@@ -1,6 +1,6 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAMES HERE"
+title: "Energy and Human Development"
+author: "Antonin Vidon and Jannik Wiedenhaupt"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
