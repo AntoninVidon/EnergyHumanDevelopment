@@ -1,1 +1,22 @@
 # Missing values
+
+```{r}
+library(dplyr)
+library(tidyverse)
+library(patchwork)
+source("R/plot_missing_patterns.R")
+```
+
+```{r}
+library(Lock5withR)
+
+# shorten column names so as to only keep first 3 characters
+myHollywood <- HollywoodMovies2011
+names(myHollywood) <- substring(names(myHollywood), 0, 3)
+
+# plot_missing_paramters function with counts on economics dataset
+plot_missing_parameters(data = myHollywood, use_counts = TRUE)
+
+# plot_missing_paramters function with percents on economics dataset
+plot_missing_parameters(data = myHollywood, use_counts = FALSE)
+```
