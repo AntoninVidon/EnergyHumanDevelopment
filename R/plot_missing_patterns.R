@@ -43,7 +43,8 @@ plot_missing_parameters <- function(data, use_counts) {
     ylab(ifelse(use_counts == TRUE, "num rows \n missing", "% rows \n missing")) +
     labs(title = "Missing value patterns") +
     theme_bw() +
-    theme(panel.grid.major.x = element_blank())
+    theme(panel.grid.major.x = element_blank(),
+          axis.text.x = element_text(angle = 20, hjust = 1))
   
   # create main plot
   main_plot <- msp_treated %>%
@@ -60,7 +61,8 @@ plot_missing_parameters <- function(data, use_counts) {
     scale_fill_manual(values = c("#cbcbcb", "#7f6fa1")) +
     scale_alpha_manual(values = c(0.6,1)) +
     theme_classic() +
-    theme(legend.position="none")
+    theme(legend.position="none",
+          axis.text.x = element_text(angle = 20, hjust = 1))
   
   # create right plot
   right_plot <- msp_treated %>%

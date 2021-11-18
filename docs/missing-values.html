@@ -24,7 +24,7 @@
 <meta name="author" content="Antonin Vidon and Jannik Wiedenhaupt" />
 
 
-<meta name="date" content="2021-11-11" />
+<meta name="date" content="2021-11-17" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -34,7 +34,7 @@
 <link rel="prev" href="data-transformation.html"/>
 <link rel="next" href="results.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
-<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="libs/jquery-3.5.1/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -76,7 +76,12 @@
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
 <li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
-<li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a></li>
+<li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#load-data"><i class="fa fa-check"></i><b>4.1</b> Load Data</a></li>
+<li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#identify-missing-data"><i class="fa fa-check"></i><b>4.2</b> Identify missing data</a></li>
+<li class="chapter" data-level="4.3" data-path="missing-values.html"><a href="missing-values.html#visualizations"><i class="fa fa-check"></i><b>4.3</b> Visualizations</a></li>
+</ul></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
@@ -101,8 +106,238 @@
             <section class="normal" id="section-">
 <div id="missing-values" class="section level1" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Missing values</h1>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="finalproj_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<div id="load-data" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Load Data</h2>
+</div>
+<div id="identify-missing-data" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Identify missing data</h2>
+<p>In identifying the missing data, we follow a top-down approach. From analysing the whole dataset, we drill for column and row-wise observations.</p>
+<p>First, we calculate the share of all missing data to the overall dataset to get a sense of the magnitude.</p>
+<pre><code>## 68% of cell values is missing</code></pre>
+<p>With such a high value, we know that we will need to reduce our analysis to some subset of rows and/or columns to make many meaningful analyses.</p>
+<p>Second, we calculate the missing data on a column basis to get a first sense for which columns will have more or less interpretability.</p>
+<pre><code>##                                         perc_na
+## biofuel_cons_change_pct                    97.0
+## carbon_intensity_elec                      96.6
+## solar_cons_change_pct                      92.4
+## nuclear_cons_change_pct                    91.3
+## wind_cons_change_pct                       91.1
+## other_renewables_cons_change_pct           86.7
+## hydro_cons_change_pct                      79.0
+## gas_cons_change_pct                        78.8
+## coal_cons_change_pct                       78.4
+## low_carbon_cons_change_pct                 78.0
+## renewables_cons_change_pct                 78.0
+## biofuel_elec_per_capita                    76.0
+## biofuel_share_elec                         75.9
+## coal_cons_change_twh                       75.9
+## fossil_cons_change_pct                     75.9
+## fossil_cons_change_twh                     75.9
+## gas_cons_change_twh                        75.9
+## hydro_cons_change_twh                      75.9
+## low_carbon_cons_change_twh                 75.9
+## nuclear_cons_change_twh                    75.9
+## oil_cons_change_pct                        75.9
+## oil_cons_change_twh                        75.9
+## other_renewables_cons_change_twh           75.9
+## renewables_cons_change_twh                 75.9
+## solar_cons_change_twh                      75.9
+## wind_cons_change_twh                       75.9
+## biofuel_electricity                        75.6
+## other_renewable_exc_biofuel_electricity    75.6
+## biofuel_share_energy                       75.4
+## coal_share_energy                          75.4
+## coal_cons_per_capita                       75.4
+## fossil_share_energy                        75.4
+## fossil_fuel_consumption                    75.4
+## fossil_energy_per_capita                   75.4
+## gas_share_energy                           75.4
+## gas_energy_per_capita                      75.4
+## hydro_share_energy                         75.4
+## hydro_consumption                          75.4
+## hydro_energy_per_capita                    75.4
+## low_carbon_share_energy                    75.4
+## low_carbon_consumption                     75.4
+## low_carbon_energy_per_capita               75.4
+## nuclear_share_energy                       75.4
+## nuclear_consumption                        75.4
+## nuclear_energy_per_capita                  75.4
+## oil_share_energy                           75.4
+## oil_energy_per_capita                      75.4
+## other_renewables_share_energy              75.4
+## other_renewable_consumption                75.4
+## other_renewables_energy_per_capita         75.4
+## renewables_share_energy                    75.4
+## renewables_consumption                     75.4
+## renewables_energy_per_capita               75.4
+## solar_share_energy                         75.4
+## solar_consumption                          75.4
+## solar_energy_per_capita                    75.4
+## wind_share_energy                          75.4
+## wind_consumption                           75.4
+## wind_energy_per_capita                     75.4
+## coal_elec_per_capita                       72.7
+## fossil_cons_per_capita                     72.7
+## gas_elec_per_capita                        72.7
+## oil_elec_per_capita                        72.7
+## gas_prod_change_pct                        72.1
+## coal_share_elec                            71.0
+## fossil_share_elec                          71.0
+## gas_share_elec                             71.0
+## oil_share_elec                             71.0
+## coal_electricity                           70.7
+## fossil_electricity                         70.7
+## gas_electricity                            70.7
+## oil_electricity                            70.7
+## coal_consumption                           70.3
+## gas_consumption                            70.3
+## oil_consumption                            70.3
+## hydro_elec_per_capita                      68.5
+## low_carbon_elec_per_capita                 68.5
+## nuclear_elec_per_capita                    68.5
+## other_renewables_elec_per_capita           68.5
+## per_capita_electricity                     68.5
+## renewables_elec_per_capita                 68.5
+## solar_elec_per_capita                      68.5
+## wind_elec_per_capita                       68.5
+## biofuel_cons_change_twh                    68.4
+## biofuel_consumption                        67.7
+## biofuel_cons_per_capita                    67.7
+## low_carbon_share_elec                      65.3
+## other_renewables_share_elec                65.3
+## renewables_share_elec                      65.3
+## other_renewable_electricity                65.1
+## renewables_electricity                     65.1
+## hydro_share_elec                           65.1
+## low_carbon_electricity                     65.1
+## nuclear_share_elec                         65.1
+## solar_share_elec                           65.1
+## wind_share_elec                            65.1
+## electricity_generation                     64.9
+## hydro_electricity                          64.9
+## nuclear_electricity                        64.9
+## solar_electricity                          64.9
+## wind_electricity                           64.9
+## oil_prod_change_pct                        62.6
+## energy_per_gdp                             60.4
+## gas_prod_per_capita                        57.9
+## coal_prod_change_pct                       57.3
+## gas_prod_change_twh                        54.7
+## oil_prod_per_capita                        54.5
+## gas_production                             53.7
+## oil_prod_change_twh                        50.9
+## oil_production                             50.0
+## energy_per_capita                          48.2
+## coal_prod_per_capita                       44.6
+## energy_cons_change_pct                     43.5
+## energy_cons_change_twh                     43.3
+## primary_energy_consumption                 41.9
+## coal_prod_change_twh                       40.4
+## gdp                                        40.0
+## coal_production                            39.0
+## population                                 10.1
+## iso_code                                    0.0
+## country                                     0.0
+## year                                        0.0</code></pre>
+<p>We see that a lot of data (70-90%) for percentage-wise consumption change of specific energy sources is missing. At the other end of the spectrum, we see that more data is available for less specific variables like “primary energy consumption” or “energy per capita”.</p>
+<p>Third, we want to summarise the variables where less than 30% of data is available.</p>
+<pre><code>## Variables with over 70% of missing data:</code></pre>
+<pre><code>##  [1] &quot;biofuel_cons_change_pct&quot;                
+##  [2] &quot;carbon_intensity_elec&quot;                  
+##  [3] &quot;solar_cons_change_pct&quot;                  
+##  [4] &quot;nuclear_cons_change_pct&quot;                
+##  [5] &quot;wind_cons_change_pct&quot;                   
+##  [6] &quot;other_renewables_cons_change_pct&quot;       
+##  [7] &quot;hydro_cons_change_pct&quot;                  
+##  [8] &quot;gas_cons_change_pct&quot;                    
+##  [9] &quot;coal_cons_change_pct&quot;                   
+## [10] &quot;low_carbon_cons_change_pct&quot;             
+## [11] &quot;renewables_cons_change_pct&quot;             
+## [12] &quot;biofuel_elec_per_capita&quot;                
+## [13] &quot;biofuel_share_elec&quot;                     
+## [14] &quot;coal_cons_change_twh&quot;                   
+## [15] &quot;fossil_cons_change_pct&quot;                 
+## [16] &quot;fossil_cons_change_twh&quot;                 
+## [17] &quot;gas_cons_change_twh&quot;                    
+## [18] &quot;hydro_cons_change_twh&quot;                  
+## [19] &quot;low_carbon_cons_change_twh&quot;             
+## [20] &quot;nuclear_cons_change_twh&quot;                
+## [21] &quot;oil_cons_change_pct&quot;                    
+## [22] &quot;oil_cons_change_twh&quot;                    
+## [23] &quot;other_renewables_cons_change_twh&quot;       
+## [24] &quot;renewables_cons_change_twh&quot;             
+## [25] &quot;solar_cons_change_twh&quot;                  
+## [26] &quot;wind_cons_change_twh&quot;                   
+## [27] &quot;biofuel_electricity&quot;                    
+## [28] &quot;other_renewable_exc_biofuel_electricity&quot;
+## [29] &quot;biofuel_share_energy&quot;                   
+## [30] &quot;coal_share_energy&quot;                      
+## [31] &quot;coal_cons_per_capita&quot;                   
+## [32] &quot;fossil_share_energy&quot;                    
+## [33] &quot;fossil_fuel_consumption&quot;                
+## [34] &quot;fossil_energy_per_capita&quot;               
+## [35] &quot;gas_share_energy&quot;                       
+## [36] &quot;gas_energy_per_capita&quot;                  
+## [37] &quot;hydro_share_energy&quot;                     
+## [38] &quot;hydro_consumption&quot;                      
+## [39] &quot;hydro_energy_per_capita&quot;                
+## [40] &quot;low_carbon_share_energy&quot;                
+## [41] &quot;low_carbon_consumption&quot;                 
+## [42] &quot;low_carbon_energy_per_capita&quot;           
+## [43] &quot;nuclear_share_energy&quot;                   
+## [44] &quot;nuclear_consumption&quot;                    
+## [45] &quot;nuclear_energy_per_capita&quot;              
+## [46] &quot;oil_share_energy&quot;                       
+## [47] &quot;oil_energy_per_capita&quot;                  
+## [48] &quot;other_renewables_share_energy&quot;          
+## [49] &quot;other_renewable_consumption&quot;            
+## [50] &quot;other_renewables_energy_per_capita&quot;     
+## [51] &quot;renewables_share_energy&quot;                
+## [52] &quot;renewables_consumption&quot;                 
+## [53] &quot;renewables_energy_per_capita&quot;           
+## [54] &quot;solar_share_energy&quot;                     
+## [55] &quot;solar_consumption&quot;                      
+## [56] &quot;solar_energy_per_capita&quot;                
+## [57] &quot;wind_share_energy&quot;                      
+## [58] &quot;wind_consumption&quot;                       
+## [59] &quot;wind_energy_per_capita&quot;                 
+## [60] &quot;coal_elec_per_capita&quot;                   
+## [61] &quot;fossil_cons_per_capita&quot;                 
+## [62] &quot;gas_elec_per_capita&quot;                    
+## [63] &quot;oil_elec_per_capita&quot;                    
+## [64] &quot;gas_prod_change_pct&quot;                    
+## [65] &quot;coal_share_elec&quot;                        
+## [66] &quot;fossil_share_elec&quot;                      
+## [67] &quot;gas_share_elec&quot;                         
+## [68] &quot;oil_share_elec&quot;                         
+## [69] &quot;coal_electricity&quot;                       
+## [70] &quot;fossil_electricity&quot;                     
+## [71] &quot;gas_electricity&quot;                        
+## [72] &quot;oil_electricity&quot;                        
+## [73] &quot;coal_consumption&quot;                       
+## [74] &quot;gas_consumption&quot;                        
+## [75] &quot;oil_consumption&quot;</code></pre>
+<p>More than half the variables in the dataset have over 70% of empty cells.
+This could be detrimental if we did not know more about the dataset. However, the dataset contains energy data of</p>
+<pre><code>## 216</code></pre>
+<p>countries (or similar entities) in the years</p>
+<pre><code>## 1900 to 2020</code></pre>
+<p>Therefore, it is expected that a lot of data is missing for reasons like development status, begin of data entry, data destruction, non-existence of certain technologies and many more. Therefore, the time range and analyzed variables will be subset based on the further analysis.</p>
+</div>
+<div id="visualizations" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Visualizations</h2>
+<p>In the following, visualizations of the missing data patterns by category, country, region, and year will be presented. Due to the size of the dataset, many visualizations are not readable for the whole dataset but were broken down into similar groups of variables. It is recommended to look at these visualizations in fullscreen.
+<img src="finalproj_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>Now we look at the missing data country-by-country as a time series
+<img src="finalproj_files/figure-html/unnamed-chunk-13-1.png" width="672" />
+It can be seen that data availability generally increases over time. Furthermore, it can be seen that countries from Europe and, some from the Middle East, and North America have the strongest data availability. Nevertheless, a</p>
+<p>We look at the same visualization on a more aggregated perspective, by region.
+<img src="finalproj_files/figure-html/unnamed-chunk-14-1.png" width="672" />
+On a region-basis, we can see that Europe &amp; central Asia, as well as North America have the least missing values. Sub-Saharan Africa on the other hand has the most missing values. For all regions, spikes in 1965 and 2000 can be seen. This will be needed to be analyzed further.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>Visualized by year for all countries, it can now clearly be seen that major boosts in data availability occured around 1965 and 2000.</p>
 
+</div>
 </div>
             </section>
 

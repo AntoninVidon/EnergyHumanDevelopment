@@ -2,10 +2,9 @@ introduction
 data-sources
 data-transformation
 missing-values
+load-data
+identify-missing-data
+visualizations
 results
 interactive-component
 conclusion
-mycars-missing-patterns
-missing-value-plot-function
-setup-your-github-final-project-repo
-missing-values-chapter
