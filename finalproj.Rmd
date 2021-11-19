@@ -1,8 +1,64 @@
+--- 
+title: "Energy and Human Development"
+author: "Antonin Vidon and Jannik Wiedenhaupt"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+---
+--- 
+title: "Energy and Human Development"
+author: "Antonin Vidon and Jannik Wiedenhaupt"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+---
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+# Introduction
+
+The effect of energy consumption on economic growth is a wide area of research and teaches us that energy is in fact one of the most important driver of economic development. In our study, instead of considering the raw economic growth, we weigh human development and its core components: long and healthy life, level of education and standard of living (GDP per capita and related). We put to the test some intuitive insights between energy consumption and human development. 
+
+<!--chapter:end:index.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+# Data sources
+
+
+<!--chapter:end:02-data.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+# Data transformation
+
+<!--chapter:end:03-cleaning.Rmd-->
+
 ---
 output:
   html_document: default
   pdf_document: default
 ---
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
 # Missing values
 
 ```{r, echo=FALSE, warning=FALSE}
@@ -152,3 +208,42 @@ myun_years_of_schooling <- un_years_of_schooling
 plot_missing_parameters(data = myun_years_of_schooling, use_counts = FALSE, max_100 = FALSE, 
                         ticks_angle = 90, ticks_size = 7.5, complete_cases_size = 3, complete_cases_hjust = 0.05)
 ```
+
+<!--chapter:end:04-missing.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+# Results
+
+<!--chapter:end:05-results.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+# Interactive component
+
+
+
+<!--chapter:end:06-interactive.Rmd-->
+
+```{r include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE
+)
+```
+# Conclusion
+
+
+<!--chapter:end:07-conclusion.Rmd-->
+
