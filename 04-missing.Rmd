@@ -27,134 +27,112 @@ df_country_info <- as.data.frame(data_country_info) %>%
   rename(iso_code = "X.U.FEFF.iso_code")
 ```
 
+We only select the following columns from the data set to avoid redundancies and as they are most crucial to our questions. We also restrain the time frame to 1980-2020:
+```{r}
+selected_columns <- c("iso_code", "country", "year","consumption")
+df_energy_sel <- df_energy %>% 
+  select(contains(selected_columns)) %>%
+  select(-contains(c("_per_capita", "_pct", "_change"))) %>%
+  subset(year >= 1980)
+```
+
 ## Identify missing data
 In identifying the missing data, we follow a top-down approach. From analysing the whole dataset, we drill for column and row-wise observations.
 
 First, we calculate the share of all missing data to the overall dataset to get a sense of the magnitude.
 ```{r}
 # Calculate share of missing data in total
-perc_missing <- round(sum(is.na(df_energy)) * 100 / prod(dim(df_energy)), 1)
+perc_missing <- round(sum(is.na(df_energy_sel)) * 100 / prod(dim(df_energy_sel)), 1)
 cat(perc_missing, "% of cell values is missing", sep="")
 ```
 With such a high value, we know that we will need to reduce our analysis to some subset of rows and/or columns to make many meaningful analyses.
 
 Second, we calculate the missing data on a column basis to get a first sense for which columns will have more or less interpretability.
-```{r}
+```{r, fig.height=10}
 # Calculate share of missing data per column
-df_energy_na <- as.data.frame(round(colSums(is.na(df_energy)) / nrow(df_energy) * 100, 1)) %>% 
+df_energy_na <- as.data.frame(round(colSums(is.na(df_energy_sel)) / nrow(df_energy_sel) * 100, 1)) %>% 
   rename(perc_na = 1) %>%
   mutate(variable = rownames(.)) %>%
   arrange(-perc_na)
-df_energy_na %>% select(perc_na)
+
+ggplot(df_energy_na, aes(x=reorder(variable, perc_na), y=perc_na)) + 
+  geom_col() +
+  labs(x="Variable", y="Missing data (in percent)", title="Missing data per column") +
+  coord_flip()
 ```
 
-We see that a lot of data (70-90%) for percentage-wise consumption change of specific energy sources is missing. At the other end of the spectrum, we see that more data is available for less specific variables like "primary energy consumption" or "energy per capita".
+We see that for most variables over 60% of the data is missing. Year, iso_code, and country are the identifiers and none of them is missing.
 
-Third, we want to summarise the variables where less than 30% of data is available.
-```{r}
-# Highlight variables with missing data over 70%
-cat("Variables with over 70% of missing data:\n")
-df_energy_na[df_energy_na$perc_na > 70,]$variable
-```
-More than half the variables in the dataset have over 70% of empty cells.
-This could be detrimental if we did not know more about the dataset. However, the dataset contains energy data of 
+This high share could be detrimental if we did not know more about the dataset. However, the dataset contains energy data of 
 
 ```{r}
-cat(num_countries <- length(unique(filter(df_energy, iso_code != "")$country)))
+cat(num_countries <- length(unique(filter(df_energy_sel, iso_code != "")$country)))
 ```
 countries (or similar entities) in the years
 ```{r}
-cat(min(df_energy$year), "to", max(df_energy$year))
+cat(min(df_energy_sel$year), "to", max(df_energy_sel$year))
 ```
 Therefore, it is expected that a lot of data is missing for reasons like development status, begin of data entry, data destruction, non-existence of certain technologies and many more. Therefore, the time range and analyzed variables will be subset based on the further analysis.
 
+
 ## Visualizations
 In the following, visualizations of the missing data patterns by category, country, region, and year will be presented. Due to the size of the dataset, many visualizations are not readable for the whole dataset but were broken down into similar groups of variables. It is recommended to look at these visualizations in fullscreen.
-```{r}
-df_energy_per_capita <- df_energy %>% 
-  select(contains(c("per_capita"))) %>% 
-  rename_with(~gsub("_per_capita", "", .x))
-plt_miss_params_energy_per_capita <- plot_missing_parameters(df_energy_per_capita, TRUE)
+```{r, fig.width=10}
+plt_miss_params_energy <- plot_missing_parameters(df_energy_sel, FALSE)
 
-df_energy_change_pct <- df_energy %>% 
-  select(contains(c("change_pct"))) %>% 
-  rename_with(~gsub("_change_pct", "", .x))
-plt_miss_params_energy_change_pct <- plot_missing_parameters(df_energy_change_pct, TRUE)
-
-df_energy_consumption <- df_energy %>% 
-  select(contains(c("consumption"))) %>% 
-  rename_with(~gsub("_consumption", "", .x))
-plt_miss_params_consumption <- plot_missing_parameters(df_energy_consumption, TRUE)
-
-df_energy_electricity <- df_energy %>% 
-  select(contains(c("electricity"))) %>% 
-  rename_with(~gsub("_electricity", "", .x))
-plt_miss_params_electricity <- plot_missing_parameters(df_energy_electricity, TRUE)
-
-figure1 <- ggarrange(plt_miss_params_electricity, plt_miss_params_consumption, 
-                    plt_miss_params_energy_per_capita, plt_miss_params_energy_change_pct,
-                    labels = c("Electricity", "Consumption", "Per Capita", "Percentage Change"),
-                    vjust = 1,
-                    hjust = -0.6,
-                    ncol = 2, 
-                    nrow = 4)
-figure1
+plt_miss_params_energy
 ```
+We can see that about 40% of rows are missing almost all variables. This might become a problem when comparing countries over time as this might suggest that some countries have only little data for a limited number of years.
+However, about 35% of rows are complete, in that the energy mix can be fully analyzed. The remaining 30% of rows also miss a high share of variables with some exception for oil, biofuel, and primary energy consumption. The reasons for this will need to be examined.
 
-Now we look at the missing data country-by-country as a time series
+
+We look at the same visualization on a by-region basis. To identify a country's region, we merge the energy data set with the worldbank data set on countries.
 ```{r}
-df_by_country <- df_energy %>% mutate(available_perc = 1-rowSums(apply(is.na(df_energy), 2, as.numeric))/ncol(df_energy))
-df_by_country <- df_by_country %>% filter(iso_code != "") %>% select(c(iso_code, country, year, available_perc))
-
-##################################################
-#TODO: Code order to be by most data available
-##################################################
-
+df_by_country <- df_energy_sel %>% mutate(missing_perc = rowSums(apply(is.na(df_energy_sel), 2, as.numeric))/ncol(df_energy_sel))
+df_by_country <- df_by_country %>% filter(iso_code != "") %>% select(c(iso_code, country, year, missing_perc))
 df_by_country <- left_join(df_by_country, df_country_info, by = "iso_code") %>%
-  select(c(iso_code, country, year, available_perc, Region, IncomeGroup)) %>%
-  arrange(-available_perc)
+  select(c(iso_code, country, year, missing_perc, Region, IncomeGroup)) %>%
+  arrange(-missing_perc)
 
-order_country <- unique(df_by_country[, c("country","Region")]) %>% select(country)
-levels(df_by_country$country) <- order_country$country
+df_by_region <- df_by_country %>%
+  select(c(Region, year, missing_perc)) %>%
+  group_by(Region, year) %>%
+  summarise(missing_perc = mean(missing_perc))
 
-plt_available_years_by_country <- ggplot(df_by_country, aes(x=year, y=available_perc, color=Region)) + 
+df_by_region_order <- df_by_region %>%
+  group_by(Region) %>%
+  summarise(mean_missing = mean(missing_perc)) %>%
+  arrange(desc(mean_missing), Region)
+df_by_region$Region <- factor(df_by_region$Region, levels = df_by_region_order$Region)
+
+plt_available_years_by_region <- ggplot(df_by_region, aes(x=year, y=missing_perc)) + 
   geom_col() + 
   ylim(0, 1) +
-  facet_wrap(country~.) +
-  theme(axis.text = element_text(size = 5),
-        axis.text.x = element_text(angle = 20, hjust = 1))
+  facet_wrap(~Region) +
+  labs(x="Year", y="Missing data (in percent)", title="Missing Data by Geographic Region")
+plt_available_years_by_region
+```
+On a region-basis, we can see that Sub-Saharan Africa and Latin America have the most missing data, while Europe & central Asia, as well as North America have the least missing values. For all regions, data availability remains largely constant over time with a high spike in 2020. This is likely due to recency and that some data is not finally collected yet. We also see that because of the merge some countries were not matched with a region in the last graph "NA". Looking at these countries individually, we will be able to match them with the fitting region.
+
+Now we look at the missing data on a by-country basis.
+```{r, fig.height=30, fig.width=15}
+df_by_country_order <- df_by_country %>%
+  group_by(country, Region) %>%
+  summarise(sum_missing = sum(missing_perc))
+df_by_country_order <- df_by_country_order %>% arrange(desc(sum_missing), Region)
+
+order_country <- df_by_country_order$country
+df_by_country$country <- factor(df_by_country$country, levels = order_country)
+
+plt_available_years_by_country <- ggplot(df_by_country, aes(x=year, y=missing_perc, color=Region)) + 
+  geom_col() + 
+  ylim(0, 1) +
+  facet_wrap(~country, ncol = 7) +
+  theme(axis.text.x = element_text(angle = 20, hjust = 1, size = 7)) +
+  labs(x="Year", y="Missing Data (in percent)", title="Missing Data by Country and Region")
+
 
 plt_available_years_by_country
 ```
-It can be seen that data availability generally increases over time. Furthermore, it can be seen that countries from Europe and, some from the Middle East, and North America have the strongest data availability. Nevertheless, a 
 
-
-We look at the same visualization on a more aggregated perspective, by region.
-```{r}
-df_by_region <- left_join(df_by_country, df_country_info, by = "iso_code") %>%
-  select(c(Region.x, year, available_perc)) %>%
-  group_by(Region.x, year) %>%
-  summarise(available_perc = mean(available_perc))
-
-plt_available_years_by_region <- ggplot(df_by_region, aes(x=year, y=available_perc)) + 
-  geom_col() + 
-  ylim(0, 1) +
-  facet_wrap(~Region.x) +
-  theme(axis.text = element_text(size = 5))
-plt_available_years_by_region
-```
-On a region-basis, we can see that Europe & central Asia, as well as North America have the least missing values. Sub-Saharan Africa on the other hand has the most missing values. For all regions, spikes in 1965 and 2000 can be seen. This will be needed to be analyzed further.
-
-
-```{r}
-df_by_year <- df_by_country %>% group_by(year) %>% summarise(available_perc = mean(available_perc))
-
-plt_available_years_avg <- ggplot(df_by_year, aes(x=year, y=available_perc)) + 
-  geom_col() + 
-  ylim(0, 1)
-
-plt_available_years_avg
-```
-
-Visualized by year for all countries, it can now clearly be seen that major boosts in data availability occured around 1965 and 2000.
-
+Looking at the missing data by country, it becomes clear that many countries missing specific variables over the entire time frame. The data availability is also constant inside the previously looked at regions. While the data availability in European and North American countries is largely consistent, the countries in East Asia & Pacific and Latin America vary widely. Some of them are among the best in terms of data availability while others are among the worst. We predict a strong correlation with GDP which will be test later.
