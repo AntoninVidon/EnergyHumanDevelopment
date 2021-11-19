@@ -1,7 +1,7 @@
 ---
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 # Missing values
 
@@ -15,36 +15,32 @@ library(ggpubr)
 source("R/plot_missing_patterns.R")
 ```
 
-## Energy consumption
-
+## Load Data
 ```{r}
 energy_data <- read.csv("data/owid_energy_data.csv", header=TRUE, stringsAsFactors=FALSE)
+data_country_info <- read.csv("data/worldbank_country_info.csv", header=TRUE, stringsAsFactors=FALSE, encoding = "UTF-8")
+
 df_energy <- as.data.frame(energy_data)
+df_country_info <- as.data.frame(data_country_info)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+df_country_info <- as.data.frame(data_country_info) %>% 
+  rename(iso_code = "X.U.FEFF.iso_code")
+```
+
+We only select the following columns from the data set to avoid redundancies and as they are most crucial to our questions. We also restrain the time frame to 1980-2020:
+```{r}
+>>>>>>> parent of f178bf2 (Created missing patterns plots for en cons, gdp, life exp and years of schooling)
 selected_columns <- c("iso_code", "country", "year","consumption")
 df_energy_sel <- df_energy %>% 
   select(contains(selected_columns)) %>%
   select(-contains(c("_per_capita", "_pct", "_change"))) %>%
-  subset(year >= 1990) %>%
-  rename("fossil_fuel" = "fossil_fuel_consumption", 
-         "hydro" = "hydro_consumption", 
-         "low_carb" = "low_carbon_consumption", 
-         "nuclear" = "nuclear_consumption", 
-         "other_renew" = "other_renewable_consumption", 
-         "renew" = "renewables_consumption", 
-         "solar" = "solar_consumption", 
-         "wind" = "wind_consumption", 
-         "coal" = "coal_consumption", 
-         "gas" = "gas_consumption", 
-         "oil" = "oil_consumption", 
-         "biofuel" = "biofuel_consumption", 
-         "primary" = "primary_energy_consumption")
-  
-plot_missing_parameters(df_energy_sel, use_counts = FALSE, max_100 = FALSE, 
-                  ticks_angle = 45, ticks_size = 9, complete_cases_size = 3.5, complete_cases_hjust = 0)
+  subset(year >= 1980)
 ```
 
+<<<<<<< HEAD
 ## GDP per capita
 =======
 df_country_info <- as.data.frame(data_country_info) %>% 
@@ -54,19 +50,45 @@ df_country_info <- as.data.frame(data_country_info) %>%
 ## Identify missing data
 In identifying the missing data, we follow a top-down approach. From analysing the whole dataset, we drill for column and row-wise observations.
 >>>>>>> parent of e1367f0 (Updated Chapter 4)
+=======
+## Identify missing data
+In identifying the missing data, we follow a top-down approach. From analysing the whole dataset, we drill for column and row-wise observations.
+>>>>>>> parent of f178bf2 (Created missing patterns plots for en cons, gdp, life exp and years of schooling)
 
+First, we calculate the share of all missing data to the overall dataset to get a sense of the magnitude.
 ```{r}
+<<<<<<< HEAD
 <<<<<<< HEAD
 gdp_per_capita <- read.csv("data/gdp_per_capita.csv", skip = 4, check.names = FALSE)
 
 relevant_years <- as.character(1990:2019)
+=======
+# Calculate share of missing data in total
+perc_missing <- round(sum(is.na(df_energy_sel)) * 100 / prod(dim(df_energy_sel)), 1)
+cat(perc_missing, "% of cell values is missing", sep="")
+```
+With such a high value, we know that we will need to reduce our analysis to some subset of rows and/or columns to make many meaningful analyses.
 
-gdp_per_capita <- gdp_per_capita %>%
-  select("Country Name", relevant_years)
+Second, we calculate the missing data on a column basis to get a first sense for which columns will have more or less interpretability.
+```{r, fig.height=10}
+# Calculate share of missing data per column
+df_energy_na <- as.data.frame(round(colSums(is.na(df_energy_sel)) / nrow(df_energy_sel) * 100, 1)) %>% 
+  rename(perc_na = 1) %>%
+  mutate(variable = rownames(.)) %>%
+  arrange(-perc_na)
 
-mygdp_per_capita <- gdp_per_capita
-names(mygdp_per_capita) <- c("Country", substring(names(mygdp_per_capita)[1:length(relevant_years) + 1], 0, 4))
+ggplot(df_energy_na, aes(x=reorder(variable, perc_na), y=perc_na)) + 
+  geom_col() +
+  labs(x="Variable", y="Missing data (in percent)", title="Missing data per column") +
+  coord_flip()
+```
+>>>>>>> parent of f178bf2 (Created missing patterns plots for en cons, gdp, life exp and years of schooling)
 
+We see that for most variables over 60% of the data is missing. Year, iso_code, and country are the identifiers and none of them is missing.
+
+This high share could be detrimental if we did not know more about the dataset. However, the dataset contains energy data of 
+
+<<<<<<< HEAD
 plot_missing_parameters(data = mygdp_per_capita, use_counts = FALSE, max_100 = FALSE, 
                         ticks_angle = 90, ticks_size = 7.5, complete_cases_size = 2, complete_cases_hjust = 0.05, y_ticks_size = 6)
 =======
@@ -100,33 +122,75 @@ This could be detrimental if we did not know more about the dataset. However, th
 ```{r}
 cat(num_countries <- length(unique(filter(df_energy, iso_code != "")$country)))
 >>>>>>> parent of e1367f0 (Updated Chapter 4)
-```
-
-## Life expectancy
-
+=======
 ```{r}
+cat(num_countries <- length(unique(filter(df_energy_sel, iso_code != "")$country)))
+>>>>>>> parent of f178bf2 (Created missing patterns plots for en cons, gdp, life exp and years of schooling)
+```
+countries (or similar entities) in the years
+```{r}
+<<<<<<< HEAD
 <<<<<<< HEAD
 un_life_data <- read.csv("data/life_expectancy.csv", skip = 4, check.names = FALSE)
 
 relevant_years <- as.character(1990:2019)
-
-un_life_data <- un_life_data %>%
-  select("Country Name", relevant_years)
-
-myun_life_data <- un_life_data
-names(myun_life_data) <- c("Country", substring(names(myun_life_data)[1:length(relevant_years) + 1], 0, 4))
-
-plot_missing_parameters(data = myun_life_data, use_counts = FALSE, max_100 = FALSE, 
-                        ticks_angle = 90, ticks_size = 7.5, complete_cases_size = 3, complete_cases_hjust = 0.05)
+=======
+cat(min(df_energy_sel$year), "to", max(df_energy_sel$year))
 ```
+Therefore, it is expected that a lot of data is missing for reasons like development status, begin of data entry, data destruction, non-existence of certain technologies and many more. Therefore, the time range and analyzed variables will be subset based on the further analysis.
+>>>>>>> parent of f178bf2 (Created missing patterns plots for en cons, gdp, life exp and years of schooling)
 
-## Years of schooling
 
+## Visualizations
+In the following, visualizations of the missing data patterns by category, country, region, and year will be presented. Due to the size of the dataset, many visualizations are not readable for the whole dataset but were broken down into similar groups of variables. It is recommended to look at these visualizations in fullscreen.
+```{r, fig.width=10}
+plt_miss_params_energy <- plot_missing_parameters(df_energy_sel, FALSE)
+
+plt_miss_params_energy
+```
+We can see that about 40% of rows are missing almost all variables. This might become a problem when comparing countries over time as this might suggest that some countries have only little data for a limited number of years.
+However, about 35% of rows are complete, in that the energy mix can be fully analyzed. The remaining 30% of rows also miss a high share of variables with some exception for oil, biofuel, and primary energy consumption. The reasons for this will need to be examined.
+
+
+We look at the same visualization on a by-region basis. To identify a country's region, we merge the energy data set with the worldbank data set on countries.
 ```{r}
-un_years_of_schooling <- read.csv("data/un_years_of_schooling.csv", skip = 6, check.names = FALSE)
+df_by_country <- df_energy_sel %>% mutate(missing_perc = rowSums(apply(is.na(df_energy_sel), 2, as.numeric))/ncol(df_energy_sel))
+df_by_country <- df_by_country %>% filter(iso_code != "") %>% select(c(iso_code, country, year, missing_perc))
+df_by_country <- left_join(df_by_country, df_country_info, by = "iso_code") %>%
+  select(c(iso_code, country, year, missing_perc, Region, IncomeGroup)) %>%
+  arrange(-missing_perc)
 
-relevant_years <- as.character(1990:2019)
+df_by_region <- df_by_country %>%
+  select(c(Region, year, missing_perc)) %>%
+  group_by(Region, year) %>%
+  summarise(missing_perc = mean(missing_perc))
 
+df_by_region_order <- df_by_region %>%
+  group_by(Region) %>%
+  summarise(mean_missing = mean(missing_perc)) %>%
+  arrange(desc(mean_missing), Region)
+df_by_region$Region <- factor(df_by_region$Region, levels = df_by_region_order$Region)
+
+plt_available_years_by_region <- ggplot(df_by_region, aes(x=year, y=missing_perc)) + 
+  geom_col() + 
+  ylim(0, 1) +
+  facet_wrap(~Region) +
+  labs(x="Year", y="Missing data (in percent)", title="Missing Data by Geographic Region")
+plt_available_years_by_region
+```
+On a region-basis, we can see that Sub-Saharan Africa and Latin America have the most missing data, while Europe & central Asia, as well as North America have the least missing values. For all regions, data availability remains largely constant over time with a high spike in 2020. This is likely due to recency and that some data is not finally collected yet. We also see that because of the merge some countries were not matched with a region in the last graph "NA". Looking at these countries individually, we will be able to match them with the fitting region.
+
+Now we look at the missing data on a by-country basis.
+```{r, fig.height=30, fig.width=15}
+df_by_country_order <- df_by_country %>%
+  group_by(country, Region) %>%
+  summarise(sum_missing = sum(missing_perc))
+df_by_country_order <- df_by_country_order %>% arrange(desc(sum_missing), Region)
+
+order_country <- df_by_country_order$country
+df_by_country$country <- factor(df_by_country$country, levels = order_country)
+
+<<<<<<< HEAD
 un_years_of_schooling <- un_years_of_schooling %>%
   select("Country", "HDI Rank", relevant_years) %>%
   mutate_at(relevant_years, as.numeric) %>%
@@ -213,10 +277,17 @@ plt_available_years_by_region
 ```
 On a region-basis, we can see that Europe & central Asia, as well as North America have the least missing values. Sub-Saharan Africa on the other hand has the most missing values. For all regions, spikes in 1965 and 2000 can be seen. This will be needed to be analyzed further.
 >>>>>>> parent of e1367f0 (Updated Chapter 4)
+=======
+plt_available_years_by_country <- ggplot(df_by_country, aes(x=year, y=missing_perc, color=Region)) + 
+  geom_col() + 
+  ylim(0, 1) +
+  facet_wrap(~country, ncol = 7) +
+  theme(axis.text.x = element_text(angle = 20, hjust = 1, size = 7)) +
+  labs(x="Year", y="Missing Data (in percent)", title="Missing Data by Country and Region")
+>>>>>>> parent of f178bf2 (Created missing patterns plots for en cons, gdp, life exp and years of schooling)
 
-myun_years_of_schooling <- un_years_of_schooling
-#names(myun_years_of_schooling) <- c("cy", "hdi", substring(names(myun_years_of_schooling)[1:length(relevant_years) + 1], 0, 4))
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 plot_missing_parameters(data = myun_years_of_schooling, use_counts = FALSE, max_100 = FALSE, 
                         ticks_angle = 90, ticks_size = 7.5, complete_cases_size = 3, complete_cases_hjust = 0.05)
@@ -236,3 +307,9 @@ plt_available_years_avg
 Visualized by year for all countries, it can now clearly be seen that major boosts in data availability occured around 1965 and 2000.
 
 >>>>>>> parent of e1367f0 (Updated Chapter 4)
+=======
+plt_available_years_by_country
+```
+
+Looking at the missing data by country, it becomes clear that many countries missing specific variables over the entire time frame. The data availability is also constant inside the previously looked at regions. While the data availability in European and North American countries is largely consistent, the countries in East Asia & Pacific and Latin America vary widely. Some of them are among the best in terms of data availability while others are among the worst. We predict a strong correlation with GDP which will be test later.
+>>>>>>> parent of f178bf2 (Created missing patterns plots for en cons, gdp, life exp and years of schooling)
