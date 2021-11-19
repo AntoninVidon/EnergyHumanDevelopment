@@ -24,7 +24,7 @@
 <meta name="author" content="Antonin Vidon and Jannik Wiedenhaupt" />
 
 
-<meta name="date" content="2021-11-18" />
+<meta name="date" content="2021-11-19" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -34,7 +34,7 @@
 <link rel="prev" href="data-transformation.html"/>
 <link rel="next" href="results.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
-<script src="libs/jquery-3.5.1/jquery-3.5.1.min.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -78,9 +78,10 @@
 <li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#load-data"><i class="fa fa-check"></i><b>4.1</b> Load Data</a></li>
-<li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#identify-missing-data"><i class="fa fa-check"></i><b>4.2</b> Identify missing data</a></li>
-<li class="chapter" data-level="4.3" data-path="missing-values.html"><a href="missing-values.html#visualizations"><i class="fa fa-check"></i><b>4.3</b> Visualizations</a></li>
+<li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#energy-consumption"><i class="fa fa-check"></i><b>4.1</b> Energy consumption</a></li>
+<li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#gdp-per-capita"><i class="fa fa-check"></i><b>4.2</b> GDP per capita</a></li>
+<li class="chapter" data-level="4.3" data-path="missing-values.html"><a href="missing-values.html#life-expectancy"><i class="fa fa-check"></i><b>4.3</b> Life expectancy</a></li>
+<li class="chapter" data-level="4.4" data-path="missing-values.html"><a href="missing-values.html#years-of-schooling"><i class="fa fa-check"></i><b>4.4</b> Years of schooling</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
@@ -106,37 +107,21 @@
             <section class="normal" id="section-">
 <div id="missing-values" class="section level1" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Missing values</h1>
-<div id="load-data" class="section level2" number="4.1">
-<h2><span class="header-section-number">4.1</span> Load Data</h2>
-<p>We only select the following columns from the data set to avoid redundancies and as they are most crucial to our questions. We also restrain the time frame to 1980-2020:</p>
+<div id="energy-consumption" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Energy consumption</h2>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
-<div id="identify-missing-data" class="section level2" number="4.2">
-<h2><span class="header-section-number">4.2</span> Identify missing data</h2>
-<p>In identifying the missing data, we follow a top-down approach. From analysing the whole dataset, we drill for column and row-wise observations.</p>
-<p>First, we calculate the share of all missing data to the overall dataset to get a sense of the magnitude.</p>
-<pre><code>## 47.6% of cell values is missing</code></pre>
-<p>With such a high value, we know that we will need to reduce our analysis to some subset of rows and/or columns to make many meaningful analyses.</p>
-<p>Second, we calculate the missing data on a column basis to get a first sense for which columns will have more or less interpretability.
-<img src="finalproj_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>We see that for most variables over 60% of the data is missing. Year, iso_code, and country are the identifiers and none of them is missing.</p>
-<p>This high share could be detrimental if we did not know more about the dataset. However, the dataset contains energy data of</p>
-<pre><code>## 216</code></pre>
-<p>countries (or similar entities) in the years</p>
-<pre><code>## 1980 to 2020</code></pre>
-<p>Therefore, it is expected that a lot of data is missing for reasons like development status, begin of data entry, data destruction, non-existence of certain technologies and many more. Therefore, the time range and analyzed variables will be subset based on the further analysis.</p>
+<div id="gdp-per-capita" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> GDP per capita</h2>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
-<div id="visualizations" class="section level2" number="4.3">
-<h2><span class="header-section-number">4.3</span> Visualizations</h2>
-<p>In the following, visualizations of the missing data patterns by category, country, region, and year will be presented. Due to the size of the dataset, many visualizations are not readable for the whole dataset but were broken down into similar groups of variables. It is recommended to look at these visualizations in fullscreen.
-<img src="finalproj_files/figure-html/unnamed-chunk-12-1.png" width="960" />
-We can see that about 40% of rows are missing almost all variables. This might become a problem when comparing countries over time as this might suggest that some countries have only little data for a limited number of years.
-However, about 35% of rows are complete, in that the energy mix can be fully analyzed. The remaining 30% of rows also miss a high share of variables with some exception for oil, biofuel, and primary energy consumption. The reasons for this will need to be examined.</p>
-<p>We look at the same visualization on a by-region basis. To identify a country’s region, we merge the energy data set with the worldbank data set on countries.
-<img src="finalproj_files/figure-html/unnamed-chunk-13-1.png" width="672" />
-On a region-basis, we can see that Sub-Saharan Africa and Latin America have the most missing data, while Europe &amp; central Asia, as well as North America have the least missing values. For all regions, data availability remains largely constant over time with a high spike in 2020. This is likely due to recency and that some data is not finally collected yet. We also see that because of the merge some countries were not matched with a region in the last graph “NA”. Looking at these countries individually, we will be able to match them with the fitting region.</p>
-<p>Now we look at the missing data on a by-country basis.
-<img src="finalproj_files/figure-html/unnamed-chunk-14-1.png" width="1440" /></p>
-<p>Looking at the missing data by country, it becomes clear that many countries missing specific variables over the entire time frame. The data availability is also constant inside the previously looked at regions. While the data availability in European and North American countries is largely consistent, the countries in East Asia &amp; Pacific and Latin America vary widely. Some of them are among the best in terms of data availability while others are among the worst. We predict a strong correlation with GDP which will be test later.</p>
+<div id="life-expectancy" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Life expectancy</h2>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="years-of-schooling" class="section level2" number="4.4">
+<h2><span class="header-section-number">4.4</span> Years of schooling</h2>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 
 </div>
 </div>

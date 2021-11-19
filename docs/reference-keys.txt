@@ -8,3 +8,8 @@ visualizations
 results
 interactive-component
 conclusion
+life-expectancy-and-years-of-schooling-components
+life-expectancy
+years-of-schooling
+energy-consumption
+gdp-per-capita

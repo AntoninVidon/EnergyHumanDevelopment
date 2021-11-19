@@ -1,7 +1,9 @@
-plot_missing_parameters <- function(data, use_counts) {
+### The following is the implentation of a function to plot the missing patterns in raw data
+
+plot_missing_parameters <- function(data, use_counts, max_100, ticks_angle = 0, ticks_size = 9, complete_cases_size = 3, complete_cases_hjust = 0, y_ticks_size = 9) {
   
   # create missing pattern dataframe
-  missing_patterns <- data.frame(is.na(data)) %>%
+  missing_patterns <- data.frame(is.na(data), check.names = FALSE) %>%
     group_by_all() %>%
     count(name = "count", sort = TRUE) %>%
     ungroup()
@@ -44,7 +46,7 @@ plot_missing_parameters <- function(data, use_counts) {
     labs(title = "Missing value patterns") +
     theme_bw() +
     theme(panel.grid.major.x = element_blank(),
-          axis.text.x = element_text(angle = 20, hjust = 1))
+          axis.text.x = element_text(angle = ticks_angle, size = ticks_size, hjust=1))
   
   # create main plot
   main_plot <- msp_treated %>%
@@ -54,15 +56,16 @@ plot_missing_parameters <- function(data, use_counts) {
     mutate(percentmissing = countmissing / total_num_rows) %>%
     ggplot(aes(x = reorder(variable, -countmissing), y = reorder(Y, -Y), fill= bool, alpha = complete_cases)) + 
     geom_tile(color = "gray") +
-    annotate(geom = "text", y = nrow(missing_patterns)  + 1 - index_complete_cases, x = ncol(missing_patterns) / 2, 
-             label="complete cases", hjust = 0.5) +
+    annotate(geom = "text", y = nrow(missing_patterns)  + 1 - index_complete_cases + complete_cases_hjust, x = ncol(missing_patterns) / 2, 
+             label="complete cases", hjust = 0.5, size = complete_cases_size) +
     xlab("variable") +
     ylab("missing pattern") +
     scale_fill_manual(values = c("#cbcbcb", "#7f6fa1")) +
     scale_alpha_manual(values = c(0.6,1)) +
     theme_classic() +
     theme(legend.position="none",
-          axis.text.x = element_text(angle = 20, hjust = 1))
+          axis.text.x = element_text(angle = ticks_angle, size = ticks_size, hjust=1),
+          axis.text.y = element_text(size = y_ticks_size))
   
   # create right plot
   right_plot <- msp_treated %>%
@@ -87,18 +90,21 @@ plot_missing_parameters <- function(data, use_counts) {
     coord_flip() +
     theme_bw() +
     theme(legend.position="none") +
-    theme(panel.grid.major.y = element_blank())
+    theme(panel.grid.major.y = element_blank(),
+          axis.text.y = element_text(size = y_ticks_size))
   
   # set y limits of top plot depending on use_counts value
   if(!use_counts){
-    top_plot <- top_plot + ylim(0,100)
-    right_plot <- right_plot + ylim(0, 100)
+    # set max values of top and right plot y axis to 100 if max_100 = TRUE
+    if(max_100){
+      top_plot <- top_plot + ylim(0,100)
+      right_plot <- right_plot + ylim(0, 100)
+    }
   }
   else{
-    top_plot <- top_plot + expand_limits(y=c(0, NA))
-    right_plot <- right_plot + expand_limits(y=c(0, NA))
+    top_plot <- top_plot
+    right_plot <- right_plot
   }
-  
   
   # put together the three plots with patchwork
   design <- "
