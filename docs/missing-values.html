@@ -34,7 +34,7 @@
 <link rel="prev" href="data-transformation.html"/>
 <link rel="next" href="results.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
-<script src="libs/jquery-3.5.1/jquery-3.5.1.min.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -120,21 +120,176 @@ However, about 35% of rows are complete, in that the energy mix can be fully ana
 <p>We look at the same visualization on a by-region basis. To identify a country’s region, we merge the energy data set with the worldbank data set on countries.
 <img src="finalproj_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>On a region-basis, we can see that Sub-Saharan Africa and Latin America have the most missing data, while Europe &amp; central Asia, as well as North America have the least missing values. For all regions, data availability remains largely constant over time with a high spike in 2020. This is likely due to recency and that some data is not finally collected yet. We also see that because of the merge some countries were not matched with a region in the last graph “NA”. Looking at these countries individually, we will be able to match them with the fitting region.</p>
-<p>Now we look at the missing data on a by-country basis.
-<img src="finalproj_files/figure-html/unnamed-chunk-10-1.png" width="1440" /></p>
+<p>Now we look at the missing data on a by-country basis.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-10-1.png" width="1440" /></p>
 <p>Looking at the missing data by country, it becomes clear that many countries missing specific variables over the entire time frame. The data availability is also constant inside the previously looked at regions. While the data availability in European and North American countries is largely consistent, the countries in East Asia &amp; Pacific and Latin America vary widely. Some of them are among the best in terms of data availability while others are among the worst. We predict a strong correlation with GDP which will be test later.</p>
 </div>
 <div id="gdp-per-capita" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> GDP per capita</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><u>Data description:</u> <em>Measure of a country’s economic output per person calculated by dividing the GDP of a country by its population.</em>
+<a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.CN">Link to data.</a></p>
+<p>We focus on the 1990-2019 time-frame.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+<u>Observations:</u></p>
+<ul>
+<li>The highest sparsity is recorded for the most ancient years of the time frame. Data becomes increasingly unavailable as be go back in time.</li>
+<li>Complete cases account for almost 80% of the data. For all of these countries, the data gives a full picture of the evolution of GDP per capita across time.</li>
+<li>A small proportion of country present a missing pattern of total unavailability of GDP per capita. The list of countries is displayed just below. We see that these correspond to countries that either (1) do not share their data eg. Korea or (2) have a very small population and/or economic output eg. small islands like St.Martin or.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Countries with full missing pattern
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Gibraltar
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Not classified
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+St. Martin (French part)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Korea, Dem. People’s Rep. 
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+British Virgin Islands
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="life-expectancy" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> Life expectancy</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><u>Data description:</u> <em>Mean length of life of an actual birth cohort (all individuals born in a given year).</em></p>
+<p><a href="https://data.worldbank.org/indicator/SP.DYN.LE00.IN">Link to data.</a></p>
+<p>We focus on the 1990-2019 time-frame.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><u>Observations:</u></p>
+<ul>
+<li>Life expectancy data becomes slightly sparser as we go back in time. However, the range of missing data stays within the range 6-8%.</li>
+<li>Complete cases account for almost 90% of the data. For all of these countries, the data gives a full picture of the evolution of life expectancy across time.</li>
+<li>The second most frequent missing pattern corresponds to total unavailability of life expectancy within the time frame. The list of countries is displayed just below. We see that these correspond to either (1) unclassified data or (2) countries with very small population for which it is difficult to conduct data collection eg. small islands like American Samoa.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Countries with full missing pattern
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Andorra
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+American Samoa
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gibraltar
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Not classified
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Monaco
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Northern Mariana Islands
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nauru
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Turks and Caicos Islands
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tuvalu
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+British Virgin Islands
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="years-of-schooling" class="section level2" number="4.4">
 <h2><span class="header-section-number">4.4</span> Years of schooling</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><u>Data description:</u> <em>Number of years of schooling that a child of school entrance age can expect to receive if prevailing patterns of age-specific enrollment rates persist throughout the child’s life.</em></p>
+<p><a href="http://hdr.undp.org/en/indicators/69706#">Link to data.</a></p>
+<p>We focus on the 1990-2019 time-frame.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><u>Observations:</u></p>
+<ul>
+<li>As for previous variables, sparsity increases when we look at more ancient years, but never exceeds 12%.</li>
+<li>Complete cases account for almost 90% of the data. For all of these countries, the data gives a full picture of the evolution of the years of schooling across time.</li>
+<li>A few countries are not ranked in terms of HDI. These countries are displayed below and correspond to countries that either (1) do not share their data eg. Korea or (2) countries with very small population (empirically &lt; 40k) for which it is difficult to conduct data collection eg. Nauru.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Countries with no HDI rank
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Korea (Democratic People’s Rep. of)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Nauru
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+San Marino
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Tuvalu
+</td>
+</tr>
+</tbody>
+</table>
 
 </div>
 </div>

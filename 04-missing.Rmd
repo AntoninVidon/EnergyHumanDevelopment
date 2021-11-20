@@ -98,6 +98,7 @@ plt_available_years_by_region
 On a region-basis, we can see that Sub-Saharan Africa and Latin America have the most missing data, while Europe & central Asia, as well as North America have the least missing values. For all regions, data availability remains largely constant over time with a high spike in 2020. This is likely due to recency and that some data is not finally collected yet. We also see that because of the merge some countries were not matched with a region in the last graph "NA". Looking at these countries individually, we will be able to match them with the fitting region.
 
 Now we look at the missing data on a by-country basis.
+
 ```{r, fig.height=30, fig.width=15}
 df_by_country_order <- df_by_country %>%
   group_by(country, Region) %>%
@@ -119,6 +120,12 @@ Looking at the missing data by country, it becomes clear that many countries mis
 
 ## GDP per capita
 
+<u>Data description:</u> *Measure of a country's economic output per person calculated by dividing the GDP of a country by its population.*
+
+[Link to data.](https://data.worldbank.org/indicator/NY.GDP.PCAP.CN)
+
+We focus on the 1990-2019 time-frame.
+
 ```{r}
 gdp_per_capita <- read.csv("data/gdp_per_capita.csv", skip = 4, check.names = FALSE)
 relevant_years <- as.character(1990:2019)
@@ -127,10 +134,32 @@ gdp_per_capita <- gdp_per_capita %>%
 mygdp_per_capita <- gdp_per_capita
 names(mygdp_per_capita) <- c("Country", substring(names(mygdp_per_capita)[1:length(relevant_years) + 1], 0, 4))
 plot_missing_parameters(data = mygdp_per_capita, use_counts = FALSE, max_100 = FALSE, 
-                        ticks_angle = 90, ticks_size = 7.5, complete_cases_size = 2, complete_cases_hjust = 0.05, y_ticks_size = 6)
+                        ticks_angle = 45, ticks_size = 7.5, complete_cases_size = 2, complete_cases_hjust = 0.05, y_ticks_size = 6)
+```
+<u>Observations:</u>
+
+- The highest sparsity is recorded for the most ancient years of the time frame. Data becomes increasingly unavailable as be go back in time.
+- Complete cases account for almost 80% of the data. For all of these countries, the data gives a full picture of the evolution of GDP per capita across time.
+- A small proportion of country present a missing pattern of total unavailability of GDP per capita. The list of countries is displayed just below. We see that these correspond to countries that either (1) do not share their data eg. Korea or (2) have a very small population and/or economic output eg. small islands like St.Martin or.
+
+```{r}
+prop_na <- gdp_per_capita %>%
+  mutate("NA_proportion" = apply(gdp_per_capita, 1, FUN = function(x) sum(is.na(x))) / length(relevant_years)) %>%
+  select("Country Name", "NA_proportion") %>%
+  arrange(desc(NA_proportion)) %>%
+  select("Country Name") %>%
+  rename("Countries with full missing pattern" = "Country Name")
+
+knitr::kable(head(prop_na, 5), "html")
 ```
 
 ## Life expectancy
+
+<u>Data description:</u> *Mean length of life of an actual birth cohort (all individuals born in a given year).*
+
+[Link to data.](https://data.worldbank.org/indicator/SP.DYN.LE00.IN) 
+
+We focus on the 1990-2019 time-frame.
 
 ```{r}
 un_life_data <- read.csv("data/life_expectancy.csv", skip = 4, check.names = FALSE)
@@ -140,10 +169,33 @@ un_life_data <- un_life_data %>%
 myun_life_data <- un_life_data
 names(myun_life_data) <- c("Country", substring(names(myun_life_data)[1:length(relevant_years) + 1], 0, 4))
 plot_missing_parameters(data = myun_life_data, use_counts = FALSE, max_100 = FALSE, 
-                        ticks_angle = 90, ticks_size = 7.5, complete_cases_size = 3, complete_cases_hjust = 0.05)
+                        ticks_angle = 45, ticks_size = 7.5, complete_cases_size = 3, complete_cases_hjust = 0.05)
+```
+
+<u>Observations:</u>
+
+- Life expectancy data becomes slightly sparser as we go back in time. However, the range of missing data stays within the range 6-8%.
+- Complete cases account for almost 90% of the data. For all of these countries, the data gives a full picture of the evolution of life expectancy across time.
+- The second most frequent missing pattern corresponds to total unavailability of life expectancy within the time frame. The list of countries is displayed just below. We see that these correspond to either (1) unclassified data or (2) countries with very small population for which it is difficult to conduct data collection eg. small islands like American Samoa.
+
+```{r}
+prop_na <- un_life_data %>%
+  mutate("NA_proportion" = apply(un_life_data, 1, FUN = function(x) sum(is.na(x))) / length(relevant_years)) %>%
+  select("Country Name", "NA_proportion") %>%
+  arrange(desc(NA_proportion)) %>%
+  select("Country Name") %>%
+  rename("Countries with full missing pattern" = "Country Name")
+
+knitr::kable(head(prop_na, 10), "html")
 ```
 
 ## Years of schooling
+
+<u>Data description:</u> *Number of years of schooling that a child of school entrance age can expect to receive if prevailing patterns of age-specific enrollment rates persist throughout the child's life.*
+
+[Link to data.](http://hdr.undp.org/en/indicators/69706#) 
+
+We focus on the 1990-2019 time-frame.
 
 ```{r}
 un_years_of_schooling <- read.csv("data/un_years_of_schooling.csv", skip = 6, check.names = FALSE)
@@ -153,7 +205,22 @@ un_years_of_schooling <- un_years_of_schooling %>%
   mutate_at(relevant_years, as.numeric) %>%
   mutate_at("HDI Rank", as.numeric)
 myun_years_of_schooling <- un_years_of_schooling
-#names(myun_years_of_schooling) <- c("cy", "hdi", substring(names(myun_years_of_schooling)[1:length(relevant_years) + 1], 0, 4))
 plot_missing_parameters(data = myun_years_of_schooling, use_counts = FALSE, max_100 = FALSE, 
-                        ticks_angle = 90, ticks_size = 7.5, complete_cases_size = 3, complete_cases_hjust = 0.05)
+                        ticks_angle = 45, ticks_size = 7.5, complete_cases_size = 3, complete_cases_hjust = 0.05)
+```
+
+<u>Observations:</u>
+
+- As for previous variables, sparsity increases when we look at more ancient years, but never exceeds 12%. 
+- Complete cases account for almost 90% of the data. For all of these countries, the data gives a full picture of the evolution of the years of schooling across time.
+- A few countries are not ranked in terms of HDI. These countries are displayed below and correspond to countries that either (1) do not share their data eg. Korea or (2) countries with very small population (empirically < 40k) for which it is difficult to conduct data collection eg. Nauru.
+
+```{r}
+no_hdi_rank <- un_years_of_schooling %>%
+  filter(is.na(`HDI Rank` )) %>%
+  select(Country)  %>%
+  select("Country") %>%
+  rename("Countries with no HDI rank" = "Country")
+
+knitr::kable(head(no_hdi_rank), "html")
 ```
