@@ -77,9 +77,9 @@ df_by_region_order <- df_by_region %>%
   summarise(mean_missing = mean(missing_perc)) %>%
   arrange(desc(mean_missing), Region)
 df_by_region$Region <- factor(df_by_region$Region, levels = df_by_region_order$Region)
-plt_available_years_by_region <- ggplot(df_by_region, aes(x=year, y=missing_perc)) + 
+plt_available_years_by_region <- ggplot(df_by_region, aes(x=year, y=missing_perc*100)) + 
   geom_col() + 
-  ylim(0, 1) +
+  ylim(0, 100) +
   facet_wrap(~Region) +
   labs(x="Year", y="Missing data (in percent)", title="Missing Data by Geographic Region")
 plt_available_years_by_region
