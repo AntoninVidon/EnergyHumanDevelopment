@@ -20,6 +20,10 @@ In this chapter, we analyze the missing data in our four primary data sets on en
 
 ```{r}
 energy_data <- read.csv("data/owid_energy_data.csv", header=TRUE, stringsAsFactors=FALSE)
+data_country_info <- read.csv("data/worldbank_country_info.csv", header=TRUE, stringsAsFactors=FALSE, encoding = "UTF-8")
+df_country_info <- as.data.frame(data_country_info)
+df_country_info <- as.data.frame(data_country_info) %>% 
+  rename(iso_code = "X.U.FEFF.iso_code")
 df_energy <- as.data.frame(energy_data)
 selected_columns <- c("iso_code", "country", "year","consumption")
 df_energy_sel <- df_energy %>% 
@@ -43,6 +47,7 @@ df_energy_sel <- df_energy %>%
 plot_missing_parameters(df_energy_sel, use_counts = FALSE, max_100 = FALSE, 
                         ticks_angle = 45, ticks_size = 9, complete_cases_size = 3.5, complete_cases_hjust = 0)
 ```
+
 We can see that about 40% of rows are missing almost all variables. This might become a problem when comparing countries over time as this might suggest that some countries have only little data for a limited number of years.
 However, about 35% of rows are complete, in that the energy mix can be fully analyzed. The remaining 30% of rows also miss a high share of variables with some exception for oil, biofuel, and primary energy consumption. The reasons for this will need to be examined.
 
