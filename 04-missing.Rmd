@@ -138,7 +138,7 @@ plot_missing_parameters(data = mygdp_per_capita, use_counts = FALSE, max_100 = F
 ```
 <u>Observations:</u>
 
-- The highest sparsity is recorded for the most ancient years of the time frame. Data becomes increasingly unavailable as be go back in time.
+- The highest sparsity is recorded for the most ancient years of the time frame. Data becomes increasingly unavailable as we go back in time.
 - Complete cases account for almost 80% of the data. For all of these countries, the data gives a full picture of the evolution of GDP per capita across time.
 - A small proportion of countries present a missing pattern of total unavailability of GDP per capita. The list of those countries is displayed just below. We see that these correspond to countries that either (1) do not share their data eg. Korea or (2) have a very small population and/or economic output eg. small islands like St.Martin.
 
@@ -174,7 +174,7 @@ plot_missing_parameters(data = myun_life_data, use_counts = FALSE, max_100 = FAL
 
 <u>Observations:</u>
 
-- Life expectancy data becomes slightly sparser as we go back in time. However, the range of missing data stays within the range 6-8%.
+- Life expectancy data becomes slightly sparser as we go back in time. However, the proportion of missing data stays within the range 6-8%.
 - Complete cases account for almost 90% of the data. For all of these countries, the data gives a full picture of the evolution of life expectancy across time.
 - The second most frequent missing pattern corresponds to total unavailability of life expectancy within the time frame. The list of those countries is displayed just below. We see that these correspond to either (1) unclassified data or (2) countries with very small population for which it is difficult to conduct data collection eg. small islands like American Samoa.
 
