@@ -119,16 +119,16 @@
 <li>40% of rows are missing 75% of the variables. This might become a problem when comparing countries over time as this might suggest that some countries have only little data for a limited number of years.</li>
 <li>30% of rows are complete, such that the energy mix can be fully analyzed.</li>
 <li>The remaining 30% of rows also miss a 56% to 81% of variables with some exceptions.</li>
-<li>Adjustments on which countries are compared on which energy sources will therefore likely need to be made.</li>
 </ul>
-<p>We look at the same visualization on a by-region basis.
-<img src="finalproj_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>In order to have enough data to draw solid conclusions on these time series, we will probably have to select a sub-sample of countries.</p>
+<p>Let’s now group the countries together so as to visualize missing data by geographic region.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p><u>Observations:</u></p>
 <ul>
 <li>Sub-Saharan Africa and Latin America have the most missing data.</li>
 <li>Europe &amp; central Asia, as well as North America have the least missing values.</li>
-<li>For all regions, data availability remains largely constant over time with a high spike in 2020. This is likely due to recency and that some data is not finally collected yet.</li>
-<li>For some countries, no region could be identified, indicated by “NA” in the last graph. For better comparisons, these countries will be matched.</li>
+<li>For all regions, data availability remains largely constant over time with a high spike in 2020, year for which the data might not be collected yet.</li>
+<li>For some countries, no region could be identified. This is indicated by the label “Unmatched countries”. For better comparisons, these countries will be matched.</li>
 </ul>
 </div>
 <div id="gdp-per-capita" class="section level2" number="4.2">
@@ -136,7 +136,7 @@
 <p><u>Data description:</u> <em>Measure of a country’s economic output per person calculated by dividing the GDP of a country by its population.</em></p>
 <p><a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.CN">Link to data.</a></p>
 <p>We focus on the 1990-2019 time-frame.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+<p><img src="finalproj_files/figure-html/unnamed-chunk-9-1.png" width="672" />
 <u>Observations:</u></p>
 <ul>
 <li>The highest sparsity is recorded for the most ancient years of the time frame. Data becomes increasingly unavailable as we go back in time.</li>
@@ -185,7 +185,7 @@ British Virgin Islands
 <p><u>Data description:</u> <em>Mean length of life of an actual birth cohort (all individuals born in a given year).</em></p>
 <p><a href="https://data.worldbank.org/indicator/SP.DYN.LE00.IN">Link to data.</a></p>
 <p>We focus on the 1990-2019 time-frame.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p><u>Observations:</u></p>
 <ul>
 <li>Life expectancy data becomes slightly sparser as we go back in time. However, the proportion of missing data stays within the range 6-8%.</li>
@@ -259,7 +259,7 @@ British Virgin Islands
 <p><u>Data description:</u> <em>Number of years of schooling that a child of school entrance age can expect to receive if prevailing patterns of age-specific enrollment rates persist throughout the child’s life.</em></p>
 <p><a href="http://hdr.undp.org/en/indicators/69706#">Link to data.</a></p>
 <p>We focus on the 1990-2019 time-frame.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p><u>Observations:</u></p>
 <ul>
 <li>As for previous variables, sparsity increases when we look at more ancient years, but never exceeds 12%.</li>

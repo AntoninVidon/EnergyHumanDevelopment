@@ -59,10 +59,12 @@ plot_missing_parameters(df_energy_sel, use_counts = FALSE, max_100 = FALSE,
 - 40% of rows are missing 75% of the variables. This might become a problem when comparing countries over time as this might suggest that some countries have only little data for a limited number of years.
 - 30% of rows are complete, such that the energy mix can be fully analyzed. 
 - The remaining 30% of rows also miss a 56% to 81% of variables with some exceptions.
-- Adjustments on which countries are compared on which energy sources will therefore likely need to be made.
 
-We look at the same visualization on a by-region basis.
-```{r}
+In order to have enough data to draw solid conclusions on these time series, we will probably have to select a sub-sample of countries.
+
+Let's now group the countries together so as to visualize missing data by geographic region.
+
+```{r, eval=FALSE}
 df_by_country <- df_energy_sel %>% mutate(missing_perc = rowSums(apply(is.na(df_energy_sel), 2, as.numeric))/ncol(df_energy_sel))
 df_by_country <- df_by_country %>% filter(iso_code != "") %>% select(c(iso_code, country, year, missing_perc))
 df_by_country <- left_join(df_by_country, df_country_info, by = "iso_code") %>%
@@ -85,12 +87,50 @@ plt_available_years_by_region <- ggplot(df_by_region, aes(x=year, y=missing_perc
 plt_available_years_by_region
 ```
 
+```{r}
+df_by_country <- df_energy_sel %>% mutate(missing_perc = rowSums(apply(is.na(df_energy_sel), 2, as.numeric))/ncol(df_energy_sel))
+df_by_country <- df_by_country %>% filter(iso_code != "") %>% select(c(iso_code, country, year, missing_perc))
+df_by_country <- left_join(df_by_country, df_country_info, by = "iso_code") %>%
+  select(c(iso_code, country, year, missing_perc, Region, IncomeGroup)) %>%
+  arrange(-missing_perc)
+df_by_region <- df_by_country %>%
+  select(c(Region, year, missing_perc)) %>%
+  group_by(Region, year) %>%
+  summarise(missing_perc = mean(missing_perc))
+df_by_region <- df_by_region %>%
+  ungroup() %>%
+  mutate(fill_color = if_else(is.na(Region), TRUE, FALSE),
+         Region = if_else(is.na(Region), "Unmatched countries", as.character(Region))) %>%
+  group_by(Region) %>%
+  mutate(mean_missing_perc = mean(missing_perc)) %>%
+  ungroup()
+df_by_region_order <- df_by_region %>%
+  group_by(Region) %>%
+  summarise(mean_missing = mean(missing_perc)) %>%
+  arrange(desc(mean_missing), Region)
+df_by_region$Region <- factor(df_by_region$Region, levels = df_by_region_order$Region)
+
+cols <- c("mean value for missing data percentage"="black")
+
+ggplot(df_by_region, aes(x=year, y=missing_perc*100, alpha = fill_color)) + 
+  guides(size = "legend", alpha = "none") +
+  geom_col(fill="#6495ED") + 
+  ylim(0, 100) +
+  geom_line(linetype = "longdash", aes(y = 100 * mean_missing_perc, colour = "mean value for missing data percentage"), size = 0.7) +
+  facet_wrap(~Region) +
+  scale_alpha_manual(values = c(1, 0.6)) +
+  labs(x="Year", y="Missing data (in %)", title="Missing data by Geographic Region") +
+  scale_colour_manual(name="",values=cols) +
+  theme_classic() +
+  theme(legend.position="bottom", panel.grid.major.y = element_line( size=.1, color="gray" ))
+```
+
 <u>Observations:</u>
 
 - Sub-Saharan Africa and Latin America have the most missing data.
 - Europe & central Asia, as well as North America have the least missing values.
-- For all regions, data availability remains largely constant over time with a high spike in 2020. This is likely due to recency and that some data is not finally collected yet. 
-- For some countries, no region could be identified, indicated by "NA" in the last graph. For better comparisons, these countries will be matched.
+- For all regions, data availability remains largely constant over time with a high spike in 2020, year for which the data might not be collected yet.
+- For some countries, no region could be identified. This is indicated by the label "Unmatched countries". For better comparisons, these countries will be matched.
 
 ## GDP per capita
 
