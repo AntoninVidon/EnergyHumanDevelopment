@@ -10,127 +10,52 @@ library(stringr)
 source("R/plot_missing_patterns.R")
 ```
 
-## Jannik
 
 ```{r echo=FALSE, warning=FALSE}
-# Load Energy Data
-df_energy <- read.csv("data/owid_energy_data.csv", header=TRUE, stringsAsFactors=FALSE)
-df_energy <- df_energy %>% 
-  select(-contains(c("_per_capita", "_pct", "_change", "_production"))) %>%
-  subset(year >= 1990 & year <= 2019) %>%
-  subset(iso_code != "") %>%
-  rename("fossil_fuel" = "fossil_fuel_consumption", 
-         "hydro" = "hydro_consumption", 
-         "low_carb" = "low_carbon_consumption", 
-         "nuclear" = "nuclear_consumption", 
-         "other_renew" = "other_renewable_consumption", 
-         "renew" = "renewables_consumption", 
-         "solar" = "solar_consumption", 
-         "wind" = "wind_consumption", 
-         "coal" = "coal_consumption", 
-         "gas" = "gas_consumption", 
-         "oil" = "oil_consumption", 
-         "biofuel" = "biofuel_consumption", 
-         "primary" = "primary_energy_consumption")
-
-# Load Country Info Data
-df_country_info <- read.csv("data/worldbank_country_info.csv", header=TRUE, stringsAsFactors=FALSE, encoding = "UTF-8")
-df_country_info <- as.data.frame(df_country_info) %>% 
-  rename(iso_code = "X.U.FEFF.iso_code")
-
-# Choose years
-relevant_years <- as.character(1990:2019)
-
-# Load GDP Per Capita Data
-df_gdp <- read.csv("data/gdp_per_capita.csv", skip = 4, check.names = FALSE)
-df_gdp <- df_gdp %>%
-  select("Country Name", relevant_years)
-
-# Load Life Expectancy Data
-df_life <- read.csv("data/life_expectancy.csv", skip = 4, check.names = FALSE)
-df_life <- df_life %>%
-  select("Country Name", relevant_years) %>%
-  mutate_at(relevant_years, as.numeric)
-
-# Load Years of Schooling Data
-df_schooling <- read.csv("data/un_years_of_schooling.csv", skip = 6, check.names = FALSE)
-df_schooling <- df_schooling %>%
-  select("Country", "HDI Rank", relevant_years) %>%
-  mutate_at(relevant_years, as.numeric) %>%
-  mutate_at("HDI Rank", as.numeric) %>%
-  mutate(Country = str_trim(Country))
+# Load Data
+master_df <- read.csv(file = "data/master.csv")
 ```
 
-```{r, echo = FALSE}
-# Convert data to long format
-df_schooling <- df_schooling %>% 
-  pivot_longer(-c("Country", "HDI Rank")) %>% rename("year" = "name", "schooling_years" = "value", "hdi_rank" = "HDI Rank", "country"="Country") %>%
-  mutate_at("year", as.numeric)
+## Jannik
 
-df_life <- df_life %>% pivot_longer(-c("Country Name")) %>% rename("year" = "name", "life_expectancy" = "value", "country" = "Country Name")
-
-df_gdp <- df_gdp %>% pivot_longer(-c("Country Name")) %>% rename("year" = "name", "gdp" = "value", "country" = "Country Name")
-```
+## Is an energy mix oriented towards renewable sources associated with good human development indicators? 
 
 ```{r}
-# Data cleaning
-## Identifying overlapping countries of datasets
-setdiff(df_schooling$country, df_energy$country)
-
-## Establish common naming of countries
-df_schooling$country[df_schooling$country == "Bolivia (Plurinational State of)"] <- "Bolivia"
-df_schooling$country[df_schooling$country == "Brunei Darussalam"] <- "Brunei"
-df_schooling$country[df_schooling$country == "Congo (Democratic Republic of the)"] <- "Democratic Republic of Congo"
-df_schooling$country[df_schooling$country == "Côte d'Ivoire"] <- "Cote d'Ivoire"
-df_schooling$country[df_schooling$country == "Eswatini (Kingdom of)"] <- "Eswatini"
-df_schooling$country[df_schooling$country == "Hong Kong, China (SAR)"] <- "Hong Kong"
-df_schooling$country[df_schooling$country == "Iran (Islamic Republic of)"] <- "Iran"
-df_schooling$country[df_schooling$country == "Korea (Democratic People's Rep. of)"] <- "North Korea"
-df_schooling$country[df_schooling$country == "Korea (Republic of)"] <- "South Korea"
-df_schooling$country[df_schooling$country == "Lao People's Democratic Republic"] <- "Laos"
-df_schooling$country[df_schooling$country == "Micronesia (Federated States of)"] <- "Micronesia"
-df_schooling$country[df_schooling$country == "Moldova (Republic of)"] <- "Moldova"
-df_schooling$country[df_schooling$country == "Palestine, State of"] <- "Palestine"
-df_schooling$country[df_schooling$country == "Russian Federation"] <- "Russia"
-df_schooling$country[df_schooling$country == "Syrian Arab Republic"] <- "Syria"
-df_schooling$country[df_schooling$country == "Tanzania (United Republic of)"] <- "Tanzania"
-df_schooling$country[df_schooling$country == "Timor-Leste"] <- "Timor"
-df_schooling$country[df_schooling$country == "Venezuela (Bolivarian Republic of)"] <- "Venezuela"
-df_schooling$country[df_schooling$country == "Viet Nam"] <- "Vietnam"
-```
-
-```{r}
-df_energy_and_schooling <- merge(df_energy, df_schooling, by = c("country", "year"), all.x = TRUE)
-```
-
-Is an energy mix oriented towards renewable sources associated with good human development indicators? 
-
-```{r}
-df_graph <- df_energy_and_schooling[df_energy_and_schooling$year == 2019,]
-ggplot(df_graph, aes(x=low_carbon_share_elec, y=schooling_years)) +
+df_graph <- master_df[master_df$year==2019,]
+ggplot(df_graph, aes(x=primary/population*1000000000, y=years_of_schooling)) +
   geom_point(aes(color = year)) +
   geom_smooth(method="lm") +
   theme_light() + 
   geom_text(
     label=df_graph$country, 
-    nudge_x = 0.25, nudge_y = 0.3,
+    nudge_x = 0, nudge_y = 0.4,
     size = 3,
     check_overlap = T
-  )
+  ) +
+  scale_x_log10()
 ```
+
 ```{r}
 selected_cols <- c("renewables_share_elec", "low_carbon_share_energy", "hdi_rank", "schooling_years")
 selected_ids <- match(selected_cols, names(df_energy_and_schooling))
 
-pairs(df_energy_and_schooling[df_energy_and_schooling$year == 2019, selected_ids])
+pairs(df_energy_and_schooling[df_energy_and_schooling, selected_ids])
 ```
 
-What characterises the countries that have the most renewable energy mix? 
+## What characterises the countries that have the most renewable energy mix? 
 
+### Ideas:
+- relationship between HDI and different energy metrics -> per capita, coal, renewable, etc.
+- outlier analysis
+- filter on GDP or population to make trends appear
+- cluster countries by energy mix
 
 
 
 On the other hand, how does the production of coal and gas energy leading to more pollution might foster and hinder human development at the same time?
+- countries might consume other energy than they produce
+- 
+
 
 ## Antonin
 

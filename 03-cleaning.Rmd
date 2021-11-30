@@ -5,6 +5,7 @@ library(dplyr)
 library(tidyverse)
 library(countrycode)
 ```
+
 ```{r}
 # Load Energy Data
 df_energy_long <- read.csv("data/owid_energy_data.csv", header = TRUE, stringsAsFactors = FALSE)
@@ -137,3 +138,15 @@ master_df <- master_df %>%
 # write master_df to csv
 write.csv(master_df,"data/master.csv", row.names = FALSE)
 ```
+
+#TODOS:
+- What countries are missing from the data set that exist in real life
+- How many regions maximum compared to final dataset
+- Make data cleaning steps more explicit
+  - removing variables
+  - limiting time frame
+  - merge and exclude duplicates
+
+
+
+
