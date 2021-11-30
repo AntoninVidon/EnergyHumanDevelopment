@@ -113,42 +113,7 @@ master_df <- master_df %>%
   select(ISO_code, country, year, HDI_rank, GDP, life_expectancy, years_of_schooling, everything())
 ```
 
-```{r, eval = FALSE}
-# Convert data to long format
-df_schooling <- df_schooling %>% 
-  pivot_longer(-c("Country", "HDI Rank")) %>% rename("year" = "name", "schooling_years" = "value", "hdi_rank" = "HDI Rank", "country"="Country") %>%
-  mutate_at("year", as.numeric)
-
-df_life <- df_life %>% pivot_longer(-c("Country Name")) %>% rename("year" = "name", "life_expectancy" = "value", "country" = "Country Name")
-
-df_GDP <- df_GDP %>% pivot_longer(-c("Country Name")) %>% rename("year" = "name", "GDP" = "value", "country" = "Country Name")
-```
-
-
-
-```{r, eval = FALSE}
-# Data cleaning
-## Identifying overlapping countries of datasets
-setdiff(df_schooling$country, df_energy$country)
-
-## Establish common naming of countries
-df_schooling$country[df_schooling$country == "Bolivia (Plurinational State of)"] <- "Bolivia"
-df_schooling$country[df_schooling$country == "Brunei Darussalam"] <- "Brunei"
-df_schooling$country[df_schooling$country == "Congo (Democratic Republic of the)"] <- "Democratic Republic of Congo"
-df_schooling$country[df_schooling$country == "Côte d'Ivoire"] <- "Cote d'Ivoire"
-df_schooling$country[df_schooling$country == "Eswatini (Kingdom of)"] <- "Eswatini"
-df_schooling$country[df_schooling$country == "Hong Kong, China (SAR)"] <- "Hong Kong"
-df_schooling$country[df_schooling$country == "Iran (Islamic Republic of)"] <- "Iran"
-df_schooling$country[df_schooling$country == "Korea (Democratic People's Rep. of)"] <- "North Korea"
-df_schooling$country[df_schooling$country == "Korea (Republic of)"] <- "South Korea"
-df_schooling$country[df_schooling$country == "Lao People's Democratic Republic"] <- "Laos"
-df_schooling$country[df_schooling$country == "Micronesia (Federated States of)"] <- "Micronesia"
-df_schooling$country[df_schooling$country == "Moldova (Republic of)"] <- "Moldova"
-df_schooling$country[df_schooling$country == "Palestine, State of"] <- "Palestine"
-df_schooling$country[df_schooling$country == "Russian Federation"] <- "Russia"
-df_schooling$country[df_schooling$country == "Syrian Arab Republic"] <- "Syria"
-df_schooling$country[df_schooling$country == "Tanzania (United Republic of)"] <- "Tanzania"
-df_schooling$country[df_schooling$country == "Timor-Leste"] <- "Timor"
-df_schooling$country[df_schooling$country == "Venezuela (Bolivarian Republic of)"] <- "Venezuela"
-df_schooling$country[df_schooling$country == "Viet Nam"] <- "Vietnam"
+```{r}
+# write master_df to csv
+write.csv(master_df,"data/master.csv", row.names = FALSE)
 ```
