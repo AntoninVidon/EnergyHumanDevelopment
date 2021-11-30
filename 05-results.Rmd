@@ -134,11 +134,10 @@ On the other hand, how does the production of coal and gas energy leading to mor
 
 ## Antonin
 
-```{r}
+```{r, fig.height=8}
 master_df <- read.csv(file = "data/master.csv")
-knitr::kable(head(master_df, 10), "html")
-plot_missing_parameters(master_df, use_counts = FALSE, max_100 = FALSE, 
-                        ticks_angle = 45, ticks_size = 9, complete_cases_size = 3, complete_cases_hjust = 0.3, y_ticks_size = 5)
+plot_missing_parameters(master_df, use_counts = FALSE, max_100 = TRUE, 
+                        ticks_angle = 45, ticks_size = 9, complete_cases_size = 3.5, complete_cases_hjust = 0.1, y_ticks_size = 9)
 ```
 
 

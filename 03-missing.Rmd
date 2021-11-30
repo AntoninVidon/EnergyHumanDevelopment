@@ -135,7 +135,7 @@ ggplot(df_by_region, aes(x=year, y=missing_perc*100, alpha = fill_color)) +
 
 We focus on the 1990-2019 time-frame.
 
-```{r}
+```{r, fig.height=8}
 gdp_per_capita <- read.csv("data/gdp_per_capita.csv", skip = 4, check.names = FALSE)
 relevant_years <- as.character(1990:2019)
 gdp_per_capita <- gdp_per_capita %>%
@@ -143,7 +143,7 @@ gdp_per_capita <- gdp_per_capita %>%
 mygdp_per_capita <- gdp_per_capita
 names(mygdp_per_capita) <- c("Country", substring(names(mygdp_per_capita)[1:length(relevant_years) + 1], 0, 4))
 plot_missing_parameters(data = mygdp_per_capita, use_counts = FALSE, max_100 = FALSE, 
-                        ticks_angle = 45, ticks_size = 7.5, complete_cases_size = 2, complete_cases_hjust = 0.05, y_ticks_size = 6)
+                        ticks_angle = 45, ticks_size = 7.5, complete_cases_size = 3, complete_cases_hjust = 0.1, y_ticks_size = 7)
 ```
 <u>Observations:</u>
 
