@@ -1,12 +1,18 @@
 # Data transformation
 
+```{r, echo=FALSE, warning=FALSE}
+library(dplyr)
+library(tidyverse)
+library(countrycode)
+```
 ```{r}
 # Load Energy Data
-df_energy <- read.csv("data/owid_energy_data.csv", header=TRUE, stringsAsFactors=FALSE)
-df_energy <- df_energy %>% 
+df_energy_long <- read.csv("data/owid_energy_data.csv", header = TRUE, stringsAsFactors = FALSE)
+df_energy_long <- df_energy_long %>% 
   select(-contains(c("_per_capita", "_pct", "_change", "_production", "_share"))) %>%
   subset(year >= 1990 & year <= 2019) %>%
-  subset(iso_code != "") %>%
+  rename("ISO_code" = "iso_code") %>%
+  subset(ISO_code != "") %>%
   rename("fossil_fuel" = "fossil_fuel_consumption", 
          "hydro" = "hydro_consumption", 
          "low_carb" = "low_carbon_consumption", 
@@ -19,37 +25,95 @@ df_energy <- df_energy %>%
          "gas" = "gas_consumption", 
          "oil" = "oil_consumption", 
          "biofuel" = "biofuel_consumption", 
-         "primary" = "primary_energy_consumption")
+         "primary" = "primary_energy_consumption") %>%
+  select("ISO_code", "year", "fossil_fuel", "hydro", "low_carb", "nuclear", "other_renew", "renew", "solar", "wind", "coal", 
+         "gas", "oil", "biofuel", "primary")
 
-# Load Country Info Data
-df_country_info <- read.csv("data/worldbank_country_info.csv", header=TRUE, stringsAsFactors=FALSE, encoding = "UTF-8")
-df_country_info <- as.data.frame(df_country_info) %>% 
-  rename(iso_code = "X.U.FEFF.iso_code")
+df_energy_ISO_with_no_missing_year <- df_energy_long %>%
+  select("ISO_code", "year") %>%
+  group_by(ISO_code) %>%
+  summarize(count = n()) %>%
+  filter(count == 2019 - 1990 + 1) %>%
+  pull(ISO_code)
+
+df_energy_long <- df_energy_long %>%
+  filter(ISO_code %in% df_energy_ISO_with_no_missing_year)
 
 # Choose years
 relevant_years <- as.character(1990:2019)
 
 # Load GDP Per Capita Data
-df_gdp <- read.csv("data/gdp_per_capita.csv", skip = 4, check.names = FALSE)
-df_gdp <- df_gdp %>%
-  select("Country Name", relevant_years)
+df_GDP_wide <- read.csv("data/GDP_per_capita.csv", skip = 4, check.names = FALSE)
+df_GDP_wide <- df_GDP_wide %>%
+  select("Country Code", relevant_years) %>%
+  rename("ISO_code" = "Country Code")
+  
 
 # Load Life Expectancy Data
-df_life <- read.csv("data/life_expectancy.csv", skip = 4, check.names = FALSE)
-df_life <- df_life %>%
-  select("Country Name", relevant_years) %>%
-  mutate_at(relevant_years, as.numeric)
+df_life_wide <- read.csv("data/life_expectancy.csv", skip = 4, check.names = FALSE)
+df_life_wide <- df_life_wide %>%
+  select("Country Name", "Country Code", relevant_years) %>%
+  rename("country" = "Country Name", "ISO_code" = "Country Code") %>%
+  mutate_at(relevant_years, as.numeric) %>%
+  select("ISO_code", relevant_years)
 
 # Load Years of Schooling Data
-df_schooling <- read.csv("data/un_years_of_schooling.csv", skip = 6, check.names = FALSE)
-df_schooling <- df_schooling %>%
+df_schooling_wide <- read.csv("data/un_years_of_schooling.csv", skip = 6, check.names = FALSE)
+df_schooling_wide <- df_schooling_wide %>%
   select("Country", "HDI Rank", relevant_years) %>%
+  mutate("ISO_code" = countrycode(Country, origin = "country.name", destination = "iso3c")) %>%
   mutate_at(relevant_years, as.numeric) %>%
   mutate_at("HDI Rank", as.numeric) %>%
-  mutate(Country = str_trim(Country))
+  rename("HDI_rank" = "HDI Rank") %>%
+  select("ISO_code", "HDI_rank", relevant_years)
+
+# Load Country Info Data
+df_country_info <- read.csv("data/worldbank_country_info.csv", header = TRUE, stringsAsFactors = FALSE, encoding = "UTF-8")
+df_country_info <- as.data.frame(df_country_info) %>% 
+  rename("ISO_code" = "X.U.FEFF.iso_code", "region" = "Region", "income_group" = "IncomeGroup", "special_notes" = "SpecialNotes")
+
+
+# retrieve common countries across data sets based on ISO code
+common_ISO_codes <- Reduce(intersect, list(df_energy_long$ISO_code,df_life_wide$ISO_code, df_schooling_wide$ISO_code, df_GDP_wide$ISO_code))
+
+# filter data sets on common ISO codes
+df_energy_long <- df_energy_long %>% filter(ISO_code %in% common_ISO_codes)
+df_GDP_wide <- df_GDP_wide %>% filter(ISO_code %in% common_ISO_codes)
+df_life_wide <- df_life_wide %>% filter(ISO_code %in% common_ISO_codes)
+df_schooling_wide <- df_schooling_wide %>% filter(ISO_code %in% common_ISO_codes)
 ```
 
-```{r, echo = FALSE}
+
+```{r}
+# Convert data frames to long format
+df_GDP_long <- df_GDP_wide %>% pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "GDP")
+df_schooling_long <- df_schooling_wide %>% 
+  pivot_longer(cols = -c("ISO_code", "HDI_rank"), names_to = "year", values_to = "years_of_schooling") %>%
+  mutate_at("year", as.numeric)
+df_life_long <- df_life_wide %>% pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "life_expectancy")
+```
+
+```{r}
+# display number of rows for each dataframe
+nrow(df_energy_long)
+nrow(df_GDP_long)
+nrow(df_life_long)
+nrow(df_schooling_long)
+```
+```{r}
+# merge data frames into one master data frame
+master_df <- merge(df_energy_long, 
+                   merge(df_GDP_long, 
+                         merge(df_life_long, df_schooling_long, 
+                               by = c("ISO_code", "year")), by = c("ISO_code", "year")), by = c("ISO_code", "year"))
+
+# Add one variable for country name and reorder columns
+master_df <- master_df %>%
+  mutate(country = countrycode(ISO_code, origin = "iso3c", destination = "country.name")) %>%
+  select(ISO_code, country, year, HDI_rank, GDP, life_expectancy, years_of_schooling, everything())
+```
+
+```{r, eval = FALSE}
 # Convert data to long format
 df_schooling <- df_schooling %>% 
   pivot_longer(-c("Country", "HDI Rank")) %>% rename("year" = "name", "schooling_years" = "value", "hdi_rank" = "HDI Rank", "country"="Country") %>%
@@ -57,10 +121,12 @@ df_schooling <- df_schooling %>%
 
 df_life <- df_life %>% pivot_longer(-c("Country Name")) %>% rename("year" = "name", "life_expectancy" = "value", "country" = "Country Name")
 
-df_gdp <- df_gdp %>% pivot_longer(-c("Country Name")) %>% rename("year" = "name", "gdp" = "value", "country" = "Country Name")
+df_GDP <- df_GDP %>% pivot_longer(-c("Country Name")) %>% rename("year" = "name", "GDP" = "value", "country" = "Country Name")
 ```
 
-```{r}
+
+
+```{r, eval = FALSE}
 # Data cleaning
 ## Identifying overlapping countries of datasets
 setdiff(df_schooling$country, df_energy$country)
