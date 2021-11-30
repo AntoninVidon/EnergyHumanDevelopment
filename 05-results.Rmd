@@ -7,7 +7,10 @@ library(patchwork)
 library(Lock5withR)
 library(ggpubr)
 library(stringr)
+source("R/plot_missing_patterns.R")
 ```
+
+## Jannik
 
 ```{r echo=FALSE, warning=FALSE}
 # Load Energy Data
@@ -128,6 +131,15 @@ What characterises the countries that have the most renewable energy mix?
 
 
 On the other hand, how does the production of coal and gas energy leading to more pollution might foster and hinder human development at the same time?
+
+## Antonin
+
+```{r}
+master_df <- read.csv(file = "data/master.csv")
+knitr::kable(head(master_df, 10), "html")
+plot_missing_parameters(master_df, use_counts = FALSE, max_100 = FALSE, 
+                        ticks_angle = 45, ticks_size = 9, complete_cases_size = 3, complete_cases_hjust = 0.3, y_ticks_size = 5)
+```
 
 
 

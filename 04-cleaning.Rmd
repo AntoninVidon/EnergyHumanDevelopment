@@ -60,12 +60,26 @@ df_life_wide <- df_life_wide %>%
 # Load Years of Schooling Data
 df_schooling_wide <- read.csv("data/un_years_of_schooling.csv", skip = 6, check.names = FALSE)
 df_schooling_wide <- df_schooling_wide %>%
-  select("Country", "HDI Rank", relevant_years) %>%
+  select("Country", relevant_years) %>%
   mutate("ISO_code" = countrycode(Country, origin = "country.name", destination = "iso3c")) %>%
   mutate_at(relevant_years, as.numeric) %>%
-  mutate_at("HDI Rank", as.numeric) %>%
-  rename("HDI_rank" = "HDI Rank") %>%
-  select("ISO_code", "HDI_rank", relevant_years)
+  select("ISO_code", relevant_years)
+
+# Load population data
+df_population_wide <- read.csv("data/population.csv", skip = 4, check.names = FALSE)
+df_population_wide <- df_population_wide %>%
+  select("Country Name", "Country Code", relevant_years) %>%
+  rename("country" = "Country Name", "ISO_code" = "Country Code") %>%
+  mutate_at(relevant_years, as.numeric) %>%
+  select("ISO_code", relevant_years)
+
+# Load HDI data
+df_HDI_wide <- read.csv("data/HDI.csv", skip = 5, check.names = FALSE)
+df_HDI_wide <- df_HDI_wide %>%
+  select("Country", relevant_years) %>%
+  mutate("ISO_code" = countrycode(Country, origin = "country.name", destination = "iso3c")) %>%
+  mutate_at(relevant_years, as.numeric) %>%
+  select("ISO_code", relevant_years)
 
 # Load Country Info Data
 df_country_info <- read.csv("data/worldbank_country_info.csv", header = TRUE, stringsAsFactors = FALSE, encoding = "UTF-8")
@@ -74,13 +88,16 @@ df_country_info <- as.data.frame(df_country_info) %>%
 
 
 # retrieve common countries across data sets based on ISO code
-common_ISO_codes <- Reduce(intersect, list(df_energy_long$ISO_code,df_life_wide$ISO_code, df_schooling_wide$ISO_code, df_GDP_wide$ISO_code))
+common_ISO_codes <- Reduce(intersect, list(df_energy_long$ISO_code,df_life_wide$ISO_code, df_schooling_wide$ISO_code, 
+                                           df_GDP_wide$ISO_code, df_population_wide$ISO_code, df_HDI_wide$ISO_code))
 
 # filter data sets on common ISO codes
 df_energy_long <- df_energy_long %>% filter(ISO_code %in% common_ISO_codes)
 df_GDP_wide <- df_GDP_wide %>% filter(ISO_code %in% common_ISO_codes)
 df_life_wide <- df_life_wide %>% filter(ISO_code %in% common_ISO_codes)
 df_schooling_wide <- df_schooling_wide %>% filter(ISO_code %in% common_ISO_codes)
+df_population_wide <- df_population_wide %>% filter(ISO_code %in% common_ISO_codes)
+df_HDI_wide <- df_HDI_wide %>% filter(ISO_code %in% common_ISO_codes)
 ```
 
 
@@ -88,10 +105,13 @@ df_schooling_wide <- df_schooling_wide %>% filter(ISO_code %in% common_ISO_codes
 # Convert data frames to long format
 df_GDP_long <- df_GDP_wide %>% pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "GDP")
 df_schooling_long <- df_schooling_wide %>% 
-  pivot_longer(cols = -c("ISO_code", "HDI_rank"), names_to = "year", values_to = "years_of_schooling") %>%
+  pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "years_of_schooling") %>%
   mutate_at("year", as.numeric)
 df_life_long <- df_life_wide %>% pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "life_expectancy")
+df_population_long <- df_population_wide %>% pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "population") 
+df_HDI_long <- df_HDI_wide %>% pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "HDI")
 ```
+
 
 ```{r}
 # display number of rows for each dataframe
@@ -99,18 +119,18 @@ nrow(df_energy_long)
 nrow(df_GDP_long)
 nrow(df_life_long)
 nrow(df_schooling_long)
+nrow(df_population_long)
+nrow(df_HDI_long)
 ```
 ```{r}
 # merge data frames into one master data frame
-master_df <- merge(df_energy_long, 
-                   merge(df_GDP_long, 
-                         merge(df_life_long, df_schooling_long, 
-                               by = c("ISO_code", "year")), by = c("ISO_code", "year")), by = c("ISO_code", "year"))
+master_df <- merge(df_energy_long, merge(df_GDP_long, merge(df_life_long, merge(df_schooling_long, merge(df_population_long, df_HDI_long,
+                by = c("ISO_code", "year")), by = c("ISO_code", "year")), by = c("ISO_code", "year")), by = c("ISO_code", "year")), by = c("ISO_code", "year"))
 
 # Add one variable for country name and reorder columns
 master_df <- master_df %>%
   mutate(country = countrycode(ISO_code, origin = "iso3c", destination = "country.name")) %>%
-  select(ISO_code, country, year, HDI_rank, GDP, life_expectancy, years_of_schooling, everything())
+  select(ISO_code, country, year, population, GDP, HDI, life_expectancy, years_of_schooling, everything())
 ```
 
 ```{r}

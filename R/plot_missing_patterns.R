@@ -1,6 +1,7 @@
 ### The following is the implentation of a function to plot the missing patterns in raw data
 
-plot_missing_parameters <- function(data, use_counts, max_100, ticks_angle = 0, ticks_size = 9, complete_cases_size = 3, complete_cases_hjust = 0, y_ticks_size = 9) {
+plot_missing_parameters <- function(data, use_counts, max_100, ticks_angle = 0, ticks_size = 9, 
+                                    complete_cases_size = 3, complete_cases_hjust = 0, y_ticks_size = 9) {
   
   # create missing pattern dataframe
   missing_patterns <- data.frame(is.na(data), check.names = FALSE) %>%
