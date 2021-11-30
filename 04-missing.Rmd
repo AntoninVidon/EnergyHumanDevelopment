@@ -11,6 +11,16 @@ source("R/plot_missing_patterns.R")
 
 In this chapter, we analyze the missing data in our four primary data sets on energy consumption, GDP, life expectancy, years of schooling, and life expectancy.
 
+## Missing values for the merged dataframe
+
+```{r, fig.height=8}
+master_df <- read.csv(file = "data/master.csv")
+plot_missing_parameters(master_df, use_counts = FALSE, max_100 = TRUE, 
+                        ticks_angle = 45, ticks_size = 9, complete_cases_size = 3.5, complete_cases_hjust = 0.1, y_ticks_size = 9)
+```
+
+
+
 ## Energy consumption
 
 <u>Data description:</u> *Energy consumption of different countries by the type of energy production.*

@@ -5,12 +5,13 @@ gdp-per-capita
 life-expectancy
 years-of-schooling
 population
+data-transformation
 missing-values
+missing-values-for-the-merged-dataframe
 energy-consumption-1
 gdp-per-capita-1
 life-expectancy-1
 years-of-schooling-1
-data-transformation
 results
 jannik
 antonin
