@@ -24,7 +24,7 @@
 <meta name="author" content="Antonin Vidon and Jannik Wiedenhaupt" />
 
 
-<meta name="date" content="2021-11-10" />
+<meta name="date" content="2021-11-30" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -32,7 +32,7 @@
   
   
 <link rel="prev" href="index.html"/>
-<link rel="next" href="data-transformation.html"/>
+<link rel="next" href="missing-values.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
@@ -74,9 +74,21 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
-<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
-<li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a></li>
+<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#energy-consumption"><i class="fa fa-check"></i><b>2.1</b> Energy consumption</a></li>
+<li class="chapter" data-level="2.2" data-path="data-sources.html"><a href="data-sources.html#gdp-per-capita"><i class="fa fa-check"></i><b>2.2</b> GDP per capita</a></li>
+<li class="chapter" data-level="2.3" data-path="data-sources.html"><a href="data-sources.html#life-expectancy"><i class="fa fa-check"></i><b>2.3</b> Life expectancy</a></li>
+<li class="chapter" data-level="2.4" data-path="data-sources.html"><a href="data-sources.html#years-of-schooling"><i class="fa fa-check"></i><b>2.4</b> Years of schooling</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>3</b> Missing values</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="missing-values.html"><a href="missing-values.html#energy-consumption-1"><i class="fa fa-check"></i><b>3.1</b> Energy consumption</a></li>
+<li class="chapter" data-level="3.2" data-path="missing-values.html"><a href="missing-values.html#gdp-per-capita-1"><i class="fa fa-check"></i><b>3.2</b> GDP per capita</a></li>
+<li class="chapter" data-level="3.3" data-path="missing-values.html"><a href="missing-values.html#life-expectancy-1"><i class="fa fa-check"></i><b>3.3</b> Life expectancy</a></li>
+<li class="chapter" data-level="3.4" data-path="missing-values.html"><a href="missing-values.html#years-of-schooling-1"><i class="fa fa-check"></i><b>3.4</b> Years of schooling</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>4</b> Data transformation</a></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
@@ -101,7 +113,28 @@
             <section class="normal" id="section-">
 <div id="data-sources" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Data sources</h1>
+<p>This is an overview of all data sources of this project. These can be divided exclusively between energy consumption, GDP, life expectancy, years of schooling, and life expectancy.</p>
+<div id="energy-consumption" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Energy consumption</h2>
+<p><u>Data description:</u> <em>Energy consumption of different countries by the type of energy production.</em></p>
+<p><a href="https://github.com/owid/energy-data">Link to data.</a></p>
+</div>
+<div id="gdp-per-capita" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> GDP per capita</h2>
+<p><u>Data description:</u> <em>Measure of a country’s economic output per person calculated by dividing the GDP of a country by its population.</em></p>
+<p><a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.CN">Link to data.</a></p>
+</div>
+<div id="life-expectancy" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Life expectancy</h2>
+<p><u>Data description:</u> <em>Mean length of life of an actual birth cohort (all individuals born in a given year).</em></p>
+<p><a href="https://data.worldbank.org/indicator/SP.DYN.LE00.IN">Link to data.</a></p>
+</div>
+<div id="years-of-schooling" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Years of schooling</h2>
+<p><u>Data description:</u> <em>Number of years of schooling that a child of school entrance age can expect to receive if prevailing patterns of age-specific enrollment rates persist throughout the child’s life.</em></p>
+<p><a href="http://hdr.undp.org/en/indicators/69706#">Link to data.</a></p>
 
+</div>
 </div>
             </section>
 
@@ -109,7 +142,7 @@
         </div>
       </div>
 <a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="data-transformation.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="missing-values.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -140,7 +173,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/YOUR GITHUB USERNAME/YOUR REPO NAME/edit/main/02-data.Rmd",
+"link": "https://github.com/AntoninVidon/energyhumandevelopment/edit/main/02-data.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -148,7 +181,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/YOUR GITHUB USERNAME/YOUR REPO NAME/blob/main/02-data.Rmd",
+"link": "https://github.com/AntoninVidon/energyhumandevelopment/blob/main/02-data.Rmd",
 "text": null
 },
 "download": null,

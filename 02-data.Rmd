@@ -1,2 +1,31 @@
 # Data sources
 
+
+This is an overview of all data sources of this project. These can be divided exclusively between energy consumption, GDP, life expectancy, years of schooling, and life expectancy.
+
+## Energy consumption
+
+<u>Data description:</u> *Energy consumption of different countries by the type of energy production.*
+
+[Link to data.](https://github.com/owid/energy-data)
+
+
+## GDP per capita
+
+<u>Data description:</u> *Measure of a country's economic output per person calculated by dividing the GDP of a country by its population.*
+
+[Link to data.](https://data.worldbank.org/indicator/NY.GDP.PCAP.CN)
+
+
+## Life expectancy
+
+<u>Data description:</u> *Mean length of life of an actual birth cohort (all individuals born in a given year).*
+
+[Link to data.](https://data.worldbank.org/indicator/SP.DYN.LE00.IN) 
+
+
+## Years of schooling
+
+<u>Data description:</u> *Number of years of schooling that a child of school entrance age can expect to receive if prevailing patterns of age-specific enrollment rates persist throughout the child's life.*
+
+[Link to data.](http://hdr.undp.org/en/indicators/69706#)

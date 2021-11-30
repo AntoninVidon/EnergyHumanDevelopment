@@ -12,3 +12,7 @@ energy-consumption
 gdp-per-capita
 life-expectancy
 years-of-schooling
+energy-consumption-1
+gdp-per-capita-1
+life-expectancy-1
+years-of-schooling-1
