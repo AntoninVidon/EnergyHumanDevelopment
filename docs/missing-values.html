@@ -94,10 +94,25 @@
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="results.html"><a href="results.html#jannik"><i class="fa fa-check"></i><b>5.1</b> Jannik</a></li>
-<li class="chapter" data-level="5.2" data-path="results.html"><a href="results.html#antonin"><i class="fa fa-check"></i><b>5.2</b> Antonin</a></li>
+<li class="chapter" data-level="5.2" data-path="results.html"><a href="results.html#is-an-energy-mix-oriented-towards-renewable-sources-associated-with-good-human-development-indicators"><i class="fa fa-check"></i><b>5.2</b> Is an energy mix oriented towards renewable sources associated with good human development indicators?</a></li>
+<li class="chapter" data-level="5.3" data-path="results.html"><a href="results.html#what-characterises-the-countries-that-have-the-most-renewable-energy-mix"><i class="fa fa-check"></i><b>5.3</b> What characterises the countries that have the most renewable energy mix?</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="results.html"><a href="results.html#ideas"><i class="fa fa-check"></i><b>5.3.1</b> Ideas:</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
-<li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
+<li class="chapter" data-level="5.4" data-path="results.html"><a href="results.html#antonin"><i class="fa fa-check"></i><b>5.4</b> Antonin</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="results-1.html"><a href="results-1.html"><i class="fa fa-check"></i><b>6</b> Results</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="results-1.html"><a href="results-1.html#jannik-1"><i class="fa fa-check"></i><b>6.1</b> Jannik</a></li>
+<li class="chapter" data-level="6.2" data-path="results-1.html"><a href="results-1.html#is-an-energy-mix-oriented-towards-renewable-sources-associated-with-good-human-development-indicators-1"><i class="fa fa-check"></i><b>6.2</b> Is an energy mix oriented towards renewable sources associated with good human development indicators?</a></li>
+<li class="chapter" data-level="6.3" data-path="results-1.html"><a href="results-1.html#what-characterises-the-countries-that-have-the-most-renewable-energy-mix-1"><i class="fa fa-check"></i><b>6.3</b> What characterises the countries that have the most renewable energy mix?</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="results-1.html"><a href="results-1.html#ideas-1"><i class="fa fa-check"></i><b>6.3.1</b> Ideas:</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="results-1.html"><a href="results-1.html#antonin-1"><i class="fa fa-check"></i><b>6.4</b> Antonin</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>7</b> Interactive component</a></li>
+<li class="chapter" data-level="8" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>8</b> Conclusion</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 </ul>
@@ -122,14 +137,14 @@
 <p>In this chapter, we analyze the missing data in our four primary data sets on energy consumption, GDP, life expectancy, years of schooling, and life expectancy.</p>
 <div id="missing-values-for-the-merged-dataframe" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Missing values for the merged dataframe</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
 </div>
 <div id="energy-consumption-1" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> Energy consumption</h2>
 <p><u>Data description:</u> <em>Energy consumption of different countries by the type of energy production.</em></p>
 <p><a href="https://github.com/owid/energy-data">Link to data.</a></p>
 <p>We focus on the 1990-2020 time-frame.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
 <p><u>Observations:</u></p>
 <ul>
 <li>40% of rows are missing 75% of the variables. This might become a problem when comparing countries over time as this might suggest that some countries have only little data for a limited number of years.</li>
@@ -138,7 +153,7 @@
 </ul>
 <p>In order to have enough data to draw solid conclusions on these time series, we will probably have to select a sub-sample of countries.</p>
 <p>Let’s now group the countries together so as to visualize missing data by geographic region.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
 <p><u>Observations:</u></p>
 <ul>
 <li>Sub-Saharan Africa and Latin America have the most missing data.</li>
@@ -152,7 +167,7 @@
 <p><u>Data description:</u> <em>Measure of a country’s economic output per person calculated by dividing the GDP of a country by its population.</em></p>
 <p><a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.CN">Link to data.</a></p>
 <p>We focus on the 1990-2019 time-frame.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-16-1.png" width="672" />
+<p><img src="finalproj_files/figure-html/unnamed-chunk-42-1.png" width="672" />
 <u>Observations:</u></p>
 <ul>
 <li>The highest sparsity is recorded for the most ancient years of the time frame. Data becomes increasingly unavailable as we go back in time.</li>
@@ -201,7 +216,7 @@ British Virgin Islands
 <p><u>Data description:</u> <em>Mean length of life of an actual birth cohort (all individuals born in a given year).</em></p>
 <p><a href="https://data.worldbank.org/indicator/SP.DYN.LE00.IN">Link to data.</a></p>
 <p>We focus on the 1990-2019 time-frame.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
 <p><u>Observations:</u></p>
 <ul>
 <li>Life expectancy data becomes slightly sparser as we go back in time. However, the proportion of missing data stays within the range 6-8%.</li>
@@ -275,7 +290,7 @@ British Virgin Islands
 <p><u>Data description:</u> <em>Number of years of schooling that a child of school entrance age can expect to receive if prevailing patterns of age-specific enrollment rates persist throughout the child’s life.</em></p>
 <p><a href="http://hdr.undp.org/en/indicators/69706#">Link to data.</a></p>
 <p>We focus on the 1990-2019 time-frame.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
 <p><u>Observations:</u></p>
 <ul>
 <li>As for previous variables, sparsity increases when we look at more ancient years, but never exceeds 12%.</li>

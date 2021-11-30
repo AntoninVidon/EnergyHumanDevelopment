@@ -14,6 +14,15 @@ life-expectancy-1
 years-of-schooling-1
 results
 jannik
+is-an-energy-mix-oriented-towards-renewable-sources-associated-with-good-human-development-indicators
+what-characterises-the-countries-that-have-the-most-renewable-energy-mix
+ideas
 antonin
+results-1
+jannik-1
+is-an-energy-mix-oriented-towards-renewable-sources-associated-with-good-human-development-indicators-1
+what-characterises-the-countries-that-have-the-most-renewable-energy-mix-1
+ideas-1
+antonin-1
 interactive-component
 conclusion
