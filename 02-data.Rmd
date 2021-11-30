@@ -29,3 +29,9 @@ This is an overview of all data sources of this project. These can be divided ex
 <u>Data description:</u> *Number of years of schooling that a child of school entrance age can expect to receive if prevailing patterns of age-specific enrollment rates persist throughout the child's life.*
 
 [Link to data.](http://hdr.undp.org/en/indicators/69706#)
+
+## Population
+
+<u>Data description:</u> *Total population is based on the de facto definition of population, which counts all residents regardless of legal status or citizenship.*
+
+[Link to data.](https://data.worldbank.org/indicator/SP.POP.TOTL)

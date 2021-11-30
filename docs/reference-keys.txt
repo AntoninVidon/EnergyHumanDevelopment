@@ -4,6 +4,7 @@ energy-consumption
 gdp-per-capita
 life-expectancy
 years-of-schooling
+population
 missing-values
 energy-consumption-1
 gdp-per-capita-1
