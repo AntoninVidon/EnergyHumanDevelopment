@@ -18,21 +18,36 @@ master_df <- read.csv(file = "data/master.csv")
 
 ```{r}
 ggplot(master_df, aes(x=primary/population, y=years_of_schooling)) +
-  geom_point(aes(size = population, alpha = population)) +
-  geom_smooth(method="lm", color = "red") +
+  geom_point(aes(size = population), alpha = 0.2, color = "#190E4F") +
+  geom_smooth(method="lm", color = "black") +
   theme_light() +
-  scale_x_log10()
+  scale_x_log10() +
+  ggtitle("Schooling vs. energy consumption") +
+  xlab("Primary energy consumption per capita") + 
+  ylab("Years of schooling") +
+  theme_classic() +
+  theme(legend.position="bottom", panel.grid.major.y = element_line( size=.1, color="gray" ))
 ```
+
+```{r}
+cor.test(master_df$years_of_schooling, master_df$primary / master_df$population)
+```
+
+
+
+
 
 ```{r}
 max_pop <- max(master_df$population)
 min_pop <- min(master_df$population)
 
 ggplot(master_df, aes(x=GDP, y=years_of_schooling)) +
-  geom_point(aes(size = population, alpha = population)) +
-  geom_smooth(method="lm", color = "red") +
+  geom_point(aes(size = population, alpha = population), color = "#6495ED") +
+  geom_smooth(method="lm", color = "black") +
   theme_light() +
-  scale_x_log10()
+  scale_x_log10() +
+  theme_classic() +
+  theme(legend.position="bottom", panel.grid.major.y = element_line( size=.1, color="gray" ))
 ```
 
 
@@ -52,6 +67,4 @@ sPDF <- joinCountryData2Map(master_df_2019,
 #mapDevice() #create world map shaped window
 mapCountryData(sPDF, nameColumnToPlot='renew_per_cap')
 ```
-
-
 
