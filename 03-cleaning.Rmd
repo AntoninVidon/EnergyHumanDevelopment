@@ -44,10 +44,12 @@ df_energy_long <- df_energy_long %>%
 relevant_years <- as.character(1990:2019)
 
 # Load GDP Per Capita Data
-df_GDP_wide <- read.csv("data/GDP_per_capita.csv", skip = 4, check.names = FALSE)
+df_GDP_wide <- read.csv("data/worldbank_GDP.csv", skip = 4, check.names = FALSE)
 df_GDP_wide <- df_GDP_wide %>%
-  select("Country Code", relevant_years) %>%
-  rename("ISO_code" = "Country Code")
+  select("Country Name", "Country Code", relevant_years) %>%
+  rename("country" = "Country Name", "ISO_code" = "Country Code") %>%
+  mutate_at(relevant_years, as.numeric) %>%
+  select("ISO_code", relevant_years)
   
 
 # Load Life Expectancy Data

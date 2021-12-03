@@ -11,6 +11,7 @@ library(esquisse)
 library(gganimate)
 library(ggrepel)
 library(GGally)
+library(parcoords)
 source("R/plot_missing_patterns.R")
 ```
 
@@ -64,7 +65,7 @@ energy_vars <- c("fossil_fuel", "hydro", "low_carb", "nuclear", "other_renew", "
 perct_df <- master_df
 perct_df[energy_vars] <- (perct_df[energy_vars] / perct_df$primary) *100
 
-ggpairs(perct_df, columns = c(5, 6, 7, 8, 14), lower = list(continuous = scat_mat_lr))
+#ggpairs(perct_df, columns = c(5, 6, 7, 8, 14), lower = list(continuous = scat_mat_lr))
 ```
 
 ```{r}
@@ -72,7 +73,7 @@ energy_vars <- c("fossil_fuel", "hydro", "low_carb", "nuclear", "other_renew", "
 per_capita_df <- master_df
 per_capita_df[energy_vars] <- per_capita_df[energy_vars] / per_capita_df$population * 1000000
 
-ggpairs(per_capita_df, columns = c(6, 9, 12, 14, 21), lower = list(continuous = scat_mat_lr))
+#ggpairs(per_capita_df, columns = c(6, 9, 12, 14, 21), lower = list(continuous = scat_mat_lr))
 
 ```
 
@@ -164,11 +165,11 @@ ggplot(graph_df, aes(y=renew/primary*100, x=GDP/population)) +
 ```
 
 ```{r}
-interactive_plot <- master_df[master_df$year==2019,] %>% 
-  select (-c("ISO_code","year", "population", "hydro", "nuclear", "solar", "wind", "coal", "gas", "oil", "biofuel"))  %>%
-  parcoords(rownames = FALSE, brushMode = "1d-axes", reorderable = TRUE, queue = T,color = list(colorBy = "region"), withD3=TRUE)
+#interactive_plot <- master_df[master_df$year==2019,] %>% 
+#  select (-c("ISO_code","year", "population", "hydro", "nuclear", "solar", "wind", "coal", "gas", "oil", "biofuel"))  %>%
+#  parcoords(rownames = FALSE, brushMode = "1d-axes", reorderable = TRUE, queue = T,color = list(colorBy = "region"), withD3=TRUE)
 
-interactive_plot
+#interactive_plot
 ```
 
 

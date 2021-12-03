@@ -144,7 +144,7 @@ ggplot(df_by_region, aes(x=year, y=missing_perc*100, alpha = fill_color)) +
 We focus on the 1990-2019 time-frame.
 
 ```{r, fig.height=8}
-gdp_per_capita <- read.csv("data/gdp_per_capita.csv", skip = 4, check.names = FALSE)
+gdp_per_capita <- read.csv("data/worldbank_GDP.csv", skip = 4, check.names = FALSE)
 relevant_years <- as.character(1990:2019)
 gdp_per_capita <- gdp_per_capita %>%
   select("Country Name", relevant_years)
