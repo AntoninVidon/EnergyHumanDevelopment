@@ -24,7 +24,7 @@
 <meta name="author" content="Antonin Vidon and Jannik Wiedenhaupt" />
 
 
-<meta name="date" content="2021-12-02" />
+<meta name="date" content="2021-12-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -74,20 +74,16 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
+<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
+<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#energy-consumption"><i class="fa fa-check"></i><b>2.1</b> Energy consumption</a></li>
-<li class="chapter" data-level="2.2" data-path="data-sources.html"><a href="data-sources.html#gdp-per-capita"><i class="fa fa-check"></i><b>2.2</b> GDP per capita</a></li>
-<li class="chapter" data-level="2.3" data-path="data-sources.html"><a href="data-sources.html#life-expectancy"><i class="fa fa-check"></i><b>2.3</b> Life expectancy</a></li>
-<li class="chapter" data-level="2.4" data-path="data-sources.html"><a href="data-sources.html#years-of-schooling"><i class="fa fa-check"></i><b>2.4</b> Years of schooling</a></li>
-<li class="chapter" data-level="2.5" data-path="data-sources.html"><a href="data-sources.html#population"><i class="fa fa-check"></i><b>2.5</b> Population</a></li>
+<li class="chapter" data-level="3.1" data-path="data-transformation.html"><a href="data-transformation.html#selecting-the-time-range"><i class="fa fa-check"></i><b>3.1</b> Selecting the time range</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#missing-values-for-the-merged-dataframe"><i class="fa fa-check"></i><b>4.1</b> Missing values for the merged dataframe</a></li>
 <li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#energy-consumption-1"><i class="fa fa-check"></i><b>4.2</b> Energy consumption</a></li>
-<li class="chapter" data-level="4.3" data-path="missing-values.html"><a href="missing-values.html#gdp-per-capita-1"><i class="fa fa-check"></i><b>4.3</b> GDP per capita</a></li>
+<li class="chapter" data-level="4.3" data-path="missing-values.html"><a href="missing-values.html#gdp-1"><i class="fa fa-check"></i><b>4.3</b> GDP</a></li>
 <li class="chapter" data-level="4.4" data-path="missing-values.html"><a href="missing-values.html#life-expectancy-1"><i class="fa fa-check"></i><b>4.4</b> Life expectancy</a></li>
 <li class="chapter" data-level="4.5" data-path="missing-values.html"><a href="missing-values.html#years-of-schooling-1"><i class="fa fa-check"></i><b>4.5</b> Years of schooling</a></li>
 </ul></li>
@@ -127,31 +123,41 @@
             <section class="normal" id="section-">
 <div id="data-sources" class="section level1" number="2">
 <h1><span class="header-section-number">Chapter 2</span> Data sources</h1>
-<p>This is an overview of all data sources of this project. These can be divided exclusively between energy consumption, GDP, life expectancy, years of schooling, and life expectancy.</p>
-<div id="energy-consumption" class="section level2" number="2.1">
-<h2><span class="header-section-number">2.1</span> Energy consumption</h2>
-<p><u>Data description:</u> <em>Energy consumption of different countries by the type of energy production.</em></p>
-<p><a href="https://github.com/owid/energy-data">Link to data.</a></p>
+<p>This is an overview of all data sources for this project. The multivariate analysis conducted in the rest of the book is solely based on these data sets.</p>
+<div id="population" class="section level3 unlisted unnumbered">
+<h3>Population</h3>
+<p><u>Data description:</u> <em>Total population is based on the de facto definition of population, which counts all residents regardless of legal status or citizenship.</em></p>
+<p><a href="https://data.worldbank.org/indicator/SP.POP.TOTL">Link to data.</a></p>
 </div>
-<div id="gdp-per-capita" class="section level2" number="2.2">
-<h2><span class="header-section-number">2.2</span> GDP per capita</h2>
-<p><u>Data description:</u> <em>Measure of a country’s economic output per person calculated by dividing the GDP of a country by its population.</em></p>
-<p><a href="https://data.worldbank.org/indicator/NY.GDP.PCAP.CN">Link to data.</a></p>
+<div id="gdp" class="section level3 unlisted unnumbered">
+<h3>GDP</h3>
+<p><u>Data description:</u> <em>Measure of a country’s economic output computed by adding up the monetary value (in current $) of all finished goods and services made within a country for a given year.</em></p>
+<p><a href="https://data.worldbank.org/indicator/NY.GDP.MKTP.CD">Link to data.</a></p>
 </div>
-<div id="life-expectancy" class="section level2" number="2.3">
-<h2><span class="header-section-number">2.3</span> Life expectancy</h2>
+<div id="hdi" class="section level3 unlisted unnumbered">
+<h3>HDI</h3>
+<p><u>Data description:</u> <em>Composite index measuring average achievement in three basic dimensions of human development-a long and healthy life, knowledge and a decent standard of living.</em></p>
+<p><a href="http://hdr.undp.org/en/indicators/137506">Link to data.</a></p>
+</div>
+<div id="life-expectancy" class="section level3 unlisted unnumbered">
+<h3>Life expectancy</h3>
 <p><u>Data description:</u> <em>Mean length of life of an actual birth cohort (all individuals born in a given year).</em></p>
 <p><a href="https://data.worldbank.org/indicator/SP.DYN.LE00.IN">Link to data.</a></p>
 </div>
-<div id="years-of-schooling" class="section level2" number="2.4">
-<h2><span class="header-section-number">2.4</span> Years of schooling</h2>
+<div id="years-of-schooling" class="section level3 unlisted unnumbered">
+<h3>Years of schooling</h3>
 <p><u>Data description:</u> <em>Number of years of schooling that a child of school entrance age can expect to receive if prevailing patterns of age-specific enrollment rates persist throughout the child’s life.</em></p>
 <p><a href="http://hdr.undp.org/en/indicators/69706#">Link to data.</a></p>
 </div>
-<div id="population" class="section level2" number="2.5">
-<h2><span class="header-section-number">2.5</span> Population</h2>
-<p><u>Data description:</u> <em>Total population is based on the de facto definition of population, which counts all residents regardless of legal status or citizenship.</em></p>
-<p><a href="https://data.worldbank.org/indicator/SP.POP.TOTL">Link to data.</a></p>
+<div id="energy-consumption" class="section level3 unlisted unnumbered">
+<h3>Energy consumption</h3>
+<p><u>Data description:</u> <em>Energy consumption by source, country and year.</em></p>
+<p><a href="https://github.com/owid/energy-data">Link to data.</a></p>
+</div>
+<div id="country-info" class="section level3 unlisted unnumbered">
+<h3>Country info</h3>
+<p><u>Data description:</u> <em>ISO code, region and level of income for all worldbank countries. The .csv dataframe is in the same zip as the one containing GDP data (first source).</em></p>
+<p><a href="https://data.worldbank.org/indicator/NY.GDP.MKTP.CD">Link to data.</a></p>
 
 </div>
 </div>

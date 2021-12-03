@@ -24,7 +24,7 @@
 <meta name="author" content="Antonin Vidon and Jannik Wiedenhaupt" />
 
 
-<meta name="date" content="2021-12-02" />
+<meta name="date" content="2021-12-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -74,20 +74,16 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
+<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
+<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#energy-consumption"><i class="fa fa-check"></i><b>2.1</b> Energy consumption</a></li>
-<li class="chapter" data-level="2.2" data-path="data-sources.html"><a href="data-sources.html#gdp-per-capita"><i class="fa fa-check"></i><b>2.2</b> GDP per capita</a></li>
-<li class="chapter" data-level="2.3" data-path="data-sources.html"><a href="data-sources.html#life-expectancy"><i class="fa fa-check"></i><b>2.3</b> Life expectancy</a></li>
-<li class="chapter" data-level="2.4" data-path="data-sources.html"><a href="data-sources.html#years-of-schooling"><i class="fa fa-check"></i><b>2.4</b> Years of schooling</a></li>
-<li class="chapter" data-level="2.5" data-path="data-sources.html"><a href="data-sources.html#population"><i class="fa fa-check"></i><b>2.5</b> Population</a></li>
+<li class="chapter" data-level="3.1" data-path="data-transformation.html"><a href="data-transformation.html#selecting-the-time-range"><i class="fa fa-check"></i><b>3.1</b> Selecting the time range</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#missing-values-for-the-merged-dataframe"><i class="fa fa-check"></i><b>4.1</b> Missing values for the merged dataframe</a></li>
 <li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#energy-consumption-1"><i class="fa fa-check"></i><b>4.2</b> Energy consumption</a></li>
-<li class="chapter" data-level="4.3" data-path="missing-values.html"><a href="missing-values.html#gdp-per-capita-1"><i class="fa fa-check"></i><b>4.3</b> GDP per capita</a></li>
+<li class="chapter" data-level="4.3" data-path="missing-values.html"><a href="missing-values.html#gdp-1"><i class="fa fa-check"></i><b>4.3</b> GDP</a></li>
 <li class="chapter" data-level="4.4" data-path="missing-values.html"><a href="missing-values.html#life-expectancy-1"><i class="fa fa-check"></i><b>4.4</b> Life expectancy</a></li>
 <li class="chapter" data-level="4.5" data-path="missing-values.html"><a href="missing-values.html#years-of-schooling-1"><i class="fa fa-check"></i><b>4.5</b> Years of schooling</a></li>
 </ul></li>
@@ -132,7 +128,7 @@
 </div>
 <div id="is-an-energy-mix-oriented-towards-renewable-sources-associated-with-good-human-development-indicators" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> Is an energy mix oriented towards renewable sources associated with good human development indicators?</h2>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-115-1.png" width="672" /></p>
 <pre><code>## 
 ## Call:
 ## lm(formula = HDI ~ fossil_fuel + nuclear + renew, data = master_normal_df)
@@ -158,9 +154,9 @@
 <h2><span class="header-section-number">5.3</span> What characterises the countries that have the most renewable energy mix?</h2>
 <pre><code>## [1] 91</code></pre>
 <p><code>{r. echo=FALSE} # What countries have a high share of renewables today? graph_df &lt;- master_df %&gt;% filter(year==2019 &amp; !is.na(renew)) ggplot(graph_df, aes(x=reorder(country, (renew/primary)), y=renew/primary*100)) +   geom_col() +   coord_flip() +   theme_light() +    theme(axis.text = element_text(size = 5)) +   labs(y="Share of renewable energy (in %)", x="Country")</code>
-<img src="finalproj_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<img src="finalproj_files/figure-html/unnamed-chunk-121-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-122-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-123-1.png" width="672" /></p>
 <div id="ideas" class="section level3" number="5.3.1">
 <h3><span class="header-section-number">5.3.1</span> Ideas:</h3>
 <ul>

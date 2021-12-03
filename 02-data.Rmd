@@ -1,37 +1,60 @@
 # Data sources
 
 
-This is an overview of all data sources of this project. These can be divided exclusively between energy consumption, GDP, life expectancy, years of schooling, and life expectancy.
+This is an overview of all data sources for this project. The multivariate analysis conducted in the rest of the book is solely based on these data sets.
 
-## Energy consumption
+### Population {.unlisted .unnumbered}
 
-<u>Data description:</u> *Energy consumption of different countries by the type of energy production.*
+<u>Data description:</u> *Total population is based on the de facto definition of population, which counts all residents regardless of legal status or citizenship.*
 
-[Link to data.](https://github.com/owid/energy-data)
-
-
-## GDP per capita
-
-<u>Data description:</u> *Measure of a country's economic output per person calculated by dividing the GDP of a country by its population.*
-
-[Link to data.](https://data.worldbank.org/indicator/NY.GDP.PCAP.CN)
+[Link to data.](https://data.worldbank.org/indicator/SP.POP.TOTL)
 
 
-## Life expectancy
+### GDP {.unlisted .unnumbered}
+
+<u>Data description:</u> *Measure of a country's economic output computed by adding up the monetary value (in current $) of all finished goods and services made within a country for a given year.*
+
+[Link to data.](https://data.worldbank.org/indicator/NY.GDP.MKTP.CD)
+
+
+### HDI {.unlisted .unnumbered}
+
+<u>Data description:</u> *Composite index measuring average achievement in three basic dimensions of human development-a long and healthy life, knowledge and a decent standard of living.*
+
+[Link to data.](http://hdr.undp.org/en/indicators/137506)
+
+
+### Life expectancy {.unlisted .unnumbered}
 
 <u>Data description:</u> *Mean length of life of an actual birth cohort (all individuals born in a given year).*
 
 [Link to data.](https://data.worldbank.org/indicator/SP.DYN.LE00.IN) 
 
 
-## Years of schooling
+### Years of schooling {.unlisted .unnumbered}
 
 <u>Data description:</u> *Number of years of schooling that a child of school entrance age can expect to receive if prevailing patterns of age-specific enrollment rates persist throughout the child's life.*
 
 [Link to data.](http://hdr.undp.org/en/indicators/69706#)
 
-## Population
 
-<u>Data description:</u> *Total population is based on the de facto definition of population, which counts all residents regardless of legal status or citizenship.*
+### Energy consumption {.unlisted .unnumbered}
 
-[Link to data.](https://data.worldbank.org/indicator/SP.POP.TOTL)
+<u>Data description:</u> *Energy consumption by source, country and year.*
+
+[Link to data.](https://github.com/owid/energy-data)
+
+
+### Country info {.unlisted .unnumbered}
+
+<u>Data description:</u> *ISO code, region and level of income for all worldbank countries. The .csv dataframe is in the same zip as the one containing GDP data (first source).*
+
+[Link to data.](https://data.worldbank.org/indicator/NY.GDP.MKTP.CD)
+
+
+
+
+
+
+
+

@@ -24,7 +24,7 @@
 <meta name="author" content="Antonin Vidon and Jannik Wiedenhaupt" />
 
 
-<meta name="date" content="2021-12-02" />
+<meta name="date" content="2021-12-03" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -74,20 +74,16 @@
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a>
+<li class="chapter" data-level="2" data-path="data-sources.html"><a href="data-sources.html"><i class="fa fa-check"></i><b>2</b> Data sources</a></li>
+<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a>
 <ul>
-<li class="chapter" data-level="2.1" data-path="data-sources.html"><a href="data-sources.html#energy-consumption"><i class="fa fa-check"></i><b>2.1</b> Energy consumption</a></li>
-<li class="chapter" data-level="2.2" data-path="data-sources.html"><a href="data-sources.html#gdp-per-capita"><i class="fa fa-check"></i><b>2.2</b> GDP per capita</a></li>
-<li class="chapter" data-level="2.3" data-path="data-sources.html"><a href="data-sources.html#life-expectancy"><i class="fa fa-check"></i><b>2.3</b> Life expectancy</a></li>
-<li class="chapter" data-level="2.4" data-path="data-sources.html"><a href="data-sources.html#years-of-schooling"><i class="fa fa-check"></i><b>2.4</b> Years of schooling</a></li>
-<li class="chapter" data-level="2.5" data-path="data-sources.html"><a href="data-sources.html#population"><i class="fa fa-check"></i><b>2.5</b> Population</a></li>
+<li class="chapter" data-level="3.1" data-path="data-transformation.html"><a href="data-transformation.html#selecting-the-time-range"><i class="fa fa-check"></i><b>3.1</b> Selecting the time range</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>3</b> Data transformation</a></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a>
 <ul>
 <li class="chapter" data-level="4.1" data-path="missing-values.html"><a href="missing-values.html#missing-values-for-the-merged-dataframe"><i class="fa fa-check"></i><b>4.1</b> Missing values for the merged dataframe</a></li>
 <li class="chapter" data-level="4.2" data-path="missing-values.html"><a href="missing-values.html#energy-consumption-1"><i class="fa fa-check"></i><b>4.2</b> Energy consumption</a></li>
-<li class="chapter" data-level="4.3" data-path="missing-values.html"><a href="missing-values.html#gdp-per-capita-1"><i class="fa fa-check"></i><b>4.3</b> GDP per capita</a></li>
+<li class="chapter" data-level="4.3" data-path="missing-values.html"><a href="missing-values.html#gdp-1"><i class="fa fa-check"></i><b>4.3</b> GDP</a></li>
 <li class="chapter" data-level="4.4" data-path="missing-values.html"><a href="missing-values.html#life-expectancy-1"><i class="fa fa-check"></i><b>4.4</b> Life expectancy</a></li>
 <li class="chapter" data-level="4.5" data-path="missing-values.html"><a href="missing-values.html#years-of-schooling-1"><i class="fa fa-check"></i><b>4.5</b> Years of schooling</a></li>
 </ul></li>
@@ -127,6 +123,13 @@
             <section class="normal" id="section-">
 <div id="data-transformation" class="section level1" number="3">
 <h1><span class="header-section-number">Chapter 3</span> Data transformation</h1>
+<p>We aim at merging all data into one tidy master data frame within which each observation will correspond to one country and one year.</p>
+<div id="selecting-the-time-range" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Selecting the time range</h2>
+<p>We hope to keep a sufficiently wide range so as to observe clear change in energy consumption behavior across time.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-93-1.png" width="672" /></p>
+<p>We choose to restrict our multivariate analysis to the narrowest time range. This is exactly the intersection of all ranges : <strong>1990-2019</strong>.</p>
+<p><em>We note that this plot does not tell us anything about missing values. Indeed, a given observation might be missing although within the time range of the data set.</em></p>
 <pre><code>## [1] 5070</code></pre>
 <pre><code>## [1] 5070</code></pre>
 <pre><code>## [1] 5070</code></pre>
@@ -141,6 +144,7 @@
 - limiting time frame
 - merge and exclude duplicates</p>
 
+</div>
 </div>
             </section>
 

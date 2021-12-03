@@ -6,12 +6,82 @@ library(tidyverse)
 library(countrycode)
 ```
 
+We aim at merging all data into one tidy master data frame within which each observation will correspond to one country and one year.
+
+## Selecting the time range
+
+We hope to keep a sufficiently wide range so as to observe clear change in energy consumption behavior across time. 
+
+
 ```{r}
-# Load Energy Data
+# Load all data sets
+df_population_wide <- read.csv("data/population.csv", skip = 4, check.names = FALSE)
+df_GDP_wide <- read.csv("data/worldbank_GDP.csv", skip = 4, check.names = FALSE)
+df_HDI_wide <- read.csv("data/HDI.csv", skip = 5, check.names = FALSE)
+df_life_wide <- read.csv("data/life_expectancy.csv", skip = 4, check.names = FALSE)
+df_schooling_wide <- read.csv("data/un_years_of_schooling.csv", skip = 6, check.names = FALSE)
 df_energy_long <- read.csv("data/owid_energy_data.csv", header = TRUE, stringsAsFactors = FALSE)
+df_country_info <- read.csv("data/worldbank_country_info.csv", header = TRUE, stringsAsFactors = FALSE, encoding = "UTF-8")
+```
+
+```{r}
+year_availability <- matrix(NaN, 6, 2)
+colnames(year_availability) <- c("Min year", "Max year")
+rownames(year_availability) <- c("Energy consumption" , "Years of schooling" , "Life expectancy" , "HDI" , "GDP", "Population")
+
+year_availability[6,] <- c(1960, 2020)
+year_availability[5,] <- c(1960, 2020)
+year_availability[4,] <- c(1990, 2019)
+year_availability[3,] <- c(1960, 2020)
+year_availability[2,] <- c(1990, 2019)
+year_availability[1,] <- c(1900, 2020)
+
+## ncol and nrow
+nr <- nrow(year_availability)
+nc <- ncol(year_availability)
+
+## separation between bars
+sepr <- 0.2
+
+op <- par(mar = c(5,9,4,2) + 0.1)
+
+plot(c(1900,2020), c(1,nr), type="n",
+     ylim=c(1-(1-sepr)/2-sepr,
+            nr+(1-sepr)/2+sepr),
+     ylab="", yaxt="n",
+     xlab="", main = "Time range for each data set")
+grid(ny = NA)
+
+## plot bars
+for(i in 1:nr) {
+    lo <- year_availability[i,1]
+    hi <- year_availability[i,2]
+    polygon(x=c(lo, lo, hi, hi),
+            y=c(i-(1-sepr)/2, i+(1-sepr)/2,
+                i+(1-sepr)/2, i-(1-sepr)/2), col = "#6495ED")
+}
+
+## create y-axis
+axis(2, at=1:nr, las=2, xpd=NA, labels=rownames(year_availability)) 
+legend("topleft", fill="#6495ED", bty="n", legend="year is recorded")
+## add center line
+abline(v=0, lty=2)
+
+```
+
+We choose to restrict our multivariate analysis to the narrowest time range. This is exactly the intersection of all ranges : **1990-2019**.
+
+*We note that this plot does not tell us anything about missing values. Indeed, a given observation might be missing although within the time range of the data set.* 
+
+
+
+```{r, warning=FALSE}
+# Choose years
+relevant_years <- as.character(1990:2019)
+
 df_energy_long <- df_energy_long %>% 
   select(-contains(c("_per_capita", "_pct", "_change", "_production", "_share"))) %>%
-  subset(year >= 1990 & year <= 2019) %>%
+  subset(year %in% relevant_years) %>%
   rename("ISO_code" = "iso_code") %>%
   subset(ISO_code != "") %>%
   rename("fossil_fuel" = "fossil_fuel_consumption", 
@@ -40,11 +110,8 @@ df_energy_ISO_with_no_missing_year <- df_energy_long %>%
 df_energy_long <- df_energy_long %>%
   filter(ISO_code %in% df_energy_ISO_with_no_missing_year)
 
-# Choose years
-relevant_years <- as.character(1990:2019)
 
-# Load GDP Per Capita Data
-df_GDP_wide <- read.csv("data/worldbank_GDP.csv", skip = 4, check.names = FALSE)
+
 df_GDP_wide <- df_GDP_wide %>%
   select("Country Name", "Country Code", relevant_years) %>%
   rename("country" = "Country Name", "ISO_code" = "Country Code") %>%
@@ -52,40 +119,35 @@ df_GDP_wide <- df_GDP_wide %>%
   select("ISO_code", relevant_years)
   
 
-# Load Life Expectancy Data
-df_life_wide <- read.csv("data/life_expectancy.csv", skip = 4, check.names = FALSE)
+
 df_life_wide <- df_life_wide %>%
   select("Country Name", "Country Code", relevant_years) %>%
   rename("country" = "Country Name", "ISO_code" = "Country Code") %>%
   mutate_at(relevant_years, as.numeric) %>%
   select("ISO_code", relevant_years)
 
-# Load Years of Schooling Data
-df_schooling_wide <- read.csv("data/un_years_of_schooling.csv", skip = 6, check.names = FALSE)
+
 df_schooling_wide <- df_schooling_wide %>%
   select("Country", relevant_years) %>%
   mutate("ISO_code" = countrycode(Country, origin = "country.name", destination = "iso3c")) %>%
   mutate_at(relevant_years, as.numeric) %>%
   select("ISO_code", relevant_years)
 
-# Load population data
-df_population_wide <- read.csv("data/population.csv", skip = 4, check.names = FALSE)
+
 df_population_wide <- df_population_wide %>%
   select("Country Name", "Country Code", relevant_years) %>%
   rename("country" = "Country Name", "ISO_code" = "Country Code") %>%
   mutate_at(relevant_years, as.numeric) %>%
   select("ISO_code", relevant_years)
 
-# Load HDI data
-df_HDI_wide <- read.csv("data/HDI.csv", skip = 5, check.names = FALSE)
+
 df_HDI_wide <- df_HDI_wide %>%
   select("Country", relevant_years) %>%
   mutate("ISO_code" = countrycode(Country, origin = "country.name", destination = "iso3c")) %>%
   mutate_at(relevant_years, as.numeric) %>%
   select("ISO_code", relevant_years)
 
-# Load Country Info Data
-df_country_info <- read.csv("data/worldbank_country_info.csv", header = TRUE, stringsAsFactors = FALSE, encoding = "UTF-8")
+
 df_country_info <- as.data.frame(df_country_info) %>% 
   rename("ISO_code" = "X.U.FEFF.iso_code", "region" = "Region", "income_group" = "IncomeGroup", "special_notes" = "SpecialNotes")
 
