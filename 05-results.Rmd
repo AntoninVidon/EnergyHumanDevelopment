@@ -7,6 +7,10 @@ library(patchwork)
 library(Lock5withR)
 library(ggpubr)
 library(stringr)
+library(esquisse)
+library(gganimate)
+library(ggrepel)
+library(GGally)
 source("R/plot_missing_patterns.R")
 ```
 
@@ -19,15 +23,24 @@ master_df <- read.csv(file = "data/master.csv")
 ## Jannik
 
 ## Is an energy mix oriented towards renewable sources associated with good human development indicators? 
+```{r}
+data_country_info <- read.csv("data/worldbank_country_info.csv", header=TRUE, stringsAsFactors=FALSE, encoding = "UTF-8")
+df_country_info <- as.data.frame(data_country_info)
+df_country_info <- as.data.frame(data_country_info) %>% 
+  rename(c(ISO_code = "X.U.FEFF.iso_code", region="Region", income_group="IncomeGroup"))
+df_country_info <- df_country_info %>% select(c("ISO_code", "region", "income_group"))
+
+master_df <- left_join(master_df, df_country_info, by = "ISO_code")
+```
 
 ```{r}
-df_graph <- master_df[master_df$year==2019,]
-ggplot(df_graph, aes(x=primary/population*1000000000, y=years_of_schooling)) +
-  geom_point(aes(color = year)) +
+graph_df <- master_df[master_df$year==2019,]
+ggplot(graph_df, aes(x=primary/population*1000000000, y=years_of_schooling)) +
+  geom_point(aes(color = region)) +
   geom_smooth(method="lm") +
   theme_light() + 
   geom_text(
-    label=df_graph$country, 
+    label=graph_df$country, 
     nudge_x = 0, nudge_y = 0.4,
     size = 3,
     check_overlap = T
@@ -36,34 +49,142 @@ ggplot(df_graph, aes(x=primary/population*1000000000, y=years_of_schooling)) +
 ```
 
 ```{r}
-#selected_cols <- c("renewables_share_elec", "low_carbon_share_energy", "hdi_rank", "schooling_years")
-#selected_ids <- match(selected_cols, names(df_energy_and_schooling))
+energy_vars <- c("fossil_fuel", "hydro", "low_carb", "nuclear", "other_renew", "renew", "solar", "wind", "coal", "gas", "oil", "biofuel", "primary")
 
-#pairs(df_energy_and_schooling[df_energy_and_schooling, selected_ids])
+scat_mat_lr <- function(data, mapping, ...){
+  p <- ggplot(data = data, mapping = mapping) + 
+    geom_point() + 
+    geom_smooth(method=lm, fill="blue", color="blue", ...)
+  p
+}
 ```
 
+```{r}
+energy_vars <- c("fossil_fuel", "hydro", "low_carb", "nuclear", "other_renew", "renew", "solar", "wind", "coal", "gas", "oil", "biofuel")
+perct_df <- master_df
+perct_df[energy_vars] <- (perct_df[energy_vars] / perct_df$primary) *100
+
+ggpairs(perct_df, columns = c(5, 6, 7, 8, 14), lower = list(continuous = scat_mat_lr))
+```
+
+```{r}
+energy_vars <- c("fossil_fuel", "hydro", "low_carb", "nuclear", "other_renew", "renew", "solar", "wind", "coal", "gas", "oil", "biofuel", "primary")
+per_capita_df <- master_df
+per_capita_df[energy_vars] <- per_capita_df[energy_vars] / per_capita_df$population * 1000000
+
+ggpairs(per_capita_df, columns = c(6, 9, 12, 14, 21), lower = list(continuous = scat_mat_lr))
+
+```
+
+
+```{r}
+min_max_norm <- function(x) {
+    (x - min(x)) / (max(x) - min(x))
+}
+master_normal_df <- replace(master_df,is.na(master_df),0)
+
+master_normal_df <- as.data.frame(lapply(master_normal_df[4:21], min_max_norm))
+
+fit <- lm(HDI ~ fossil_fuel + nuclear + renew, master_normal_df)
+
+summary(fit)
+```
+
+
 ## What characterises the countries that have the most renewable energy mix? 
+```{r, echo=FALSE}
+# How many countries are missing if we look at 2019 data of renewables?
+graph_df <- master_df %>% filter(year==2019 & !is.na(renew))
+length(unique(master_df$country)) - length(unique(graph_df$country))
+```
+
+
+```{r. echo=FALSE}
+# What countries have a high share of renewables today?
+graph_df <- master_df %>% filter(year==2019 & !is.na(renew))
+ggplot(graph_df, aes(x=reorder(country, (renew/primary)), y=renew/primary*100)) +
+  geom_col() +
+  coord_flip() +
+  theme_light() + 
+  theme(axis.text = element_text(size = 5)) +
+  labs(y="Share of renewable energy (in %)", x="Country")
+```
+```{r, echo=FALSE}
+# Do countries catch up to each other or do they move similarly fast?
+graph_df <- master_df %>% 
+  filter(!is.na(renew))
+graph_df$income_group[graph_df$country=="Venezuela"] <- "Lower middle income"
+graph_df <- graph_df %>%
+  group_by(income_group, year) %>% 
+  summarise(renew = sum(renew), primary = sum(primary))
+
+graph_df$label <- NA
+graph_df$label[which(graph_df$year == max(graph_df$year))] <- graph_df$income_group[which(graph_df$year == max(graph_df$year))]
+ggplot(graph_df, aes(x=year, y=renew/primary*100, group=income_group, color=income_group)) +
+  geom_line() +
+  theme_light() + 
+  theme(legend.position="none") +
+  labs(x="Year", y="Share of renewable energy (in %)") +
+  geom_label_repel(aes(label = label), nudge_x = 1, na.rm = TRUE)
+```
+
+```{r, echo=FALSE}
+# What is the energy mix of the most renewable and the least renewable countries?
+distinct_energy_vars <- c("hydro", "nuclear", "solar", "wind", "coal", "gas", "oil", "biofuel")
+graph_df <- master_df %>% filter(year==2019)
+graph_df <- graph_df %>% arrange(desc(renew/primary)) %>% slice(1:10) %>% select(-c("primary", "fossil_fuel", "other_renew", "renew"))
+graph_df <- graph_df %>% pivot_longer(distinct_energy_vars, names_to = "energy")
+graph_df$value_per_capita <- graph_df$value / graph_df$population
+levels <- names(sort(tapply(graph_df$value_per_capita, graph_df$energy, sum)))
+
+
+ggplot(graph_df, aes(x=reorder(country, -value_per_capita*1000000), y=value_per_capita*1000000, fill=factor(energy, levels=levels))) +
+  geom_bar(stat="identity") +
+  theme_light() + 
+  theme(axis.text = element_text(angle = 45, vjust = 0, hjust = 1)) +
+  scale_fill_manual(values=c("#eabc35", "#8d9e2b", "#7cabcb", "#645f55", "#c0b879", "#b18781", "black", "#1e7991")) +
+  labs(y="Energy mix in MWh (per capita)", x="Country")
+```
+
+
+```{r, warning=FALSE}
+# What is the relationship between a share of renewables and a country's income today?
+graph_df <- master_df %>% 
+  filter(year==2019 & !is.na(renew))
+graph_df$renew <- graph_df$renew/graph_df$primary 
+graph_df <- graph_df %>% 
+  filter(renew > (quantile(renew, .25) - 1.5*IQR(renew)) & renew < (quantile(renew, .75) + 1.5*IQR(renew)))
+
+ggplot(graph_df, aes(y=renew/primary*100, x=GDP/population)) +
+  geom_point(aes(color = region)) +
+  geom_smooth(method="lm") +
+  theme_light() + 
+  theme(axis.text = element_text(size = 5)) +
+  labs(x="GDP per capita", y="Share of renewable energy (in %)")
+```
+
+```{r}
+interactive_plot <- master_df[master_df$year==2019,] %>% 
+  select (-c("ISO_code","year", "population", "hydro", "nuclear", "solar", "wind", "coal", "gas", "oil", "biofuel"))  %>%
+  parcoords(rownames = FALSE, brushMode = "1d-axes", reorderable = TRUE, queue = T,color = list(colorBy = "region"), withD3=TRUE)
+
+interactive_plot
+```
+
+
+
 
 ### Ideas:
 - relationship between HDI and different energy metrics -> per capita, coal, renewable, etc.
 - outlier analysis
 - filter on GDP or population to make trends appear
 - cluster countries by energy mix
+- development of different income areas
 
 
 
 On the other hand, how does the production of coal and gas energy leading to more pollution might foster and hinder human development at the same time?
 - countries might consume other energy than they produce
 - 
-
-
-## Antonin
-
-```{r, fig.height=8}
-master_df <- read.csv(file = "data/master.csv")
-plot_missing_parameters(master_df, use_counts = FALSE, max_100 = TRUE, 
-                        ticks_angle = 45, ticks_size = 9, complete_cases_size = 3.5, complete_cases_hjust = 0.1, y_ticks_size = 9)
-```
-
 
 
