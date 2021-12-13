@@ -6,20 +6,90 @@ library(tidyverse)
 library(patchwork)
 library(Lock5withR)
 library(ggpubr)
+library(leaflet)
+library(rgdal)
+library(plotly)
 source("R/plot_missing_patterns.R")
 ```
 
-In this chapter, we analyze the missing data in our four primary data sets on energy consumption, GDP, life expectancy, years of schooling, and life expectancy.
+In this chapter, we **analyze the missing data in the merged master data frame**. We then dive into each of the primary sets to **understand why data is missing**, namely: energy consumption, GDP, life expectancy, years of schooling, and life expectancy.
 
 ## Missing values for the merged dataframe
 
+
+
 ```{r, fig.height=8}
+# read master dataframe
 master_df <- read.csv(file = "data/master.csv")
 plot_missing_parameters(master_df, use_counts = FALSE, max_100 = TRUE, 
                         ticks_angle = 45, ticks_size = 9, complete_cases_size = 3.5, complete_cases_hjust = 0.1, y_ticks_size = 9)
 ```
 
-## Energy consumption
+Data sparsity is quite inconsistent across variables. We observe that **missing data mainly concerns energy related variables**. Hence, for a significant proportion of countries, it will be challenging to analyze the energy mix.
+
+* * *
+
+### Map of data availability across countries for all variables {.unlisted .unnumbered}
+
+```{r, echo=FALSE}
+# What countries have a high share of renewables today?
+# Use 2019 percentage data
+count_variables <- ncol(master_df) - 5
+
+graph_df <- master_df %>%
+  select(-c(country, year)) %>%
+  group_by(ISO_code) %>%
+  summarise(available_data =  1 - 1/((2019 - 1990 + 1) * count_variables) * (sum(is.na(coal)) + sum(is.na(fossil_fuel)) +
+            sum(is.na(gas)) + sum(is.na(hydro)) + sum(is.na(low_carb)) + sum(is.na(nuclear)) + sum(is.na(oil)) +
+            sum(is.na(other_renew)) + sum(is.na(renew)) + sum(is.na(solar)) + sum(is.na(wind)) + sum(is.na(biofuel)) +
+            sum(is.na(HDI)) + sum(is.na(primary)) + sum(is.na(GDP)) + sum(is.na(years_of_schooling)) +
+            sum(is.na(life_expectancy)) + sum(is.na(population)))) 
+  
+
+#Read shape file
+world_spdf <- readOGR( 
+  dsn= paste0(getwd(), "/R/world_shape_file"), 
+  layer="TM_WORLD_BORDERS_SIMPL-0.3",
+  verbose=FALSE
+)
+
+world_spdf@data = data.frame(world_spdf, graph_df[match(world_spdf$ISO3, graph_df$ISO_code),])
+
+# Create a color palette for the map:
+mybins <- rev(c(0.0,0.3,0.6,0.9,1.0))
+mypalette <- colorBin( palette="RdYlGn", domain = graph_df$renew, na.color="#d3d3d3", bins=mybins)
+labels <- c("90 - 100", "60 - 90", "30 - 60", "0 - 30", "not in dataset")
+
+# Display map
+leaflet(world_spdf) %>% 
+  addTiles()  %>% 
+  setView( lat=10, lng=0 , zoom=2) %>%
+  addPolygons( 
+    fillColor = ~mypalette(available_data), 
+    stroke=TRUE, 
+    fillOpacity = 0.9, 
+    color="white", 
+    weight=0.3,
+    labelOptions = labelOptions( 
+      style = list("font-weight" = "normal", padding = "3px 8px"), 
+      textsize = "13px", 
+      direction = "auto"
+    )
+  ) %>%
+  addLegend(pal=mypalette, values =~ available_data, opacity=0.9, title = "available data (%)", 
+            position = "bottomleft", labFormat = function(type, cuts, p) {  # Here's the trick
+                                                  paste0(labels)
+                             })
+```
+
+<br>
+At the intuition suggests, the **missing data is mainly located in central Africa**. By contrast, **Europe and North America countries all fall into the 90 to 100% range of data availability**.
+
+* * *
+
+## Dive into each primar dataset : understanding the missing values
+
+### Energy consumption {.unlisted .unnumbered}
 
 <u>Data description:</u> *Energy consumption of different countries by the type of energy production.*
 
@@ -67,30 +137,9 @@ In order to have enough data to draw solid conclusions on these time series, we 
 
 Let's now group the countries together so as to visualize missing data by geographic region.
 
-```{r, eval=FALSE}
-df_by_country <- df_energy_sel %>% mutate(missing_perc = rowSums(apply(is.na(df_energy_sel), 2, as.numeric))/ncol(df_energy_sel))
-df_by_country <- df_by_country %>% filter(iso_code != "") %>% select(c(iso_code, country, year, missing_perc))
-df_by_country <- left_join(df_by_country, df_country_info, by = "iso_code") %>%
-  select(c(iso_code, country, year, missing_perc, Region, IncomeGroup)) %>%
-  arrange(-missing_perc)
-df_by_region <- df_by_country %>%
-  select(c(Region, year, missing_perc)) %>%
-  group_by(Region, year) %>%
-  summarise(missing_perc = mean(missing_perc))
-df_by_region_order <- df_by_region %>%
-  group_by(Region) %>%
-  summarise(mean_missing = mean(missing_perc)) %>%
-  arrange(desc(mean_missing), Region)
-df_by_region$Region <- factor(df_by_region$Region, levels = df_by_region_order$Region)
-plt_available_years_by_region <- ggplot(df_by_region, aes(x=year, y=missing_perc*100)) + 
-  geom_col() + 
-  ylim(0, 100) +
-  facet_wrap(~Region) +
-  labs(x="Year", y="Missing data (in percent)", title="Missing Data by Geographic Region")
-plt_available_years_by_region
-```
 
 ```{r}
+# plot of missing data by geographic region
 df_by_country <- df_energy_sel %>% mutate(missing_perc = rowSums(apply(is.na(df_energy_sel), 2, as.numeric))/ncol(df_energy_sel))
 df_by_country <- df_by_country %>% filter(iso_code != "") %>% select(c(iso_code, country, year, missing_perc))
 df_by_country <- left_join(df_by_country, df_country_info, by = "iso_code") %>%
@@ -135,7 +184,9 @@ ggplot(df_by_region, aes(x=year, y=missing_perc*100, alpha = fill_color)) +
 - For all regions, data availability remains largely constant over time with a high spike in 2020, year for which the data might not be collected yet.
 - For some countries, no region could be identified. This is indicated by the label "Unmatched countries". For better comparisons, these countries will be matched.
 
-## GDP
+* * *
+
+### GDP {.unlisted .unnumbered}
 
 <u>Data description:</u> *Measure of a country's economic output computed by adding up the monetary value (in current $) of all finished goods and services made within a country for each year.*
 
@@ -144,6 +195,7 @@ ggplot(df_by_region, aes(x=year, y=missing_perc*100, alpha = fill_color)) +
 We focus on the 1990-2019 time-frame.
 
 ```{r, fig.height=8}
+# missing data plot for GDP
 GDP <- read.csv("data/worldbank_GDP.csv", skip = 4, check.names = FALSE)
 relevant_years <- as.character(1990:2019)
 GDP <- GDP %>%
@@ -160,6 +212,7 @@ plot_missing_parameters(data = myGDP, use_counts = FALSE, max_100 = FALSE,
 - A small proportion of countries present a missing pattern of total unavailability of GDP per capita. The list of those countries is displayed just below. We see that these correspond to countries that either (1) do not share their data eg. Korea or (2) have a very small population and/or economic output eg. small islands like St.Martin.
 
 ```{r}
+# table of countries with full missing pattern
 prop_na <- GDP %>%
   mutate("NA_proportion" = apply(GDP, 1, FUN = function(x) sum(is.na(x))) / length(relevant_years)) %>%
   select("Country Name", "NA_proportion") %>%
@@ -170,7 +223,9 @@ prop_na <- GDP %>%
 knitr::kable(head(prop_na, 5), "html")
 ```
 
-## Life expectancy
+* * *
+
+### Life expectancy {.unlisted .unnumbered}
 
 <u>Data description:</u> *Mean length of life of an actual birth cohort (all individuals born in a given year).*
 
@@ -179,6 +234,7 @@ knitr::kable(head(prop_na, 5), "html")
 We focus on the 1990-2019 time-frame.
 
 ```{r}
+# missing data plot for life expectancy
 un_life_data <- read.csv("data/life_expectancy.csv", skip = 4, check.names = FALSE)
 relevant_years <- as.character(1990:2019)
 un_life_data <- un_life_data %>%
@@ -196,6 +252,7 @@ plot_missing_parameters(data = myun_life_data, use_counts = FALSE, max_100 = FAL
 - The second most frequent missing pattern corresponds to total unavailability of life expectancy within the time frame. The list of those countries is displayed just below. We see that these correspond to either (1) unclassified data or (2) countries with very small population for which it is difficult to conduct data collection eg. small islands like American Samoa.
 
 ```{r}
+# na proportion table
 prop_na <- un_life_data %>%
   mutate("NA_proportion" = apply(un_life_data, 1, FUN = function(x) sum(is.na(x))) / length(relevant_years)) %>%
   select("Country Name", "NA_proportion") %>%
@@ -206,7 +263,9 @@ prop_na <- un_life_data %>%
 knitr::kable(head(prop_na, 10), "html")
 ```
 
-## Years of schooling
+* * *
+
+### Years of schooling {.unlisted .unnumbered}
 
 <u>Data description:</u> *Number of years of schooling that a child of school entrance age can expect to receive if prevailing patterns of age-specific enrollment rates persist throughout the child's life.*
 
@@ -215,6 +274,7 @@ knitr::kable(head(prop_na, 10), "html")
 We focus on the 1990-2019 time-frame.
 
 ```{r}
+# missing data plot for years of schooling
 un_years_of_schooling <- read.csv("data/un_years_of_schooling.csv", skip = 6, check.names = FALSE)
 relevant_years <- as.character(1990:2019)
 un_years_of_schooling <- un_years_of_schooling %>%
@@ -233,6 +293,7 @@ plot_missing_parameters(data = myun_years_of_schooling, use_counts = FALSE, max_
 - A few countries are not ranked in terms of HDI. These countries are displayed below and correspond to countries that either (1) do not share their data eg. Korea or (2) countries with very small population (empirically < 40k) for which it is difficult to conduct data collection eg. Nauru.
 
 ```{r}
+# countries with no HDI rank
 no_hdi_rank <- un_years_of_schooling %>%
   filter(is.na(`HDI Rank` )) %>%
   select(Country)  %>%

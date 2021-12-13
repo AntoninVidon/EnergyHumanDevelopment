@@ -6,11 +6,11 @@ library(tidyverse)
 library(countrycode)
 ```
 
-We aim at merging all data into one tidy master data frame within which each observation will correspond to one country and one year.
+We aim at merging all data into one tidy master data frame within which **each observation will correspond to one country and one year**.
 
 ## Selecting the time range
 
-We hope to keep a sufficiently wide range so as to observe clear change in energy consumption behavior across time. 
+We hope to keep a sufficiently wide range so as to **observe clear change in energy consumption behavior across time**. 
 
 
 ```{r}
@@ -203,15 +203,6 @@ df_HDI_long <- df_HDI_wide %>% pivot_longer(cols = -c("ISO_code"), names_to = "y
 
 
 ```{r}
-# display number of rows for each dataframe
-nrow(df_energy_long)
-nrow(df_GDP_long)
-nrow(df_life_long)
-nrow(df_schooling_long)
-nrow(df_population_long)
-nrow(df_HDI_long)
-```
-```{r}
 # merge data frames into one master data frame
 master_df <- merge(df_energy_long, merge(df_GDP_long, merge(df_life_long, merge(df_schooling_long, merge(df_population_long, df_HDI_long,
                 by = c("ISO_code", "year")), by = c("ISO_code", "year")), by = c("ISO_code", "year")), 
@@ -227,14 +218,6 @@ master_df <- master_df %>%
 # write master_df to csv
 write.csv(master_df,"data/master.csv", row.names = FALSE)
 ```
-
-#TODOS:
-- What countries are missing from the data set that exist in real life
-- How many regions maximum compared to final dataset
-- Make data cleaning steps more explicit
-  - removing variables
-  - limiting time frame
-  - merge and exclude duplicates
 
 
 
