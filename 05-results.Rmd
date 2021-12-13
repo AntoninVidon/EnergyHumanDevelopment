@@ -16,6 +16,7 @@ library(tools)
 library(grid)
 library(leaflet)
 library(rgdal)
+library(RColorBrewer)
 ```
 
 
@@ -37,9 +38,7 @@ master_df <- left_join(master_df, df_country_info, by = "ISO_code")
 
 The earlier analysis of GDP and energy consumption shows that economic growth, energy consumption, and human development are correlated until a threshold on the economic growth is reached. Considering the growing importance of renewable energy and the negative effects fossil energy sources can have on human livelihood, we must understand the **relation of renewable energy and human development**.
 
-```{r, fig.width=8, fig.height=4}
-par(mfrow=c(1,2))
-
+```{r, fig.width=7, fig.height=4, echo=FALSE, message=FALSE}
 graph_df <- master_df[master_df$year==2019 & master_df$country != "Iceland"  & master_df$country != "Norway",]
 p1 <- ggplot(graph_df, aes(x=renew/population*1000000000, y=HDI)) +
   geom_point(aes(color = region)) +
@@ -83,7 +82,7 @@ p1_legend <- ggplot(graph_df, aes(x=renew/primary*100, y=HDI)) +
   labs(color="Region")
 
 legend <- get_only_legend(p1_legend)
-combined_plot <- gridExtra::grid.arrange(p1, p2, ncol=2)
+combined_plot <- gridExtra::arrangeGrob(p1, p2, ncol=2)
 gridExtra::grid.arrange(combined_plot, legend, nrow=2, heights = c(9, 2), top = textGrob("Relation of HDI Score to Renewable Energy Consumption"))
 ```
 
@@ -101,7 +100,7 @@ scat_mat_lr <- function(data, mapping, ...){
 }
 ```
 
-```{r, fig.height=4}
+```{r, fig.width=6, fig.height=4}
 perct_df <- master_df
 perct_df[energy_vars] <- (perct_df[energy_vars] / rowSums(perct_df[distinct_energy_vars])) * 100
 perct_df_2019 <- perct_df[perct_df$year==2019,]
@@ -121,33 +120,65 @@ Statistically significantly more countries with a high share of renewable energy
 ## Characteristics of Countries With a High Share of Renewable Energy 
 (There is no data on renewable energy available for 91 countries. These countries are mainly in Africa.)
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.height=5, fig.width=6}
 # What countries have a high share of renewables today?
+# Use 2019 percentage data
+graph_df <- perct_df_2019
 
-getwd()
 #Read shape file
 world_spdf <- readOGR( 
   dsn= paste0(getwd(), "/R/world_shape_file"), 
   layer="TM_WORLD_BORDERS_SIMPL-0.3",
   verbose=FALSE
 )
-#Clean data object
-world_spdf@data$POP2005[ which(world_spdf@data$POP2005 == 0)] = NA
-world_spdf@data$POP2005 <- as.numeric(as.character(world_spdf@data$POP2005)) / 1000000 %>% round(2)
+
+world_spdf@data = data.frame(world_spdf, graph_df[match(world_spdf$ISO3, graph_df$ISO_code),])
 
 # Create a color palette for the map:
-mypalette <- colorNumeric( palette="viridis", domain = world_spdf@data$POP2005, na.color="transparent")
-mypalette(c(45,43))
+mybins <- c(0,5,10,20,30,40,60,80,100)
+mypalette <- colorBin(palette="Greens", domain = graph_df$renew, na.color="#d3d3d3", bins=mybins)
+
+# Prepare the text for tooltips
+labels <- lapply(seq(nrow(world_spdf@data)), function(i){
+  if(is.na(world_spdf@data$renew[i])){
+    paste(
+      "<b>", "Country: ", world_spdf@data$country[i],"</b>", 
+      sep="")
+  } else {
+    paste(
+      "<b>", "Country: ", world_spdf@data$country[i],"</b>","<br/>", 
+      "Renewables: ", round(world_spdf@data$renew[i], 1), "%<br/>", 
+      "Fossil Fuels: ", round(world_spdf@data$fossil_fuel[i], 1), "%<br/>", 
+      "Nuclear: ", round(world_spdf@data$nuclear[i], 1), "%",
+      sep="")
+  }
+})
 
 # Display map
 m <- leaflet(world_spdf) %>% 
   addTiles()  %>% 
-  setView( lat=10, lng=0 , zoom=2) %>%
-  addPolygons( fillColor = ~mypalette(POP2005), stroke=FALSE )
+  setView( lat=10, lng=0 , zoom=1.5) %>%
+  addPolygons( 
+    fillColor = ~mypalette(renew), 
+    stroke=TRUE, 
+    fillOpacity = 0.9, 
+    color="#444444", 
+    weight=0.3,
+    label = lapply(labels, htmltools::HTML),
+    labelOptions = labelOptions( 
+      style = list("font-weight" = "normal", padding = "3px 8px"), 
+      textsize = "13px", 
+      direction = "auto"
+    ),
+    highlightOptions = highlightOptions(color = "white", weight = 2,
+      bringToFront = TRUE)
+  ) %>%
+  addLegend(pal=mypalette, values=~(-renew), opacity=0.9, title = "Renewables (%)", position = "bottomleft" )
 
-m
+m 
 ```
-TODO: Make as map
+
+The countries with the highest share of renewable energy are Iceland, Norway, and Brazil. These and many other countries that have a high share of renewable energy have a long shoreline compared to the countries' sizes.
 
 ```{r, echo=FALSE}
 # How does the share of renewable energy change in different countries?
@@ -158,14 +189,13 @@ graph_df <- graph_df %>%
   group_by(income_group, year) %>% 
   summarise(renew = sum(renew), primary = sum(primary))
 
-graph_df$label <- NA
-graph_df$label[which(graph_df$year == max(graph_df$year))] <- graph_df$income_group[which(graph_df$year == max(graph_df$year))]
+graph_df$income_group <- factor(graph_df$income_group, levels=c("High income", "Upper middle income", "Lower middle income"))
+
 ggplot(graph_df, aes(x=year, y=renew/primary*100, group=income_group, color=income_group)) +
-  geom_line() +
-  theme_light() + 
-  theme(legend.position="none") +
-  labs(x="Year", y="Share of renewable energy (in %)") +
-  geom_label_repel(aes(label = label), nudge_x = 1, na.rm = TRUE)
+  geom_line(key_glyph="timeseries") +
+  theme_classic() + 
+  labs(x="Year", y="Share of renewable energy (in %)", color="Income Groups", caption="No data available for lowest income") +
+  scale_colour_discrete(labels = c('High income (>12,535 USD)', 'Upper middle income (4,046 - 12,535 USD)', 'Lower middle income (1,036- 3,995 USD)'))
 ```
 (Low income data is missing)
 How many countries per income?
