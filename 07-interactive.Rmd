@@ -15,7 +15,11 @@ interactive_df <- master_df %>%
   select(c("year", "solar", "biofuel", "wind", "coal", 
            "nuclear", "other_renew", "gas", "oil", "hydro")) %>%
   group_by(year) %>%
-  summarise_all(list(sum))
+  summarise_all(list(sum)) %>%
+  rename(Year="year", Solar="solar", Biofuel="biofuel", Wind="wind",
+         Coal="coal", Nuclear="nuclear", 
+         "Other renewables"="other_renew", Gas="gas", Oil="oil",
+          Hydropower="hydro")
 
 write.csv(interactive_df,"data/interactive.csv", row.names = FALSE)
 ```
