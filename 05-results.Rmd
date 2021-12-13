@@ -12,6 +12,7 @@ library(gganimate)
 library(ggrepel)
 library(GGally)
 library(parcoords)
+library(tools)
 source("R/plot_missing_patterns.R")
 ```
 
@@ -32,12 +33,15 @@ df_country_info <- df_country_info %>% select(c("ISO_code", "region", "income_gr
 master_df <- left_join(master_df, df_country_info, by = "ISO_code")
 ```
 
-```{r}
+```{r, fig.width=8, fig.height=3}
+par(mfrow=c(1,2))
+
 graph_df <- master_df[master_df$year==2019,]
-ggplot(graph_df, aes(x=renew/primary*100, y=HDI)) +
+p1 <- ggplot(graph_df, aes(x=renew/primary*100, y=HDI)) +
   geom_point(aes(color = region)) +
   geom_smooth(method="lm") +
   theme_light() + 
+  theme(legend.position="none") +
   geom_text(
     label=graph_df$country, 
     nudge_x = 0, nudge_y = 0.02,
@@ -45,14 +49,12 @@ ggplot(graph_df, aes(x=renew/primary*100, y=HDI)) +
     check_overlap = T
   ) +
   labs(x="Renewable energy consumption to overall energy consumption(in %)", color="Region")
-```
 
-```{r}
-graph_df <- master_df[master_df$year==2019,]
-ggplot(graph_df, aes(x=renew/population*1000000000, y=HDI)) +
+p2 <- ggplot(graph_df, aes(x=renew/population*1000000000, y=HDI)) +
   geom_point(aes(color = region)) +
   geom_smooth(method="lm") +
   theme_light() + 
+  theme(legend.position="none") +
   geom_text(
     label=graph_df$country, 
     nudge_x = 0, nudge_y = 0.02,
@@ -60,8 +62,31 @@ ggplot(graph_df, aes(x=renew/population*1000000000, y=HDI)) +
     check_overlap = T
   ) +
   scale_x_log10() +
-  labs(x="Renewable energy consumption per capita (in MWh)", color="Region")
+  labs(x="Renewable energy consumption per capita (in MWh)", y="", color="Region")
+
+get_only_legend <- function(plot) { 
+  plot_table <- ggplot_gtable(ggplot_build(plot))  
+  legend_plot <- which(sapply(plot_table$grobs, function(x) x$name) == "guide-box")
+  legend <- plot_table$grobs[[legend_plot]] 
+  return(legend)  
+}
+
+p1_legend <- ggplot(graph_df, aes(x=renew/primary*100, y=HDI)) +
+  geom_point(aes(color = region)) +
+  theme_light() +
+  theme(legend.position = "bottom") +
+  labs(color="Region")
+
+legend <- get_only_legend(p1_legend)
+combined_plot <- gridExtra::grid.arrange(p1, p2, ncol=2)
+gridExtra::grid.arrange(combined_plot, legend, nrow=2, heights = c(9, 2), top = textGrob("Relation of HDI Score to Renewable Energy Consumption"))
 ```
+<u>Observations:</u>
+
+- Positive correlation between both relative renewable energy and HDI score as well as absolute renewable energy and HDI score.
+- Stronger correlation between absolute renewable energy consumption because there is also a strong positive correlation between human development and energy consumption independent of the energy source
+- Norway and Iceland are far outliers in the renewable energy consumption with 65 to nearly 80% renewables in their energy mix
+- Citizens of many countries consume a similar amount of renewable energy but experience varying levels of human development
 
 ```{r}
 energy_vars <- c("fossil_fuel", "hydro", "low_carb", "nuclear", "other_renew", "renew", "solar", "wind", "coal", "gas", "oil", "biofuel", "primary")
@@ -130,23 +155,34 @@ ggplot(graph_df, aes(x=year, y=renew/primary*100, group=income_group, color=inco
 
 ```{r, echo=FALSE}
 # What is the energy mix of the most renewable and the least renewable countries?
-distinct_energy_vars <- c("hydro", "nuclear", "solar", "wind", "coal", "gas", "oil", "biofuel")
+distinct_energy_vars <- c("hydro", "nuclear", "solar", "wind", "coal", "gas", "oil", "biofuel", "other_renew")
 graph_df <- master_df %>% filter(year==2019)
-graph_df <- graph_df %>% arrange(desc(renew/primary)) %>% slice(1:10) %>% select(-c("primary", "fossil_fuel", "other_renew", "renew"))
+graph_df <- graph_df %>% arrange(desc(renew/primary)) %>% slice(1:10) %>% select(-c("primary", "fossil_fuel", "renew"))
 graph_df <- graph_df %>% pivot_longer(distinct_energy_vars, names_to = "energy")
 graph_df$value_per_capita <- graph_df$value / graph_df$population
+graph_df$energy <- sub("other_renew", "Other Renewables", graph_df$energy)
+graph_df$energy <- toTitleCase(graph_df$energy)
 levels <- names(sort(tapply(graph_df$value_per_capita, graph_df$energy, sum)))
 
 ggplot(graph_df, aes(x=reorder(country, -value_per_capita*1000000), y=value_per_capita*1000000, fill=factor(energy, levels=levels))) +
   geom_bar(stat="identity") +
   theme_light() + 
   theme(axis.text = element_text(angle = 45, vjust = 0, hjust = 1)) +
-  scale_fill_manual(values=c("#eabc35", "#8d9e2b", "#7cabcb", "#645f55", "#c0b879", "#b18781", "black", "#1e7991")) +
+  scale_fill_manual(values=c("#eabc35", "#8d9e2b", "#7cabcb", "#645f55", "#c0b879", "#d0d890", "#b18781", "black", "#1e7991")) +
   labs(y="Energy mix per capita (in MWh)", x="Country", fill="Energy source")
 ```
+<u>Observations:</u>
+
+- The countries highest share of renewable energy in their energy 
+- Stronger correlation between absolute renewable energy consumption because there is also a strong positive correlation between human development and energy consumption independent of the energy source
+- Norway and Iceland are far outliers in the renewable energy consumption with 65 to nearly 80% renewables in their energy mix
+- Citizens of many countries consume a similar amount of renewable energy but experience varying levels of human development
+
 ```{r}
 # Calculate average energy mix of top 10 most renewable countries and compare to the rest of the world
-perc_df_2019 <- perct_df %>% filter(year==2019)
+perct_graph_df <- master_df
+perct_graph_df[energy_vars] <- (perct_df[energy_vars] / rowSums(perct_df[distinct_energy_vars])) *100
+perc_df_2019 <- perct_graph_df %>% filter(year==2019)
 top_ten_df <- perc_df_2019 %>% arrange(desc(renew/primary)) %>% slice(1:10) %>% select(-c("primary", "fossil_fuel", "renew"))
 top_ten_df <- top_ten_df %>% pivot_longer(distinct_energy_vars, names_to = "energy")
 top_ten_df <- top_ten_df %>% group_by(energy) %>%
@@ -161,19 +197,14 @@ average_df$name <- "Rest average"
 
 
 compare_df <- rbind(top_ten_df, average_df)
-compare_df
+compare_df$energy <- sub("other_renew", "Other Renewables", compare_df$energy)
+compare_df$energy <- toTitleCase(compare_df$energy)
 
 ggplot(compare_df, aes(x=name, y=value, fill=factor(energy, levels=levels))) +
   geom_bar(stat="identity") +
   theme_light() + 
-  theme(axis.text = element_text(angle = 45, vjust = 0, hjust = 1)) +
-  scale_fill_manual(values=c("#eabc35", "#8d9e2b", "#7cabcb", "#645f55", "#c0b879", "#b18781", "black", "#1e7991")) +
+  scale_fill_manual(values=c("#eabc35", "#8d9e2b", "#7cabcb", "#645f55", "#c0b879","#d0d890", "#b18781", "black", "#1e7991")) +
   labs(y="Energy mix (in %)", x="Class", fill="Energy source")
-```
-
-
-```{r, warning=FALSE}
-# What is the relationship between a share of renewables and a country's income today?
 ```
 
 ```{r}
@@ -188,7 +219,6 @@ ggplot(compare_df, aes(x=name, y=value, fill=factor(energy, levels=levels))) +
 
 
 ### Ideas:
-- relationship between HDI and different energy metrics -> per capita, coal, renewable, etc.
 - outlier analysis
 - filter on GDP or population to make trends appear
 - cluster countries by energy mix
