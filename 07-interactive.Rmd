@@ -9,6 +9,14 @@ library(parcoords)
 ```{r echo=FALSE, warning=FALSE}
 # Load Data
 master_df <- read.csv(file = "data/master.csv")
+
+master_df %>%
+  na.omit() %>%
+  select(c("year", "hydro", "nuclear", "solar", "wind", "coal", "gas", "oil", "biofuel", "other_renew")) %>%
+  group_by(year) %>%
+  summarise_all(list(sum))
+
+write.csv(master_df,"data/interactive.csv", row.names = FALSE)
 ```
 
 
