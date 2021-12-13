@@ -23,10 +23,6 @@ library(RColorBrewer)
 ```{r echo=FALSE, warning=FALSE}
 # Load Data
 master_df <- read.csv(file = "data/master.csv")
-```
-
-## Association of Human Development and Renewable Energy 
-```{r}
 data_country_info <- read.csv("data/worldbank_country_info.csv", header=TRUE, stringsAsFactors=FALSE, encoding = "UTF-8")
 df_country_info <- as.data.frame(data_country_info)
 df_country_info <- as.data.frame(data_country_info) %>% 
@@ -36,10 +32,13 @@ df_country_info <- df_country_info %>% select(c("ISO_code", "region", "income_gr
 master_df <- left_join(master_df, df_country_info, by = "ISO_code")
 ```
 
-The earlier analysis of GDP and energy consumption shows that economic growth, energy consumption, and human development are correlated until a threshold on the economic growth is reached. Considering the growing importance of renewable energy and the negative effects fossil energy sources can have on human livelihood, we must understand the **relation of renewable energy and human development**.
+## Association of Human Development and Renewable Energy 
 
-```{r, fig.width=7, fig.height=4, echo=FALSE, message=FALSE}
+The earlier analysis of GDP and energy consumption shows that economic growth, energy consumption, and human development are correlated until a threshold on the economic growth is reached. Considering the growing importance of renewable energy and the negative effects fossil energy sources can have on human livelihood, we must understand the **relation of renewable energy and human development**.
+```{r, echo=FALSE, message=FALSE}
 graph_df <- master_df[master_df$year==2019 & master_df$country != "Iceland"  & master_df$country != "Norway",]
+
+# Create graph for MWh of renewable energy per capita 
 p1 <- ggplot(graph_df, aes(x=renew/population*1000000000, y=HDI)) +
   geom_point(aes(color = region)) +
   geom_smooth(method="lm") +
@@ -54,7 +53,7 @@ p1 <- ggplot(graph_df, aes(x=renew/population*1000000000, y=HDI)) +
   scale_x_log10() +
   labs(x="Renewable energy consumption per capita (in MWh)", y="HDI", color="Region", caption = "")
 
-
+# Create graph for renewable energy share of total energy consumption
 p2 <- ggplot(graph_df, aes(x=renew/primary*100, y=HDI)) +
   geom_point(aes(color = region)) +
   geom_smooth(method="lm") +
@@ -68,6 +67,7 @@ p2 <- ggplot(graph_df, aes(x=renew/primary*100, y=HDI)) +
   ) +
   labs(x="Share of renewables to overall energy consumption (in %)", y="", color="Region", caption = "Extreme outliers were removed. Data from 2019")
 
+# function to only grab the legend from a graph
 get_only_legend <- function(plot) { 
   plot_table <- ggplot_gtable(ggplot_build(plot))  
   legend_plot <- which(sapply(plot_table$grobs, function(x) x$name) == "guide-box")
@@ -75,17 +75,19 @@ get_only_legend <- function(plot) {
   return(legend)  
 }
 
+# Grab legend from first plot for final combined plot
 p1_legend <- ggplot(graph_df, aes(x=renew/primary*100, y=HDI)) +
   geom_point(aes(color = region)) +
   theme_classic() +
   theme(legend.position = "bottom") +
   labs(color="Region")
 
+# Combine plots and legend
 legend <- get_only_legend(p1_legend)
 combined_plot <- gridExtra::arrangeGrob(p1, p2, ncol=2)
 gridExtra::grid.arrange(combined_plot, legend, nrow=2, heights = c(9, 2), top = textGrob("Relation of HDI Score to Renewable Energy Consumption"))
 ```
-
+</br>
 There is both a **positive correlation between HDI and renewable energy consumption** both in per capita and in relative terms. However, we can also see that countries with a low share of renewable energy consumption like Hong Kong or Australia achieve high levels of human development. Moreover, does the plot on the left support the fact that higher overall energy consumption correlates with human development. Nevertheless, we can deduct that more developed countries also invest more in renewable energy.
 ```{r}
 energy_vars <- c("fossil_fuel", "hydro", "low_carb", "nuclear", "other_renew", "renew", "solar", "wind", "coal", "gas", "oil", "biofuel", "primary")
@@ -100,7 +102,7 @@ scat_mat_lr <- function(data, mapping, ...){
 }
 ```
 
-```{r, fig.width=6, fig.height=4}
+```{r}
 perct_df <- master_df
 perct_df[energy_vars] <- (perct_df[energy_vars] / rowSums(perct_df[distinct_energy_vars])) * 100
 perct_df_2019 <- perct_df[perct_df$year==2019,]
@@ -118,9 +120,12 @@ Statistically significantly more countries with a high share of renewable energy
 * * *
 
 ## Characteristics of Countries With a High Share of Renewable Energy 
-(There is no data on renewable energy available for 91 countries. These countries are mainly in Africa.)
+*(There is no data on renewable energy available for 91 countries. These countries are mainly in Africa.)*
 
-```{r, echo=FALSE, fig.height=5, fig.width=6}
+Now, we want to analyse countries have a high share of renewable energy and what differentiates them from the rest of the world.
+
+**Countries and the Share of Renewable Energy in Their Energy Mixes**
+```{r, echo=FALSE}
 # What countries have a high share of renewables today?
 # Use 2019 percentage data
 graph_df <- perct_df_2019
@@ -135,8 +140,9 @@ world_spdf <- readOGR(
 world_spdf@data = data.frame(world_spdf, graph_df[match(world_spdf$ISO3, graph_df$ISO_code),])
 
 # Create a color palette for the map:
-mybins <- c(0,5,10,20,30,40,60,80,100)
+mybins <- c(100,80, 60, 40, 30, 20, 10, 5)
 mypalette <- colorBin(palette="Greens", domain = graph_df$renew, na.color="#d3d3d3", bins=mybins)
+legend_text <- c("80 - 100", "60 - 80", "40 - 60", "30 - 40", "20 - 10", "10 - 5", "5 - 0", "No data available")
 
 # Prepare the text for tooltips
 labels <- lapply(seq(nrow(world_spdf@data)), function(i){
@@ -173,110 +179,124 @@ m <- leaflet(world_spdf) %>%
     highlightOptions = highlightOptions(color = "white", weight = 2,
       bringToFront = TRUE)
   ) %>%
-  addLegend(pal=mypalette, values=~(-renew), opacity=0.9, title = "Renewables (%)", position = "bottomleft" )
+  addLegend(pal=mypalette, values=~(-renew), opacity=0.9, title = "Renewables (%)", position = "bottomleft", 
+            labFormat = function(type, cuts, p){paste0(legend_text)})
 
 m 
 ```
-
+</br>
 The countries with the highest share of renewable energy are Iceland, Norway, and Brazil. These and many other countries that have a high share of renewable energy have a long shoreline compared to the countries' sizes.
 
+* * *
 ```{r, echo=FALSE}
-# How does the share of renewable energy change in different countries?
-graph_df <- master_df %>% 
-  filter(!is.na(renew))
-graph_df$income_group[graph_df$country=="Venezuela"] <- "Lower middle income"
-graph_df <- graph_df %>%
-  group_by(income_group, year) %>% 
-  summarise(renew = sum(renew), primary = sum(primary))
-
-graph_df$income_group <- factor(graph_df$income_group, levels=c("High income", "Upper middle income", "Lower middle income"))
-
-ggplot(graph_df, aes(x=year, y=renew/primary*100, group=income_group, color=income_group)) +
-  geom_line(key_glyph="timeseries") +
-  theme_classic() + 
-  labs(x="Year", y="Share of renewable energy (in %)", color="Income Groups", caption="No data available for lowest income") +
-  scale_colour_discrete(labels = c('High income (>12,535 USD)', 'Upper middle income (4,046 - 12,535 USD)', 'Lower middle income (1,036- 3,995 USD)'))
-```
-(Low income data is missing)
-How many countries per income?
-What income ranges are associated with the income levels?
-
-
-```{r, echo=FALSE}
-# What is the energy mix of the most renewable and the least renewable countries?
-graph_df <- master_df %>% filter(year==2019)
-graph_df <- graph_df %>% arrange(desc(renew/primary)) %>% slice(1:10) %>% select(-c("primary", "fossil_fuel", "renew"))
-graph_df <- graph_df %>% pivot_longer(distinct_energy_vars, names_to = "energy")
-graph_df$value_per_capita <- graph_df$value / graph_df$population
-graph_df$energy <- sub("other_renew", "Other Renewables", graph_df$energy)
-graph_df$energy <- toTitleCase(graph_df$energy)
+# What is the energy mix of the most renewable countries?
+graph_df <- master_df %>% filter(year==2019) %>%
+  arrange(desc(renew/primary)) %>% slice(1:10) %>% 
+  select(-c("primary", "fossil_fuel", "renew")) %>% 
+  pivot_longer(distinct_energy_vars, names_to = "energy") %>%
+  mutate(value_per_capita = value / population * 1000000) %>%
+  mutate(energy = sub("other_renew", "Other Renewables", energy)) %>%
+  mutate(energy = toTitleCase(energy))
 levels <- names(sort(tapply(graph_df$value_per_capita, graph_df$energy, sum)))
 
-ggplot(graph_df, aes(x=reorder(country, -value_per_capita*1000000), y=value_per_capita*1000000, fill=factor(energy, levels=levels))) +
+ggplot(graph_df, aes(x=reorder(country, -value_per_capita), y=value_per_capita, fill=factor(energy, levels=levels))) +
   geom_bar(stat="identity") +
-  theme_light() + 
+  theme_classic() + 
+  theme(panel.grid.major.y = element_line()) + 
   theme(axis.text = element_text(angle = 45, vjust = 0, hjust = 1)) +
   scale_fill_manual(values=c("#eabc35", "#8d9e2b", "#7cabcb", "#645f55", "#c0b879", "#d0d890", "#b18781", "black", "#1e7991")) +
-  labs(y="Energy mix per capita (in MWh)", x="Country", fill="Energy source")
+  labs(y="Energy mix per capita (in MWh)", x="Country", fill="Energy source", title="Energy Mixes of the 10 Most Renewable Countries")
 ```
-TODO: Title
-<u>Observations:</u>
+</br>
+The most renewabl countries rely on hydro energy but also oil for a large share of their per capita energy consumption. While it is commonly assumed that renewable energies cannot reliably service a large energy demand, the example of Iceland indicates that this is must not be true (of course considering political and geographical circumstances). Brazil and Ecuador are two poorer countries than the rest but manage to achieve a high share of renewable energy, further indicating that sustainable energy consumption is not only achievable for rich nations.    
 
-- The countries highest share of renewable energy in their energy 
-- Stronger correlation between absolute renewable energy consumption because there is also a strong positive correlation between human development and energy consumption independent of the energy source
-- Norway and Iceland are far outliers in the renewable energy consumption with 65 to nearly 80% renewables in their energy mix
-- Citizens of many countries consume a similar amount of renewable energy but experience varying levels of human development
-
+* * *
 ```{r}
 # Calculate average energy mix of top 10 most renewable countries and compare to the rest of the world
-perct_graph_df <- master_df
-perct_graph_df[energy_vars] <- (perct_graph_df[energy_vars] / rowSums(perct_df[distinct_energy_vars])) *100
-perc_df_2019 <- perct_graph_df %>% filter(year==2019)
-top_ten_df <- perc_df_2019 %>% arrange(desc(renew/primary)) %>% slice(1:10) %>% select(-c("primary", "fossil_fuel", "renew"))
-top_ten_df <- top_ten_df %>% pivot_longer(distinct_energy_vars, names_to = "energy")
-top_ten_df <- top_ten_df %>% group_by(energy) %>%
-  summarise(value = mean(value))
-top_ten_df$name <- "Top Ten"
 
-average_df <- perc_df_2019 %>% arrange(desc(renew/primary)) %>% slice(11:nrow(.)) %>% select(-c("primary", "fossil_fuel", "renew"))
-average_df <- average_df %>% pivot_longer(distinct_energy_vars, names_to = "energy") %>% drop_na(value)
-average_df <- average_df %>% group_by(energy) %>%
-  summarise(value = mean(value))
-average_df$name <- "Rest average"
+# Create dataframe for weighted average of energy of top 10 most renewable countries
+top_ten_df <- perct_df_2019 %>% 
+  arrange(desc(renew/primary)) %>% 
+  slice(1:10) %>% 
+  select(-c("primary", "fossil_fuel", "renew")) %>%
+  pivot_longer(distinct_energy_vars, names_to = "energy") %>%
+  group_by(energy) %>%
+  summarise(value = sum(value)) %>%
+  mutate(value = value/sum(value)) %>%
+  mutate(name = "Top ten")
 
+# Create dataframe for weighted average of energy rest of the world
+average_df <- perct_df_2019 %>% 
+  arrange(desc(renew/primary)) %>% 
+  slice(11:nrow(.)) %>% 
+  select(-c("primary", "fossil_fuel", "renew")) %>%
+  pivot_longer(distinct_energy_vars, names_to = "energy") %>% drop_na(value) %>%
+  group_by(energy) %>%
+  summarise(value = mean(value)) %>%
+  mutate(value = value/sum(value)) %>%
+  mutate(name = "Rest average")
 
-compare_df <- rbind(top_ten_df, average_df)
-compare_df$energy <- sub("other_renew", "Other Renewables", compare_df$energy)
-compare_df$energy <- toTitleCase(compare_df$energy)
+# Bind average_df and top_ten_df and rename values to have one graph to plot
+graph_df <- rbind(top_ten_df, average_df) %>%
+  mutate(energy = sub("other_renew", "Other Renewables", energy)) %>%
+  mutate(energy = toTitleCase(energy))
 
-ggplot(compare_df, aes(x=name, y=value, fill=factor(energy, levels=levels))) +
+# Plot Bar chart comparing the percentage energy of top ten ad rest of the world
+ggplot(graph_df, aes(x=factor(name, levels=c("Top ten", "Rest average")), y=value, fill=factor(energy, levels=levels))) +
   geom_bar(stat="identity") +
-  theme_light() + 
+  theme_classic() + 
+  theme(panel.grid.major.y = element_line()) +
+  geom_text(aes(label = paste0(round(value, 3)*100,"%")),
+            position = position_stack(vjust = 0.5), size = 3, color="#ffffff", check_overlap = T) +
   scale_fill_manual(values=c("#eabc35", "#8d9e2b", "#7cabcb", "#645f55", "#c0b879","#d0d890", "#b18781", "black", "#1e7991")) +
   labs(y="Energy mix (in %)", x="Class", fill="Energy source")
 ```
+</br>
+The **major difference** between the top ten countries and the rest of the world **is the share of hydro energy**. It is 23% higher than the one of the rest of the world. Additionally, the **top ten countries use 24.6% less coal** in their energy mix. Interestingly, **wind, biofuel, and solar make up a very small share of the energy mix in all countries** despite them being the ones that many countries put the most political attention to. 
 
-```{r}
-#interactive_plot <- master_df[master_df$year==2019,] %>% 
-#  select (-c("ISO_code","year", "population", "hydro", "nuclear", "solar", "wind", "coal", "gas", "oil", "biofuel"))  %>%
-#  parcoords(rownames = FALSE, brushMode = "1d-axes", reorderable = TRUE, queue = T,color = list(colorBy = "region"), withD3=TRUE)
-
-#interactive_plot
+```{r, echo=FALSE}
+# How does the share of renewable energy change in different countries?
+graph_df <- master_df %>% filter(!is.na(renew))
+graph_df$income_group[graph_df$country=="Venezuela"] <- "Lower middle income"
+graph_df <- graph_df %>%
+  group_by(income_group, year) %>% 
+  summarise(renew = sum(renew), total = sum(primary)) %>%
+  mutate(renew = renew / total*100) %>%
+  mutate(income_group = factor(income_group, levels=c("High income", "Upper middle income", "Lower middle income")))
+  
+ggplot(graph_df, aes(x=year, y=renew, group=income_group, color=income_group)) +
+  geom_line(key_glyph="timeseries", size=1) +
+  theme_classic() +
+  theme(panel.grid.major.y = element_line(), legend.position="bottom") +
+  labs(x="Year", 
+       y="Share of renewable energy (in %)", 
+       color="Income Groups", 
+       caption="No data available for lowest income", 
+       title="Weighted Average Growth of Renewable Energy by Income Group") +
+  scale_colour_discrete(labels = c('High income (>12,535 USD)', 
+                                   'Upper middle income (4,046 - 12,535 USD)', 
+                                   'Lower middle income (1,036- 3,995 USD)'))
 ```
+</br>
+Contrary, to common expectation, **not the richest countries but upper middle income countries grow their renewable energy quickest**. Instead, populous upper middle income countries like Brazil, Turkey, and China, drive steeper growth. Nevertheless, many upper-middle income countries do not currently increase their share of renewable energy. Albeit the average growth is slightly slower for high income countries, **growth is more consistent across high income countries**. An upward trend for all high-income trend could be identified. Lower middle income countries have only seen a slight uptick in recent years. On the one hand, countries like India and Venezuela slowly drive up the share of renewables. On the other hand, **countries like Pakistan, Vietnam, or Sri Lanka have recently seen their renewable energy share drop drastically**.
 
-
-
-
-### Ideas:
-- outlier analysis
-- filter on GDP or population to make trends appear
-- cluster countries by energy mix
-- development of different income areas
-
-
-
-On the other hand, how does the production of coal and gas energy leading to more pollution might foster and hinder human development at the same time?
-- countries might consume other energy than they produce
-- 
-
-
+```{r, echo=FALSE}
+# # How does the share of renewable energy change in different countries?
+# graph_df <- master_df %>% filter(!is.na(renew))
+# graph_df$income_group[graph_df$country=="Venezuela"] <- "Lower middle income"
+# graph_df <- graph_df[graph_df$income_group == "High income",]
+# graph_df <- graph_df %>% mutate(renew = renew / primary*100)
+# 
+# ggplot(graph_df, aes(x=year, y=renew, group=country, color=income_group)) +
+#   geom_line(key_glyph="timeseries", size=0.5) +
+#   theme_classic() + 
+#   geom_text(
+#     label=graph_df$country, 
+#     nudge_x = 0, nudge_y = 0.02,
+#     size = 3,
+#     check_overlap = T
+#   ) +
+#   theme(panel.grid.major.y = element_line()) +
+#   labs(x="Year", y="Share of renewable energy (in %)", color="Income Groups", caption="No data available for lowest income", title="Growth of Renewable Energy by Income Group") +
+#   scale_colour_discrete(labels = c('High income (>12,535 USD)', 'Upper middle income (4,046 - 12,535 USD)', 'Lower middle income (1,036- 3,995 USD)'))
+```
