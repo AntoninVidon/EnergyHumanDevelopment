@@ -117,8 +117,6 @@ master_df %>%
   
 ```
 
-* * *
-
 ```{r}
 # plot GDP per capita vs primary energy consumption per capita in 2019
 master_df %>%
@@ -151,44 +149,45 @@ The path towards economic maturity consists of a **simultaneous rise of energy c
 
 ## Co-movement of energy consumption and HDI
 
-### An overview of HDI in the world
+### An overview of HDI in the world {.unlisted .unnumbered}
 
 ```{r, echo=FALSE}
 # What countries have a high share of renewables today?
+# Use 2019 percentage data
+graph_df <- master_df
+
 #Read shape file
 world_spdf <- readOGR( 
   dsn= paste0(getwd(), "/R/world_shape_file"), 
   layer="TM_WORLD_BORDERS_SIMPL-0.3",
   verbose=FALSE
 )
-#Clean data object
-world_spdf@data$POP2005[ which(world_spdf@data$POP2005 == 0)] = NA
-world_spdf@data$POP2005 <- as.numeric(as.character(world_spdf@data$POP2005)) / 1000000 %>% round(2)
+
+world_spdf@data = data.frame(world_spdf, graph_df[match(world_spdf$ISO3, graph_df$ISO_code),])
+
 # Create a color palette for the map:
-mypalette <- colorNumeric( palette="viridis", domain = world_spdf@data$POP2005, na.color="transparent")
-mypalette(c(45,43))
+mybins <- c(0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0)
+mypalette <- colorBin( palette="YlGn", domain = graph_df$renew, na.color="#d3d3d3", bins=mybins)
+
 # Display map
-m <- leaflet(world_spdf) %>% 
+leaflet(world_spdf) %>% 
   addTiles()  %>% 
   setView( lat=10, lng=0 , zoom=2) %>%
-  addPolygons( fillColor = ~mypalette(POP2005), stroke=FALSE )
-m
+  addPolygons( 
+    fillColor = ~mypalette(HDI), 
+    stroke=TRUE, 
+    fillOpacity = 0.9, 
+    color="white", 
+    weight=0.3,
+    labelOptions = labelOptions( 
+      style = list("font-weight" = "normal", padding = "3px 8px"), 
+      textsize = "13px", 
+      direction = "auto"
+    )
+  ) %>%
+  addLegend(pal=mypalette, values=~HDI, opacity=0.9, title = "HDI", position = "bottomleft" )
 ```
 
-```{r, warning = FALSE}
-
-# plot HDI on a map in 2019
-map_df <- master_df %>%
-  filter(year == 2019) %>%
-  mutate(ratio_primary_population = primary/population)
-
-sPDF <- joinCountryData2Map(map_df,
-                            joinCode = "ISO3",
-                            nameJoinColumn = "ISO_code",
-                            mapResolution = "coarse")
-
-mapCountryData(sPDF, mapTitle = "Human Development Index in 2019", nameColumnToPlot="HDI", addLegend = TRUE)
-```
 
 * * *
 

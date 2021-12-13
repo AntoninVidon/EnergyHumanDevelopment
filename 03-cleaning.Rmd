@@ -66,14 +66,36 @@ axis(2, at=1:nr, las=2, xpd=NA, labels=rownames(year_availability))
 legend("topleft", fill="#6495ED", bty="n", legend="year is recorded")
 ## add center line
 abline(v=0, lty=2)
-
 ```
 
 We choose to restrict our multivariate analysis to the narrowest time range. This is exactly the intersection of all ranges : **1990-2019**.
 
-*We note that this plot does not tell us anything about missing values. Indeed, a given observation might be missing although within the time range of the data set.* 
+We note that this plot **does not tell us anything about missing values**. Indeed, a given observation might be missing although within the time range of the data set.
+
+* * *
 
 ## Selecting the variables
+
+We hope to be able to analyze and understand the cross-correlation between energy consumption and human development. To do so, we figured we would need the following:
+
+- data indicators for **HDI and all its major components**, namely: `GDP`, `life_expectancy`, `years_of_schooling`;
+- figures for **consumption per energy type**;
+- population.
+
+
+```{r}
+# except from year and country
+variable <- c("ISO_code", "HDI", "population", 
+             "years_of_schooling", "life_expectancy", "GDP", "fossil_fuel", "hydro", "low_carb", 
+               "nuclear", "other_renew", "renew", "solar", "wind", 
+               "coal", "gas", "oil", "biofuel", "primary")
+dataset <- c("worldbank_country_info", "HDI", "population", "un_years_of_schooling", "life_expectancy",
+             "worldbank_gdp", "owid_energy_data", "owid_energy_data", "owid_energy_data", "owid_energy_data", "owid_energy_data", "owid_energy_data", "owid_energy_data", "owid_energy_data", "owid_energy_data", "owid_energy_data", "owid_energy_data", "owid_energy_data", "owid_energy_data")
+
+chosen_variables <- data.frame(variable, dataset)
+
+knitr::kable(chosen_variables, "html")
+```
 
 ```{r, warning=FALSE}
 # Choose years
@@ -97,8 +119,8 @@ df_energy_long <- df_energy_long %>%
          "oil" = "oil_consumption", 
          "biofuel" = "biofuel_consumption", 
          "primary" = "primary_energy_consumption") %>%
-  select("ISO_code", "year", "fossil_fuel", "hydro", "low_carb", "nuclear", "other_renew", "renew", "solar", "wind", "coal", 
-         "gas", "oil", "biofuel", "primary")
+  select("ISO_code", "year", "fossil_fuel", "hydro", "low_carb", "nuclear", "other_renew", "renew", 
+         "solar", "wind", "coal", "gas", "oil", "biofuel", "primary")
 
 df_energy_ISO_with_no_missing_year <- df_energy_long %>%
   select("ISO_code", "year") %>%
@@ -168,12 +190,14 @@ df_HDI_wide <- df_HDI_wide %>% filter(ISO_code %in% common_ISO_codes)
 
 ```{r}
 # Convert data frames to long format
-df_GDP_long <- df_GDP_wide %>% pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "GDP")
+df_GDP_long <- df_GDP_wide %>% 
+  pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "GDP")
 df_schooling_long <- df_schooling_wide %>% 
   pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "years_of_schooling") %>%
   mutate_at("year", as.numeric)
 df_life_long <- df_life_wide %>% pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "life_expectancy")
-df_population_long <- df_population_wide %>% pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "population") 
+df_population_long <- df_population_wide %>% 
+  pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "population") 
 df_HDI_long <- df_HDI_wide %>% pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "HDI")
 ```
 
@@ -190,7 +214,8 @@ nrow(df_HDI_long)
 ```{r}
 # merge data frames into one master data frame
 master_df <- merge(df_energy_long, merge(df_GDP_long, merge(df_life_long, merge(df_schooling_long, merge(df_population_long, df_HDI_long,
-                by = c("ISO_code", "year")), by = c("ISO_code", "year")), by = c("ISO_code", "year")), by = c("ISO_code", "year")), by = c("ISO_code", "year"))
+                by = c("ISO_code", "year")), by = c("ISO_code", "year")), by = c("ISO_code", "year")), 
+                by = c("ISO_code", "year")), by = c("ISO_code", "year"))
 
 # Add one variable for country name and reorder columns
 master_df <- master_df %>%
