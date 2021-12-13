@@ -73,7 +73,7 @@ We choose to restrict our multivariate analysis to the narrowest time range. Thi
 
 *We note that this plot does not tell us anything about missing values. Indeed, a given observation might be missing although within the time range of the data set.* 
 
-
+## Selecting the variables
 
 ```{r, warning=FALSE}
 # Choose years
