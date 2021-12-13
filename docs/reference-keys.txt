@@ -5,10 +5,7 @@ selecting-the-time-range
 selecting-the-variables
 missing-values
 missing-values-for-the-merged-dataframe
-energy-consumption-1
-gdp-1
-life-expectancy-1
-years-of-schooling-1
+dive-into-each-primar-dataset-understanding-the-missing-values
 results
 association-of-human-development-and-renewable-energy
 characteristics-of-countries-with-a-high-share-of-renewable-energy
@@ -16,6 +13,5 @@ ideas
 results-antonins-part
 cross-directional-causality-btw.-ec-gdp-and-yos
 co-movement-of-energy-consumption-and-hdi
-an-overview-of-hdi-in-the-world
 interactive-component
 conclusion

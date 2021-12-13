@@ -31,10 +31,10 @@ The acronyms EC, GDP and YOS will be used to refer to energy consumption, gross 
 ### Energy consumption fuels economic prosperity {.unlisted .unnumbered}
 
 Analyzing the impact of energy consumption on GDP and mean years of schooling is not that easy as the three variables suffer from cross directional causality.
-The intuition suggests a **high correlation between energy consumption and GDP**. Indeed, most economies are highly energy dependent and many production and consumption activities involve energy as a central input. 
+The intuition suggests a **high correlation between energy consumption and GDP**. Indeed, most economies are **highly energy dependent** and many production and consumption activities involve energy as a central input. 
 
 
-```{r, , fig.height=7, fig.width = 7}
+```{r, fig.height=7, fig.width = 7}
 # plot GDP per capita vs primary energy consumption per capita in 2019
 master_df %>%
     left_join(df_country_info, by = "ISO_code") %>%
@@ -72,7 +72,7 @@ This graph emphasizes the intuitive idea that **energy is required to stimulate 
 As a country benefits from economic prosperity with a higher GDP per capita, this one might allocate more resources to education to foster the formation of human capital. This would **enhance the schooling system and lead to the increase of the mean year of schooling** for a given cohort.
 
 
-```{r}
+```{r, fig.width = 7}
 # plot GDP per capita vs primary energy consumption per capita in 2019
 master_df %>%
     filter(country %in% c("Brazil", "Russia", "India", "China")) %>%
@@ -94,7 +94,7 @@ master_df %>%
   scale_colour_discrete(limits = c("Brazil", "Russia", "India", "China"))
 ```
 
-```{r}
+```{r, fig.width = 7}
 # plot GDP per capita vs primary energy consumption per capita in 2019
 master_df %>%
     filter(country %in% c("United States", "Canada", "Japan", "France", "Germany")) %>%
@@ -117,8 +117,8 @@ master_df %>%
   
 ```
 
-```{r}
-# plot GDP per capita vs primary energy consumption per capita in 2019
+```{r,  fig.width = 7}
+# plot GDP per capita vs primary energy consumption per capita in 2019 for the two groups of countries
 master_df %>%
     filter(country %in% c("United States", "Canada", "Japan", "France", "Germany", "Brazil", "Russia", "India", "China")) %>%
     mutate(category = if_else(country %in% c("Brazil", "Russia", "India", "China"), "BRIC", "mature")) %>%
@@ -126,6 +126,9 @@ master_df %>%
     geom_point(aes(label = year)) +
     geom_hline(yintercept = 15.0, color = "black", size = 0.5) +
     geom_hline(yintercept = 17.0, color = "black", size = 0.5) +
+    annotate("rect", fill = "grey", alpha = 0.4, 
+        xmin = 0.000, xmax = Inf, ymin = 15, ymax = 17) +
+    annotate("text", x = 0.000005, y = 16, label = "YOS at maturity") +
     geom_path(size = 0.2) +
     theme_light() +
     geom_point(aes(group = seq_along(year))) +
@@ -166,8 +169,8 @@ world_spdf <- readOGR(
 world_spdf@data = data.frame(world_spdf, graph_df[match(world_spdf$ISO3, graph_df$ISO_code),])
 
 # Create a color palette for the map:
-mybins <- c(0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0)
-mypalette <- colorBin( palette="YlGn", domain = graph_df$renew, na.color="#d3d3d3", bins=mybins)
+mybins <- rev(c(0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0))
+mypalette <- colorBin( palette="RdYlGn", domain = graph_df$renew, na.color="#d3d3d3", bins=mybins)
 
 # Display map
 leaflet(world_spdf) %>% 
@@ -188,6 +191,9 @@ leaflet(world_spdf) %>%
   addLegend(pal=mypalette, values=~HDI, opacity=0.9, title = "HDI", position = "bottomleft" )
 ```
 
+**
+
+From the available data, we observe **high variability of the human development index**. It ranges from the highest values in Europe, North America, Oceania and Japan to the lowest in central Africa.
 
 * * *
 
