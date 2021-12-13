@@ -17,3 +17,5 @@ results-antonins-part
 how-is-the-increase-in-energy-consumption-boosting-the-education-system-in-order-to-cope-with-the-industrial-boom-generated-by-rapid-economic-growth
 interactive-component
 conclusion
+association-of-human-development-and-renewable-energy
+characteristics-of-countries-with-a-high-share-of-renewable-energy
