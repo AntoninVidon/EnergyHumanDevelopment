@@ -15,3 +15,7 @@ cross-directional-causality-btw.-ec-gdp-and-yos
 co-movement-of-energy-consumption-and-hdi
 interactive-component
 conclusion
+cross-directional-causality-btw.-ec-gdp-and-yos-1
+co-movement-of-energy-consumption-and-hdi-1
+answers
+summary

@@ -435,7 +435,7 @@ ggplot(graph_df, aes(x=reorder(country, -value_per_capita), y=value_per_capita, 
   labs(y="Energy mix per capita (MWh)", x="Country", fill="Energy source", title="Energy mixes of the 10 most renewable countries")
 ```
 </br>
-The most renewabl countries rely on hydro energy but also oil for a large share of their per capita energy consumption. While it is commonly assumed that renewable energies cannot reliably service a large energy demand, the example of Iceland indicates that this is must not be true (of course considering political and geographical circumstances). Brazil and Ecuador are two poorer countries than the rest but manage to achieve a high share of renewable energy, further indicating that sustainable energy consumption is not only achievable for rich nations.    
+The most renewabl countries rely on hydropower but also oil for a large share of their per capita energy consumption. While it is commonly assumed that renewable energies cannot reliably service a large energy demand, the example of Iceland indicates that this is must not be true (of course considering political and geographical circumstances). Brazil and Ecuador are two poorer countries than the rest but manage to achieve a high share of renewable energy, further indicating that sustainable energy consumption is not only achievable for rich nations.    
 
 * * *
 ```{r}
@@ -479,7 +479,7 @@ ggplot(graph_df, aes(x=factor(name, levels=c("Top ten", "Rest average")), y=valu
   labs(y="Energy mix (%)", x="", fill="Energy source", title="Comparison of the energy mix of the most renewable countries \n and the rest of the world in 2019")
 ```
 </br>
-The **major difference** between the top ten countries and the rest of the world **is the share of hydro energy**. It is 23% higher than the one of the rest of the world. Additionally, the **top ten countries use 24.6% less coal** in their energy mix. Interestingly, **wind, biofuel, and solar make up a very small share of the energy mix in all countries** despite them being the ones that many countries put the most political attention to. 
+The **major difference** between the top ten countries and the rest of the world **is the share of hydropower**. It is 23% higher than the one of the rest of the world. Additionally, the **top ten countries use 24.6% less coal** in their energy mix. Interestingly, **wind, biofuel, and solar make up a very small share of the energy mix in all countries** despite them being the ones that many countries put the most political attention to. 
 
 ```{r}
 # How does the share of renewable energy change in different countries?
