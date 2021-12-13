@@ -435,7 +435,7 @@ ggplot(graph_df, aes(x=reorder(country, -value_per_capita), y=value_per_capita, 
   labs(y="Energy mix per capita (MWh)", x="Country", fill="Energy source", title="Energy mixes of the 10 most renewable countries")
 ```
 </br>
-The most renewabl countries rely on hydropower but also oil for a large share of their per capita energy consumption. While it is commonly assumed that renewable energies cannot reliably service a large energy demand, the example of Iceland indicates that this is must not be true (of course considering political and geographical circumstances). Brazil and Ecuador are two poorer countries than the rest but manage to achieve a high share of renewable energy, further indicating that sustainable energy consumption is not only achievable for rich nations.    
+The most renewable countries rely on hydropower but also oil for a large share of their per capita energy consumption. While it is commonly assumed that renewable energies cannot reliably service a large energy demand, the example of Iceland indicates that this is must not be true (of course considering political and geographical circumstances). Brazil and Ecuador are two poorer countries than the rest but manage to achieve a high share of renewable energy, further indicating that sustainable energy consumption is not only achievable for rich nations.    
 
 * * *
 ```{r}

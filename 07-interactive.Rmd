@@ -3,25 +3,35 @@
 ```{r, echo=FALSE, warning=FALSE}
 library(dplyr)
 library(tidyverse)
-library(parcoords)
 ```
 
 ```{r echo=FALSE, warning=FALSE}
 # Load Data
 master_df <- read.csv(file = "data/master.csv")
+distinct_energy_vars <- c("hydro", "nuclear", "solar", "wind", "coal", "gas", "oil", "biofuel", "other_renew")
 
-interactive_df <- master_df %>%
-  na.omit() %>%
-  select(c("year", "solar", "biofuel", "wind", "coal", 
-           "nuclear", "other_renew", "gas", "oil", "hydro")) %>%
-  group_by(year) %>%
+left_df <- master_df %>%
+  select(c("ISO_code", "year", "HDI", "solar", "biofuel", "wind", "coal", "nuclear", "other_renew", "gas", "oil", "hydro")) %>%
+  na.omit()
+
+right_df <- left_df[left_df$year==2019,] %>% select(c("ISO_code", "HDI"))
+
+interactive_df <- left_join(left_df, right_df, by="ISO_code") %>%
+  mutate(HDI = HDI.y) %>%
+  select(-c("HDI.x", "HDI.y")) %>%
+  mutate(HDI = case_when(HDI <= 0.549 ~ 'Low',
+                         (HDI <= 0.699 & HDI > 0.549) ~ 'Medium',
+                         (HDI <= 0.799 & HDI > 0.699) ~ 'High',
+                         (HDI <= 1 & HDI > 0.799) ~ 'Very high')) %>%
+  select(-"ISO_code") %>%
+  group_by(year, HDI) %>%
   summarise_all(list(sum)) %>%
   rename(Year="year", Solar="solar", Biofuel="biofuel", Wind="wind",
          Coal="coal", Nuclear="nuclear", 
          "Other_renewables"="other_renew", Gas="gas", Oil="oil",
           Hydropower="hydro")
 
-write.csv(interactive_df,"data/interactive3.csv", row.names = FALSE)
+write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
 ```
 
 
