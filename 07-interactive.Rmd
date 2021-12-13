@@ -11,12 +11,4 @@ library(parcoords)
 master_df <- read.csv(file = "data/master.csv")
 ```
 
-```{r interactive}
-graph_df <- master_df %>% 
-  filter(year == 2019) %>%
-  select (-c("ISO_code","year", "population", "hydro", "nuclear", "solar", "wind", "coal", "gas", "oil", "biofuel")) %>% 
-  parcoords(rownames = FALSE,brushMode = "1d-axes",reorderable = TRUE, queue = T, withD3=TRUE)
-
-graph_df
-```
 

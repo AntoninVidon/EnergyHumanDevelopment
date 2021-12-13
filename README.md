@@ -11,7 +11,7 @@ The tasks are divided as following.
 
 Jannik:
 - Answer the questions:
-  - Is an energy mix oriented towards renewable sources associated with good human development indicators?  What characterises the countries that have the most renewable energy mix?  On the other hand, how  does  the  production  of  coal  and  gas  energy  leading  to  more  pollution  might  foster  and  hinder human development at the same time? 
+  - Is an energy mix oriented towards renewable sources associated with good human development indicators?  What characterises the countries that have the most renewable energy mix?  
 - Write project "Data" chapter
 - Conduct data cleaning and missing value analysis on the energy dataset
 - Final review of formatting and language
