@@ -249,8 +249,4 @@ master_df %>%
            colour = guide_legend(override.aes = list(size=4)))
 ```
 
-There seems to be a **threshold of energy consumption per capita which separates two types of HDI behaviors**. For countries with low level of energy consumption, the causal relationship between energy consumption and HDI is very strong, as suggested by the high value of $R^2$. For countries with high level of energy consumption, there does not seem to be a correlation between both variables. This might be due to the fact that, when becoming wealthier, a country directs most of its financing power to increase proxies of human development 
-
-
-
-
+There seems to be a **threshold of energy consumption per capita which separates two types of HDI behaviors**. For countries with low level of energy consumption, the **causal relationship between energy consumption and HDI is very strong**, as suggested by the high value of $R^2$. By contrast, there does not seem to be a correlation for countries with high level of energy consumption. Intuitively, the investments made by a country on the verge of becoming wealthier will generally have a **much larger effect on human development** (health system, education).
