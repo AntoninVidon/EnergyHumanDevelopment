@@ -1,38 +1,36 @@
 <!DOCTYPE html>
 
-<head>
-  <meta charset="utf-8" />
-  <style>
-    body {
-      font-family: Verdana, Arial, sans-serif;
-    }
+<meta charset="utf-8" />
+<style>
+  body {
+    font-family: Verdana, Arial, sans-serif;
+  }
 
-    h1 {
-      font-size: 1.2em;
-      margin: 60px 0 5px 0;
-    }
+  h1 {
+    font-size: 1.2em;
+    margin: 60px 0 5px 0;
+  }
 
-    svg {
-      width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+  svg {
+    width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-    b {
-      margin-left: 50px;
-    }
+  b {
+    margin-left: 50px;
+  }
 
-    div {
-      width: 1200px;
-      margin: 35px 0;
-    }
+  .wrapper {
+    width: 800px;
+    margin-left: 100px;
+  }
 
-    .HDI_category {
-      width: 50px;
-      text-align: center;
-    }
-  </style>
-</head>
+  .HDI_category {
+    width: 50px;
+    text-align: center;
+  }
+</style>
 
 
 <!-- Load d3.js -->
@@ -41,7 +39,17 @@
 <!-- Create a div where the graph will take place -->
 
 <body>
-  <h1>Interactive visualization of the energy consumption for different HDI levels</h1>
+  <div id="wrapper">
+    <h2>Interactive visualization on the energy mix by HDI level</h2>
+    <p>You can do the following:
+    <ul>
+      <li>Selecting only a part of the y-axis to identify the smaller categories</li>
+      <li>Hover over each element of the legend to highlight the variable in the graph</li>
+      <li>Select countries of which HDI level you want to examine</li>
+    </ul>
+    </p>
+  </div>
+
   <div id="my_dataviz"></div>
   <!-- Initialize a select button -->
   <b>Select the wanted HDI category: </b>
@@ -49,7 +57,7 @@
 </body>
 <script>
   // set the dimensions and margins of the graph
-  const margin = { top: 60, right: 230, bottom: 50, left: 50 },
+  const margin = { top: 60, right: 230, bottom: 20, left: 50 },
     width = 1000 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
@@ -64,7 +72,7 @@
 
   // Parse the Data
   d3.csv(
-    "https://raw.githubusercontent.com/AntoninVidon/energyhumandevelopment/main/data/interactive6.csv"
+    "https://raw.githubusercontent.com/AntoninVidon/energyhumandevelopment/main/data/interactive7.csv"
   ).then(function (data) {
     // List of groups (here I have one group per column)
     const allGroup = new Set(data.map((d) => d.HDI));
@@ -85,7 +93,7 @@
     // store old data
     old_data = data
     data = old_data.filter(function (d) {
-      return d.HDI == "Medium";
+      return d.HDI == "High";
     });
 
     //////////
@@ -95,15 +103,15 @@
     // List of groups = header of the csv files
     //const keys = data.columns.slice(1)
     const keys = [
+      "Coal",
+      "Oil",
+      "Gas",
+      "Hydropower",
+      "Nuclear",
       "Solar",
       "Biofuel",
       "Wind",
-      "Coal",
-      "Nuclear",
       "Other_renewables",
-      "Gas",
-      "Oil",
-      "Hydropower",
     ];
 
     // color palette
@@ -111,15 +119,15 @@
       .scaleOrdinal()
       .domain(keys)
       .range([
+        "#645f55",
+        "black",
+        "#b18781",
+        "#1e7991",
+        "#c0b879",
         "#eabc35",
         "#8d9e2b",
         "#7cabcb",
-        "#645f55",
-        "#c0b879",
         "#d0d890",
-        "#b18781",
-        "black",
-        "#1e7991",
       ]);
 
     //stack the data?
@@ -202,7 +210,7 @@
 
     // Add brushing
     const brush = d3
-      .brushX() // Add the brush feature using the d3.brush function
+      .brushY() // Add the brush feature using the d3.brush function
       .extent([
         [0, 0],
         [width, height],
@@ -252,18 +260,18 @@
       // If no selection, back to initial coordinate. Otherwise, update X axis domain
       if (!extent) {
         if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350)); // This allows to wait a little bit
-        x.domain(
+        y.domain(
           d3.extent(data, function (d) {
             return d.Year;
           })
         );
       } else {
-        x.domain([x.invert(extent[0]), x.invert(extent[1])]);
+        y.domain([y.invert(extent[1]), y.invert(extent[0])]);
         areaChart.select(".brush").call(brush.move, null); // This remove the grey brush area as soon as the selection has been done
       }
 
       // Update axis and area position
-      xAxis.transition().duration(1000).call(d3.axisBottom(x).ticks(5));
+      yAxis.transition().duration(1000).call(d3.axisLeft(y).ticks(5));
       areaChart.selectAll("path").transition().duration(1000).attr("d", area);
     }
 
@@ -308,14 +316,15 @@
         .selectAll("mylayers")
         .data(stackedData)
         .join("path")
+        .transition()
+        .duration(1000)
         .attr("class", function (d) {
           return "myArea " + d.key;
         })
         .style("fill", function (d) {
           return color(d.key);
         })
-
-      areaChart.selectAll("path").transition().duration(1000).attr("d", area);
+        .attr("d", area);
     }
 
     //////////
@@ -341,6 +350,7 @@
 
     // Add one dot in the legend for each name.
     const size = 20;
+
     svg
       .selectAll("myrect")
       .data(keys)
@@ -358,6 +368,8 @@
       .on("mouseleave", noHighlight);
 
     // Add one dot in the legend for each name.
+
+
     svg
       .selectAll("mylabels")
       .data(keys)
