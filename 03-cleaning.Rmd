@@ -85,6 +85,7 @@ We hope to be able to analyze and understand the cross-correlation between energ
 ## Data transformation procedure
 
 Our data transformation works as follows.
+
 1. Determine the needed variables from the respective datasets 
 2. Create dataframes for each of the datasets that only contains the needed variables and time frames to avoid having an unnecessarily large final dataframe that would slow down analyses
   - Energy data

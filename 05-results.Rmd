@@ -325,7 +325,7 @@ combined_plot <- gridExtra::arrangeGrob(p1, p2, ncol=2)
 gridExtra::grid.arrange(combined_plot, legend, nrow=2, heights = c(9, 2), top = textGrob("HDI score vs. renewable energy consumption per capita \n and as share of overall energy consumption in 2019")) 
 ```
 </br>
-There is both a **positive correlation between HDI and renewable energy consumption** both in per capita and in relative terms. However, we can also see that countries with a low share of renewable energy consumption like Hong Kong or Australia achieve high levels of human development. Generally, we can see that on a percentage-basis the most renewable countries are either in Europe or Latin America. Additionally, the left plot supports the idea that higher overall energy consumption correlates with human development. Nevertheless, we can deduct that more developed countries also invest more in renewable energy.
+There is a **positive correlation between HDI and renewable energy consumption** both in per capita and in relative terms. However, we can also see that countries with a low share of renewable energy consumption like Hong Kong or Australia achieve high levels of human development. Generally, we can see that on a percentage-basis the most renewable countries are either in Europe or Latin America. Additionally, the left plot supports the idea that higher overall energy consumption correlates with human development. Nevertheless, we can deduct that more developed countries also invest more in renewable energy.
 
 ***
 
@@ -352,13 +352,13 @@ ggpairs(graph_df, columns = c(6, 7, 8, 14), lower = list(continuous = scat_mat_l
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 ```
 </br>
-Significantly more countries with a high share of renewable energy are also those countries in which citizens have a higher life expectancy and receive more education. While life expectancy is left-skewed and years of schooling is normally distributed, the share of renewables is strongly right-skewed. This indicates great room for improvement in investments into renewable energy.
+Countries with a high share of renewable energy are also those countries in which citizens have a higher life expectancy and receive more education. While life expectancy is left-skewed and years of schooling looks normally distributed, the share of renewables is strongly right-skewed. This indicates great room for improvement in investments into renewable energy.
 
 * * *
 
 ## Characteristics of countries with a high share of renewable energy 
 
-Now, we want to analyse countries have a high share of renewable energy and what differentiates them from the rest of the world.
+Now, we want to analyse countries that have a high share of renewable energy and what differentiates them from the rest of the world.
 
 **Countries and the share of renewable energy in their energy mixes**
 ```{r}
@@ -445,7 +445,7 @@ ggplot(graph_df, aes(x=reorder(country, -value_per_capita), y=value_per_capita, 
   labs(y="Energy mix per capita (MWh)", x="Country", fill="Energy source", title="Energy mixes of the 10 most renewable countries")
 ```
 </br>
-The most renewable countries rely on hydropower but also oil for a large share of their per capita energy consumption. While it is commonly assumed that renewable energies cannot reliably service a large energy demand, the example of Iceland indicates that this is must not be true (of course considering political and geographical circumstances). Brazil and Ecuador are two poorer countries than the rest but manage to achieve a high share of renewable energy, further indicating that sustainable energy consumption is not only achievable for rich nations.    
+The most renewable countries rely on hydropower but also oil for a large share of their per capita energy consumption. While it is commonly assumed that renewable energies cannot reliably service a large energy demand, the example of Iceland indicates that this does not have to be true (of course considering political and geographical circumstances). Brazil and Ecuador are two poorer countries than the rest but manage to achieve a high share of renewable energy, further indicating that sustainable energy consumption is not only achievable for rich nations.    
 
 * * *
 ```{r}
@@ -516,6 +516,4 @@ ggplot(graph_df, aes(x=year, y=renew, group=income_group, color=income_group)) +
                                    'Lower middle income\n(1,036- 3,995 USD)'))
 ```
 </br>
-Contrary, to common expectation, **not the richest countries but upper middle income countries grow their renewable energy quickest**. Instead, populous upper middle income countries like Brazil, Turkey, and China, drive steeper growth. Nevertheless, many upper-middle income countries do not currently increase their share of renewable energy. Albeit the average growth is slightly slower for high income countries, **growth is more consistent across high income countries**. An upward trend for all high-income trend could be identified. Lower middle income countries have only seen a slight uptick in recent years. On the one hand, countries like India and Venezuela slowly drive up the share of renewables. On the other hand, **countries like Pakistan, Vietnam, or Sri Lanka have recently seen their renewable energy share drop drastically**.
-
-This concludes the results of our analysis. In the next chapter we will interpret the data to answer the initially proposed questions.
+Contrary, to common expectation, **not the richest countries but upper middle income countries grow their renewable energy quickest**. Instead, populous upper middle income countries like Brazil, Turkey, and China, record steeper growth. Nevertheless, many upper-middle income countries do not currently increase their share of renewable energy. Albeit the average growth is slightly slower for high income countries, **growth is more consistent across high income countries**. An upward trend for all high-income trend could be identified. Lower middle income countries have only seen a slight uptick in recent years. On the one hand, countries like India and Venezuela slowly drive up the share of renewables. On the other hand, **countries like Pakistan, Vietnam, or Sri Lanka have recently seen their renewable energy share drop drastically**.
