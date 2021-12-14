@@ -7,7 +7,7 @@
       font-family: Verdana, Arial, sans-serif;
     }
 
-    h2 {
+    h1 {
       font-size: 1.2em;
       margin: 60px 0 5px 0;
     }
@@ -41,6 +41,7 @@
 <!-- Create a div where the graph will take place -->
 
 <body>
+  <h1>Interactive visualization of the energy consumption for different HDI levels</h1>
   <div id="my_dataviz"></div>
   <!-- Initialize a select button -->
   <b>Select the wanted HDI category: </b>
@@ -140,7 +141,7 @@
     const xAxis = svg
       .append("g")
       .attr("transform", `translate(0, ${height})`)
-      .call(d3.axisBottom(x).ticks(5));
+      .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format("d")));
 
     // Add X axis label:
     svg
@@ -156,7 +157,7 @@
       .attr("text-anchor", "end")
       .attr("x", 0)
       .attr("y", -20)
-      .text("Energy consumption split for the selected HDI range")
+      .text("Energy consumption split for the selected HDI range (TWh)")
       .attr("text-anchor", "start");
 
     // Add Y axis
