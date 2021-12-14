@@ -12,7 +12,7 @@ This is an overview of all data sources for this project. The multivariate analy
 
 ### GDP {.unlisted .unnumbered}
 
-<u>Data description:</u> *Measure of a country's economic output computed by adding up the monetary value (in current $) of all finished goods and services made within a country for a given year.*
+<u>Data description:</u> *Measure of a country's economic output computed by adding up the monetary value (in current US$) of all finished goods and services made within a country for a given year.*
 
 [Link to data.](https://data.worldbank.org/indicator/NY.GDP.MKTP.CD)
 
@@ -47,7 +47,7 @@ This is an overview of all data sources for this project. The multivariate analy
 
 ### Country info {.unlisted .unnumbered}
 
-<u>Data description:</u> *ISO code, region and level of income for all worldbank countries. The .csv dataframe is in the same zip as the one containing GDP data (first source).*
+<u>Data description:</u> *ISO code, region and level of income for all worldbank-recognized regions The .csv dataframe is in the same zip as the one containing GDP data (first source).*
 
 [Link to data.](https://data.worldbank.org/indicator/NY.GDP.MKTP.CD)
 

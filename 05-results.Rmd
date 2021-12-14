@@ -215,7 +215,6 @@ The increase of energy consumption of a population generally tends to affect its
 # energy consumption per capita threshold for segmented regression
 log_pcpc_sep <- 3.5e-5
 
-
 regression_data_inf <- master_df %>%
     filter(year == 2019, primary/population <= log_pcpc_sep) %>%
     mutate(log_ratio_primary_population = log10(primary/population))
@@ -232,6 +231,7 @@ r_squared_sup <- summary(lm_sup)$r.squared
 
 # plot HDI vs primary energy consumption per capita in 2019
 master_df %>%
+    filter(year == 2019) %>%
     ggplot(aes(x=primary/population, y=HDI)) +
     geom_point(aes(color = region, size = population, label = country)) +
     geom_vline(xintercept = log_pcpc_sep, linetype = "dashed") +
@@ -369,7 +369,7 @@ world_spdf@data = data.frame(world_spdf, graph_df[match(world_spdf$ISO3, graph_d
 # Create a color palette for the map:
 mybins <- c(100,80, 60, 40, 30, 20, 10, 5)
 mypalette <- colorBin(palette="Greens", domain = graph_df$renew, na.color="#d3d3d3", bins=mybins)
-legend_text <- c("80 - 100", "60 - 80", "40 - 60", "30 - 40", "20 - 10", "10 - 5", "5 - 0", "No data available")
+legend_text <- c("80 - 100", "60 - 80", "40 - 60", "30 - 40", "10 - 20", "5 - 10", "0 - 5", "No data available")
 
 # Prepare the text for tooltips
 labels <- lapply(seq(nrow(world_spdf@data)), function(i){
@@ -423,6 +423,7 @@ graph_df <- master_df %>% filter(year==2019) %>%
   pivot_longer(distinct_energy_vars, names_to = "energy") %>%
   mutate(value_per_capita = value / population * 1000000) %>%
   mutate(energy = sub("other_renew", "Other Renewables", energy)) %>%
+  mutate(energy = sub("hydro", "Hydropower", energy)) %>%
   mutate(energy = toTitleCase(energy))
 levels <- names(sort(tapply(graph_df$value_per_capita, graph_df$energy, sum)))
 
@@ -461,22 +462,23 @@ average_df <- perct_df_2019 %>%
   group_by(energy) %>%
   summarise(value = mean(value)) %>%
   mutate(value = value/sum(value)) %>%
-  mutate(name = "Rest average")
+  mutate(name = "World average")
 
 # Bind average_df and top_ten_df and rename values to have one graph to plot
 graph_df <- rbind(top_ten_df, average_df) %>%
   mutate(energy = sub("other_renew", "Other Renewables", energy)) %>%
+  mutate(energy = sub("hydro", "Hydropower", energy)) %>%
   mutate(energy = toTitleCase(energy))
 
 # Plot Bar chart comparing the percentage energy of top ten ad rest of the world
-ggplot(graph_df, aes(x=factor(name, levels=c("Top ten", "Rest average")), y=value, fill=factor(energy, levels=levels))) +
+ggplot(graph_df, aes(x=factor(name, levels=c("Top ten", "World average")), y=value, fill=factor(energy, levels=levels))) +
   geom_bar(stat="identity") +
   theme_classic() + 
   theme(panel.grid.major.y = element_line()) +
   geom_text(aes(label = paste0(round(value, 3)*100,"%")),
             position = position_stack(vjust = 0.5), size = 3, color="#ffffff", check_overlap = T) +
   scale_fill_manual(values=c("#eabc35", "#8d9e2b", "#7cabcb", "#645f55", "#c0b879","#d0d890", "#b18781", "black", "#1e7991")) +
-  labs(y="Energy mix (%)", x="", fill="Energy source", title="Comparison of the energy mix of the most renewable countries \n and the rest of the world in 2019")
+  labs(y="Energy mix (%)", x="", fill="Energy source", title="Comparison of the energy mix of the most renewable countries\nand the rest of the world in 2019")
 ```
 </br>
 The **major difference** between the top ten countries and the rest of the world **is the share of hydropower**. It is 23% higher than the one of the rest of the world. Additionally, the **top ten countries use 24.6% less coal** in their energy mix. Interestingly, **wind, biofuel, and solar make up a very small share of the energy mix in all countries** despite them being the ones that many countries put the most political attention to. 
