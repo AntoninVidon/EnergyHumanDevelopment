@@ -36,7 +36,7 @@ energy_vars <- c("fossil_fuel", "hydro", "low_carb", "nuclear", "other_renew", "
 distinct_energy_vars <- c("hydro", "nuclear", "solar", "wind", "coal", "gas", "oil", "biofuel", "other_renew")
 ```
 
-## Cross directional causality btw. EC, GDP and YOS
+## Cross directional causality between energy consumption (EC), GDP and years of schooling (YOS)
 
 The acronyms EC, GDP and YOS will be used to refer to energy consumption, gross domestic product and years of schooling respectively.
 
@@ -70,7 +70,8 @@ master_df %>%
           panel.grid.major.y = element_line( size=.1, color="gray" )) +
     guides(colour = guide_legend(order = 1),
             size = guide_legend(order = 2),
-           colour = guide_legend(override.aes = list(size=4)))
+           colour = guide_legend(override.aes = list(size=4)))+
+    scale_color_brewer(palette="Set2")
 ```
 
 
@@ -93,7 +94,7 @@ master_df %>%
               arrow = arrow(type = "open", angle = 30, length = unit(0.15, "inches"))) +
     theme_light() +
     scale_x_log10(labels = function(l) {trans = l * 1000}) +
-    ggtitle("Mean years of schooling vs. primary energy consumption per capita \n for BRIC countries over 1990-2019") +
+    ggtitle("Mean years of schooling vs. primary energy consumption per capita \nfor BRIC countries over 1990-2019") +
     xlab("Primary energy consumption per capita (MWh)") + 
     ylab("Expected years of schooling at birth (years)") +
     theme_classic() +
@@ -115,7 +116,7 @@ master_df %>%
               arrow = arrow(type = "open", angle = 30, length = unit(0.15, "inches"))) +
     theme_light() +
     scale_x_log10(labels = function(l) {trans = l * 1000}) +
-    ggtitle("Mean years of schooling vs. primary energy consumption per capita \n for most developed countries over 1990-2019") +
+    ggtitle("Mean years of schooling vs. primary energy consumption per capita \nfor most developed countries over 1990-2019") +
     xlab("Primary energy consumption per capita (MWh)") + 
     ylab("Expected years of schooling at birth (years)") +
     theme_classic() +
@@ -128,7 +129,7 @@ master_df %>%
   
 ```
 
-```{r,  fig.width = 7}
+```{r,  fig.width = 7, warning=FALSE}
 # plot GDP per capita vs primary energy consumption per capita in 2019 for the two groups of countries
 master_df %>%
     filter(country %in% c("United States", "Canada", "Japan", "France", "Germany", "Brazil", "Russia", "India", "China")) %>%
@@ -247,7 +248,7 @@ master_df %>%
     ) +
     annotate("text", x = 0.00002, y= 0.55, label=paste("R^2 == ", round(r_squared_inf, digits = 2)), parse = T) +
     annotate("text", x = 0.0002, y= 0.55, label=paste("R^2 == ", round(r_squared_sup, digits = 2)), parse = T)  +
-    ggtitle("HDI vs. Primary energy consumption per cap. in 2019") +
+    ggtitle("HDI vs. primary energy consumption per capita in 2019") +
     xlab("Primary energy consumption per capita (MWh)") + 
     ylab("HDI") +
     theme_classic() +
@@ -256,18 +257,19 @@ master_df %>%
           panel.grid.major.y = element_line( size=.1, color="gray" )) +
     guides(colour = guide_legend(order = 1),
             size = guide_legend(order = 2),
-           colour = guide_legend(override.aes = list(size=4)))
+           colour = guide_legend(override.aes = list(size=4))) +
+    scale_color_brewer(palette="Set2")
 ```
 
 There seems to be a **threshold of energy consumption per capita which separates two types of HDI behaviors**. For countries with low level of energy consumption, the **causal relationship between energy consumption and HDI is very strong**, as suggested by the high value of $R^2$. By contrast, there does not seem to be a correlation for countries with high level of energy consumption. Intuitively, the investments made by a country on the verge of becoming wealthier will generally have a **much larger effect on human development** (health system, education).
 
 * * *
 
-## Association of Human Development and Renewable Energy 
+## Association of human development and renewable energy 
 *(Disclaimer: There is no data on renewable energy available for 91/169 countries. These countries are mainly in Africa and/or low-income countries and thus limit the analysis for these areas.)*
 
 The earlier analysis of GDP and energy consumption shows that economic growth, energy consumption, and human development are correlated until a threshold on the economic growth is reached. Considering the growing importance of renewable energy and the negative effects fossil energy sources can have on human livelihood, we must understand the **relation of renewable energy and human development**.
-```{r}
+```{r, fig.height=7, fig.width=7}
 graph_df <- master_df[master_df$year==2019 & master_df$country != "Iceland"  & master_df$country != "Norway",]
 
 # Create graph for MWh of renewable energy per capita 
@@ -283,7 +285,8 @@ p1 <- ggplot(graph_df, aes(x=renew/population*1000000000, y=HDI)) +
     check_overlap = T
   ) +
   scale_x_log10() +
-  labs(x="Renewable energy consumption\nper capita (MWh)", y="HDI", color="Region", caption = " ")
+  labs(x="Renewable energy consumption\nper capita (MWh)", y="HDI", color="Region", caption = " ") + 
+  scale_color_brewer(palette="Set2")
 
 # Create graph for renewable energy share of total energy consumption
 p2 <- ggplot(graph_df, aes(x=renew/primary*100, y=HDI)) +
@@ -297,7 +300,8 @@ p2 <- ggplot(graph_df, aes(x=renew/primary*100, y=HDI)) +
     size = 3,
     check_overlap = T
   ) +
-  labs(x="Share of renewables to \n overall energy consumption (%)", y="", color="Region", caption = "Extreme outliers were removed.")
+  labs(x="Share of renewables to \n overall energy consumption (%)", y="", color="Region", caption = "Extreme outliers were removed.") +
+  scale_color_brewer(palette="Set2")
 
 # function to only grab the legend from a graph
 get_only_legend <- function(plot) { 
@@ -312,22 +316,27 @@ p1_legend <- ggplot(graph_df, aes(x=renew/primary*100, y=HDI)) +
   geom_point(aes(color = region)) +
   theme_classic() +
   theme(legend.position = "bottom") +
-  labs(color="Region")
+  labs(color="Region") +
+  scale_color_brewer(palette="Set2")
 
 # Combine plots and legend
 legend <- get_only_legend(p1_legend)
 combined_plot <- gridExtra::arrangeGrob(p1, p2, ncol=2)
-gridExtra::grid.arrange(combined_plot, legend, nrow=2, heights = c(9, 2), top = textGrob("HDI score vs. renewable energy consumption per capita \n and as share of overall energy consumption in 2019"))
+gridExtra::grid.arrange(combined_plot, legend, nrow=2, heights = c(9, 2), top = textGrob("HDI score vs. renewable energy consumption per capita \n and as share of overall energy consumption in 2019")) 
 ```
 </br>
-There is both a **positive correlation between HDI and renewable energy consumption** both in per capita and in relative terms. However, we can also see that countries with a low share of renewable energy consumption like Hong Kong or Australia achieve high levels of human development. Moreover, does the plot on the left support the fact that higher overall energy consumption correlates with human development. Nevertheless, we can deduct that more developed countries also invest more in renewable energy.
+There is both a **positive correlation between HDI and renewable energy consumption** both in per capita and in relative terms. However, we can also see that countries with a low share of renewable energy consumption like Hong Kong or Australia achieve high levels of human development. Generally, we can see that on a percentage-basis the most renewable countries are either in Europe or Latin America. Additionally, the left plot supports the idea that higher overall energy consumption correlates with human development. Nevertheless, we can deduct that more developed countries also invest more in renewable energy.
+
+***
+
+The following graph show the relationships, correlations and distribution between the HDI score, life expectancy, years of schooling, and the share of renewable energy compared to overall energy consumption. 
 
 ```{r, fig.height=4}
 perct_df <- master_df
 perct_df[energy_vars] <- (perct_df[energy_vars] / rowSums(perct_df[distinct_energy_vars])) * 100
 perct_df_2019 <- perct_df[perct_df$year==2019,]
 
-graph_df <- perct_df_2019 %>% rename("Life expectancy"="life_expectancy", "Years of schooling"="years_of_schooling", "Renewables share"="renew")
+graph_df <- perct_df_2019 %>% rename("Life expectancy (years)"="life_expectancy", "Years of schooling (years)"="years_of_schooling", "Renewables share (%)"="renew")
 
 # Function to add smooting lines to scatter matrix
 scat_mat_lr <- function(data, mapping, ...){
@@ -343,15 +352,15 @@ ggpairs(graph_df, columns = c(6, 7, 8, 14), lower = list(continuous = scat_mat_l
   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 ```
 </br>
-Statistically significantly more countries with a high share of renewable energy are also those countries in which citizens have a higher life expectancy and tend to receive more education. While life expectancy is left-skewed and years of schooling is normally distributed, the share of renewables is strongly right-skewed. This indicates great room for improvement in investments into renewable energy.
+Significantly more countries with a high share of renewable energy are also those countries in which citizens have a higher life expectancy and receive more education. While life expectancy is left-skewed and years of schooling is normally distributed, the share of renewables is strongly right-skewed. This indicates great room for improvement in investments into renewable energy.
 
 * * *
 
-## Characteristics of Countries With a High Share of Renewable Energy 
+## Characteristics of countries With a high share of renewable Energy 
 
 Now, we want to analyse countries have a high share of renewable energy and what differentiates them from the rest of the world.
 
-**Countries and the Share of Renewable Energy in Their Energy Mixes**
+**Countries and the share of renewable energy in their energy mixes**
 ```{r}
 # What countries have a high share of renewables today?
 # Use 2019 percentage data
@@ -498,9 +507,9 @@ ggplot(graph_df, aes(x=year, y=renew, group=income_group, color=income_group)) +
   theme_classic() +
   theme(panel.grid.major.y = element_line(), legend.position="bottom") +
   labs(x="Year", 
-       y="Share of renewable energy (in %)", 
+       y="Share of renewable energy (%)", 
        color="Income Groups", 
-       caption="No data available for lowest income", 
+       caption="No data available for lowest income group.", 
        title="Weighted average growth of renewable energy by income group over 1990-2019") +
   scale_colour_discrete(labels = c('High income\n(>12,535 USD)', 
                                    'Upper middle income\n(4,046 - 12,535 USD)', 
@@ -508,7 +517,5 @@ ggplot(graph_df, aes(x=year, y=renew, group=income_group, color=income_group)) +
 ```
 </br>
 Contrary, to common expectation, **not the richest countries but upper middle income countries grow their renewable energy quickest**. Instead, populous upper middle income countries like Brazil, Turkey, and China, drive steeper growth. Nevertheless, many upper-middle income countries do not currently increase their share of renewable energy. Albeit the average growth is slightly slower for high income countries, **growth is more consistent across high income countries**. An upward trend for all high-income trend could be identified. Lower middle income countries have only seen a slight uptick in recent years. On the one hand, countries like India and Venezuela slowly drive up the share of renewables. On the other hand, **countries like Pakistan, Vietnam, or Sri Lanka have recently seen their renewable energy share drop drastically**.
-
-* * *
 
 This concludes the results of our analysis. In the next chapter we will interpret the data to answer the initially proposed questions.

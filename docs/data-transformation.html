@@ -87,6 +87,7 @@
 <ul>
 <li class="chapter" data-level="3.1" data-path="data-transformation.html"><a href="data-transformation.html#selecting-the-time-range"><i class="fa fa-check"></i><b>3.1</b> Selecting the time range</a></li>
 <li class="chapter" data-level="3.2" data-path="data-transformation.html"><a href="data-transformation.html#selecting-the-variables"><i class="fa fa-check"></i><b>3.2</b> Selecting the variables</a></li>
+<li class="chapter" data-level="3.3" data-path="data-transformation.html"><a href="data-transformation.html#data-transformation-procedure"><i class="fa fa-check"></i><b>3.3</b> Data transformation procedure</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="missing-values.html"><a href="missing-values.html"><i class="fa fa-check"></i><b>4</b> Missing values</a>
 <ul>
@@ -95,16 +96,18 @@
 </ul></li>
 <li class="chapter" data-level="5" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>5</b> Results</a>
 <ul>
-<li class="chapter" data-level="5.1" data-path="results.html"><a href="results.html#cross-directional-causality-btw.-ec-gdp-and-yos"><i class="fa fa-check"></i><b>5.1</b> Cross directional causality btw. EC, GDP and YOS</a></li>
+<li class="chapter" data-level="5.1" data-path="results.html"><a href="results.html#cross-directional-causality-between-energy-consumption-ec-gdp-and-years-of-schooling-yos"><i class="fa fa-check"></i><b>5.1</b> Cross directional causality between energy consumption (EC), GDP and years of schooling (YOS)</a></li>
 <li class="chapter" data-level="5.2" data-path="results.html"><a href="results.html#co-movement-of-energy-consumption-and-hdi"><i class="fa fa-check"></i><b>5.2</b> Co-movement of energy consumption and HDI</a></li>
-<li class="chapter" data-level="5.3" data-path="results.html"><a href="results.html#association-of-human-development-and-renewable-energy"><i class="fa fa-check"></i><b>5.3</b> Association of Human Development and Renewable Energy</a></li>
-<li class="chapter" data-level="5.4" data-path="results.html"><a href="results.html#characteristics-of-countries-with-a-high-share-of-renewable-energy"><i class="fa fa-check"></i><b>5.4</b> Characteristics of Countries With a High Share of Renewable Energy</a></li>
+<li class="chapter" data-level="5.3" data-path="results.html"><a href="results.html#association-of-human-development-and-renewable-energy"><i class="fa fa-check"></i><b>5.3</b> Association of human development and renewable energy</a></li>
+<li class="chapter" data-level="5.4" data-path="results.html"><a href="results.html#characteristics-of-countries-with-a-high-share-of-renewable-energy"><i class="fa fa-check"></i><b>5.4</b> Characteristics of countries With a high share of renewable Energy</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
 <li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a>
 <ul>
 <li class="chapter" data-level="7.1" data-path="conclusion.html"><a href="conclusion.html#answers"><i class="fa fa-check"></i><b>7.1</b> Answers</a></li>
-<li class="chapter" data-level="7.2" data-path="conclusion.html"><a href="conclusion.html#summary"><i class="fa fa-check"></i><b>7.2</b> Summary</a></li>
+<li class="chapter" data-level="7.2" data-path="conclusion.html"><a href="conclusion.html#limitations"><i class="fa fa-check"></i><b>7.2</b> Limitations</a></li>
+<li class="chapter" data-level="7.3" data-path="conclusion.html"><a href="conclusion.html#future-directions"><i class="fa fa-check"></i><b>7.3</b> Future directions</a></li>
+<li class="chapter" data-level="7.4" data-path="conclusion.html"><a href="conclusion.html#summary"><i class="fa fa-check"></i><b>7.4</b> Summary</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -130,20 +133,37 @@
 <p>We aim at merging all data into one tidy master data frame within which <strong>each observation will correspond to one country and one year</strong>.</p>
 <div id="selecting-the-time-range" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Selecting the time range</h2>
-<p>We hope to keep a sufficiently wide range so as to <strong>observe clear change in energy consumption behavior across time</strong>.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p>We hope to keep a sufficiently wide range so as to <strong>observe clear change in energy consumption behavior across time</strong>, while at the same time reducing missing data for as many countries as possible.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <p>We choose to restrict our multivariate analysis to the narrowest time range. This is exactly the intersection of all ranges : <strong>1990-2019</strong>.</p>
 <p>We note that this plot <strong>does not tell us anything about missing values</strong>. Indeed, a given observation might be missing although within the time range of the data set.</p>
 <hr />
 </div>
 <div id="selecting-the-variables" class="section level2" number="3.2">
 <h2><span class="header-section-number">3.2</span> Selecting the variables</h2>
-<p>We hope to be able to analyze and understand the cross-correlation between energy consumption and human development. To do so, we figured we would need the following:</p>
+<p>We hope to be able to analyze and understand the cross-correlation between energy consumption and human development. To do so, we need the following:</p>
 <ul>
-<li>data indicators for <strong>HDI and all its major components</strong>, namely: <code>GDP</code>, <code>life_expectancy</code>, <code>years_of_schooling</code>;</li>
-<li>figures for <strong>consumption per energy type</strong>;</li>
-<li>population.</li>
+<li>Data indicators for <strong>HDI and all its major components</strong>, namely: <code>GDP</code>, <code>life_expectancy</code>, <code>years_of_schooling</code>;</li>
+<li>Figures for <strong>consumption per energy type</strong>;</li>
+<li>Population data and other country indicators like geographic region.</li>
 </ul>
+</div>
+<div id="data-transformation-procedure" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Data transformation procedure</h2>
+<p>Our data transformation works as follows.
+1. Determine the needed variables from the respective datasets
+2. Create dataframes for each of the datasets that only contains the needed variables and time frames to avoid having an unnecessarily large final dataframe that would slow down analyses
+- Energy data
+- GDP data
+- Life expectancy data
+- Schooling data
+- Population data
+- HDI data
+3. Filter the dataframes on common ISO codes (unique identifiers for countries) such that only countries for which all dataframes match up are selected. We find that there is little to no variance in the countries from the different datasets but that some include geographic regions that are filtered by this procedure as they do not have ISO codes.
+4. Convert previously wide dataframes into a long format such that each row is one unique observation of country and year
+5. Merge all dataframes on their ISO code and year
+6. Add the country names from the library <code>countrycode</code> based on the ISO codes to guarantee a common naming scheme and simplify interpretation.</p>
+<p>We use the resulting <code>master_df</code> as our database in all further analyses. Of course, we sometimes have to modify or calculate new variables based on the current question.</p>
 <table>
 <thead>
 <tr>
