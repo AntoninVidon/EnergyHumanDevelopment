@@ -130,8 +130,44 @@
             <section class="normal" id="section-">
 <div id="interactive-component" class="section level1" number="6">
 <h1><span class="header-section-number">Chapter 6</span> Interactive component</h1>
-&lt;!DOCTYPE html&gt;
-<meta charset="utf-8" />
+<div id="interactive-visualization-on-the-energy-mix-by-hdi-level" class="section level2 unlisted unnumbered">
+<h2>Interactive visualization on the energy mix by HDI level</h2>
+<p>You can do the following:</p>
+<ul>
+<li>Selecting only a part of the y-axis to identify the smaller categories</li>
+<li>Hover over each element of the legend to highlight the variable in the graph</li>
+<li>Select countries of which HDI level you want to examine</li>
+</ul>
+<style>
+  body {
+    font-family: Verdana, Arial, sans-serif;
+  }
+
+  h1 {
+    font-size: 1.2em;
+    margin: 60px 0 5px 0;
+  }
+
+  svg {
+    width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  b {
+    margin-left: 50px;
+  }
+
+  .wrapper {
+    width: 800px;
+    margin-left: 100px;
+  }
+
+  .HDI_category {
+    width: 50px;
+    text-align: center;
+  }
+</style>
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v7.js"></script>
 <!-- Create a div where the graph will take place -->
@@ -139,12 +175,14 @@
 
 </div>
 <!-- Initialize a select button -->
-<p><select id="HDI_category"></select></p>
+<b>Select the wanted HDI category: </b>
+<select id="HDI_category"></select>
+</body>
 <script>
   // set the dimensions and margins of the graph
-  const margin = { top: 60, right: 230, bottom: 50, left: 50 },
-    width = 660 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+  const margin = { top: 60, right: 230, bottom: 20, left: 50 },
+    width = 800 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
 
   // append the svg object to the body of the page
   const svg = d3
@@ -157,7 +195,7 @@
 
   // Parse the Data
   d3.csv(
-    "https://raw.githubusercontent.com/AntoninVidon/energyhumandevelopment/main/data/interactive6.csv"
+    "https://raw.githubusercontent.com/AntoninVidon/energyhumandevelopment/main/data/interactive7.csv"
   ).then(function (data) {
     // List of groups (here I have one group per column)
     const allGroup = new Set(data.map((d) => d.HDI));
@@ -178,7 +216,7 @@
     // store old data
     old_data = data
     data = old_data.filter(function (d) {
-      return d.HDI == "Medium";
+      return d.HDI == "High";
     });
 
     //////////
@@ -188,15 +226,15 @@
     // List of groups = header of the csv files
     //const keys = data.columns.slice(1)
     const keys = [
+      "Coal",
+      "Oil",
+      "Gas",
+      "Hydropower",
+      "Nuclear",
       "Solar",
       "Biofuel",
       "Wind",
-      "Coal",
-      "Nuclear",
       "Other_renewables",
-      "Gas",
-      "Oil",
-      "Hydropower",
     ];
 
     // color palette
@@ -204,15 +242,15 @@
       .scaleOrdinal()
       .domain(keys)
       .range([
+        "#645f55",
+        "black",
+        "#b18781",
+        "#1e7991",
+        "#c0b879",
         "#eabc35",
         "#8d9e2b",
         "#7cabcb",
-        "#645f55",
-        "#c0b879",
         "#d0d890",
-        "#b18781",
-        "black",
-        "#1e7991",
       ]);
 
     //stack the data?
@@ -234,7 +272,7 @@
     const xAxis = svg
       .append("g")
       .attr("transform", `translate(0, ${height})`)
-      .call(d3.axisBottom(x).ticks(5));
+      .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format("d")));
 
     // Add X axis label:
     svg
@@ -250,7 +288,7 @@
       .attr("text-anchor", "end")
       .attr("x", 0)
       .attr("y", -20)
-      .text("Energy consumption split for the selected HDI range")
+      .text("Energy consumption split for the selected HDI range (TWh)")
       .attr("text-anchor", "start");
 
     // Add Y axis
@@ -270,7 +308,7 @@
             +d.Biofuel +
             +d.Other_renewables
           );
-        }) * 1.2,
+        }) * 1.1,
       ])
       .range([height, 0]);
     const yAxis = svg
@@ -295,13 +333,13 @@
 
     // Add brushing
     const brush = d3
-      .brushX() // Add the brush feature using the d3.brush function
+      .brushY() // Add the brush feature using the d3.brush function
       .extent([
         [0, 0],
         [width, height],
       ]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
       .on("end", updateChart); // Each time the brush selection changes, trigger the 'updateChart' function
-        
+
     // Create the scatter variable: where both the circles and the brush take place
     const areaChart = svg.append("g").attr("clip-path", "url(#clip)");
 
@@ -345,18 +383,18 @@
       // If no selection, back to initial coordinate. Otherwise, update X axis domain
       if (!extent) {
         if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350)); // This allows to wait a little bit
-        x.domain(
+        y.domain(
           d3.extent(data, function (d) {
             return d.Year;
           })
         );
       } else {
-        x.domain([x.invert(extent[0]), x.invert(extent[1])]);
+        y.domain([y.invert(extent[1]), y.invert(extent[0])]);
         areaChart.select(".brush").call(brush.move, null); // This remove the grey brush area as soon as the selection has been done
       }
 
       // Update axis and area position
-      xAxis.transition().duration(1000).call(d3.axisBottom(x).ticks(5));
+      yAxis.transition().duration(1000).call(d3.axisLeft(y).ticks(5));
       areaChart.selectAll("path").transition().duration(1000).attr("d", area);
     }
 
@@ -393,10 +431,11 @@
       yAxis.transition().duration(1000).call(d3.axisLeft(y).ticks(5));
       // update areaChart
 
-      //console.log(data);
+      console.log(data);
+      areaChart.selectAll("path").remove();
 
-    areaChart.selectAll("path").remove();
-    areaChart
+      // Show the areas
+      areaChart
         .selectAll("mylayers")
         .data(stackedData)
         .join("path")
@@ -409,8 +448,6 @@
           return color(d.key);
         })
         .attr("d", area);
-    
-    
     }
 
     //////////
@@ -436,11 +473,12 @@
 
     // Add one dot in the legend for each name.
     const size = 20;
+
     svg
       .selectAll("myrect")
       .data(keys)
       .join("rect")
-      .attr("x", 400)
+      .attr("x", width + 10)
       .attr("y", function (d, i) {
         return 10 + i * (size + 5);
       }) // 100 is where the first dot appears. 25 is the distance between dots
@@ -453,11 +491,13 @@
       .on("mouseleave", noHighlight);
 
     // Add one dot in the legend for each name.
+
+
     svg
       .selectAll("mylabels")
       .data(keys)
       .join("text")
-      .attr("x", 400 + size * 1.2)
+      .attr("x", width + 10 + size * 1.2)
       .attr("y", function (d, i) {
         return 10 + i * (size + 5) + size / 2;
       }) // 100 is where the first dot appears. 25 is the distance between dots
@@ -482,6 +522,7 @@
   });
 </script>
 
+</div>
 </div>
             </section>
 

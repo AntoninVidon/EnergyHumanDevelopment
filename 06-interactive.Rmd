@@ -33,18 +33,21 @@ interactive_df <- left_join(left_df, right_df, by="ISO_code") %>%
 
 write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
 ```
-<!DOCTYPE html>
 
-<meta charset="utf-8" />
+
+## Interactive visualization on the energy mix by HDI level {.unlisted .unnumbered}
+
+You can do the following:
+
+- Selecting only a part of the y-axis to identify the smaller categories
+- Hover over each element of the legend to highlight the variable in the graph
+- Select countries of which HDI level you want to examine
+
 <style>
   body {
     font-family: Verdana, Arial, sans-serif;
   }
 
-<<<<<<< Updated upstream
-<!DOCTYPE html>
-<meta charset="utf-8" />
-=======
   h1 {
     font-size: 1.2em;
     margin: 60px 0 5px 0;
@@ -71,36 +74,13 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
   }
 </style>
 
->>>>>>> Stashed changes
 
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v7.js"></script>
 
 <!-- Create a div where the graph will take place -->
-<<<<<<< Updated upstream
-<div id="my_dataviz"></div>
 
-<!-- Initialize a select button -->
-<select id="HDI_category"></select>
 
-<script>
-  // set the dimensions and margins of the graph
-  const margin = { top: 60, right: 230, bottom: 50, left: 50 },
-    width = 660 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-=======
-
-<body>
-  <div id="wrapper">
-    <h2>Interactive visualization on the energy mix by HDI level</h2>
-    <p>You can do the following:
-    <ul>
-      <li>Selecting only a part of the y-axis to identify the smaller categories</li>
-      <li>Hover over each element of the legend to highlight the variable in the graph</li>
-      <li>Select countries of which HDI level you want to examine</li>
-    </ul>
-    </p>
-  </div>
 
   <div id="my_dataviz"></div>
   <!-- Initialize a select button -->
@@ -110,9 +90,8 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
 <script>
   // set the dimensions and margins of the graph
   const margin = { top: 60, right: 230, bottom: 20, left: 50 },
-    width = 1000 - margin.left - margin.right,
+    width = 800 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
->>>>>>> Stashed changes
 
   // append the svg object to the body of the page
   const svg = d3
@@ -125,11 +104,7 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
 
   // Parse the Data
   d3.csv(
-<<<<<<< Updated upstream
-    "https://raw.githubusercontent.com/AntoninVidon/energyhumandevelopment/main/data/interactive6.csv"
-=======
     "https://raw.githubusercontent.com/AntoninVidon/energyhumandevelopment/main/data/interactive7.csv"
->>>>>>> Stashed changes
   ).then(function (data) {
     // List of groups (here I have one group per column)
     const allGroup = new Set(data.map((d) => d.HDI));
@@ -150,11 +125,7 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
     // store old data
     old_data = data
     data = old_data.filter(function (d) {
-<<<<<<< Updated upstream
-      return d.HDI == "Medium";
-=======
       return d.HDI == "High";
->>>>>>> Stashed changes
     });
 
     //////////
@@ -164,17 +135,6 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
     // List of groups = header of the csv files
     //const keys = data.columns.slice(1)
     const keys = [
-<<<<<<< Updated upstream
-      "Solar",
-      "Biofuel",
-      "Wind",
-      "Coal",
-      "Nuclear",
-      "Other_renewables",
-      "Gas",
-      "Oil",
-      "Hydropower",
-=======
       "Coal",
       "Oil",
       "Gas",
@@ -184,7 +144,6 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
       "Biofuel",
       "Wind",
       "Other_renewables",
->>>>>>> Stashed changes
     ];
 
     // color palette
@@ -192,17 +151,6 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
       .scaleOrdinal()
       .domain(keys)
       .range([
-<<<<<<< Updated upstream
-        "#eabc35",
-        "#8d9e2b",
-        "#7cabcb",
-        "#645f55",
-        "#c0b879",
-        "#d0d890",
-        "#b18781",
-        "black",
-        "#1e7991",
-=======
         "#645f55",
         "black",
         "#b18781",
@@ -212,7 +160,6 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
         "#8d9e2b",
         "#7cabcb",
         "#d0d890",
->>>>>>> Stashed changes
       ]);
 
     //stack the data?
@@ -234,11 +181,7 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
     const xAxis = svg
       .append("g")
       .attr("transform", `translate(0, ${height})`)
-<<<<<<< Updated upstream
-      .call(d3.axisBottom(x).ticks(5));
-=======
       .call(d3.axisBottom(x).ticks(5).tickFormat(d3.format("d")));
->>>>>>> Stashed changes
 
     // Add X axis label:
     svg
@@ -254,11 +197,7 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
       .attr("text-anchor", "end")
       .attr("x", 0)
       .attr("y", -20)
-<<<<<<< Updated upstream
-      .text("Energy consumption split for the selected HDI range")
-=======
       .text("Energy consumption split for the selected HDI range (TWh)")
->>>>>>> Stashed changes
       .attr("text-anchor", "start");
 
     // Add Y axis
@@ -278,11 +217,7 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
             +d.Biofuel +
             +d.Other_renewables
           );
-<<<<<<< Updated upstream
-        }) * 1.2,
-=======
         }) * 1.1,
->>>>>>> Stashed changes
       ])
       .range([height, 0]);
     const yAxis = svg
@@ -307,21 +242,13 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
 
     // Add brushing
     const brush = d3
-<<<<<<< Updated upstream
-      .brushX() // Add the brush feature using the d3.brush function
-=======
       .brushY() // Add the brush feature using the d3.brush function
->>>>>>> Stashed changes
       .extent([
         [0, 0],
         [width, height],
       ]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
       .on("end", updateChart); // Each time the brush selection changes, trigger the 'updateChart' function
-<<<<<<< Updated upstream
-        
-=======
 
->>>>>>> Stashed changes
     // Create the scatter variable: where both the circles and the brush take place
     const areaChart = svg.append("g").attr("clip-path", "url(#clip)");
 
@@ -365,30 +292,18 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
       // If no selection, back to initial coordinate. Otherwise, update X axis domain
       if (!extent) {
         if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350)); // This allows to wait a little bit
-<<<<<<< Updated upstream
-        x.domain(
-=======
         y.domain(
->>>>>>> Stashed changes
           d3.extent(data, function (d) {
             return d.Year;
           })
         );
       } else {
-<<<<<<< Updated upstream
-        x.domain([x.invert(extent[0]), x.invert(extent[1])]);
-=======
         y.domain([y.invert(extent[1]), y.invert(extent[0])]);
->>>>>>> Stashed changes
         areaChart.select(".brush").call(brush.move, null); // This remove the grey brush area as soon as the selection has been done
       }
 
       // Update axis and area position
-<<<<<<< Updated upstream
-      xAxis.transition().duration(1000).call(d3.axisBottom(x).ticks(5));
-=======
       yAxis.transition().duration(1000).call(d3.axisLeft(y).ticks(5));
->>>>>>> Stashed changes
       areaChart.selectAll("path").transition().duration(1000).attr("d", area);
     }
 
@@ -425,18 +340,11 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
       yAxis.transition().duration(1000).call(d3.axisLeft(y).ticks(5));
       // update areaChart
 
-<<<<<<< Updated upstream
-      //console.log(data);
-
-    areaChart.selectAll("path").remove();
-    areaChart
-=======
       console.log(data);
       areaChart.selectAll("path").remove();
 
       // Show the areas
       areaChart
->>>>>>> Stashed changes
         .selectAll("mylayers")
         .data(stackedData)
         .join("path")
@@ -449,11 +357,6 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
           return color(d.key);
         })
         .attr("d", area);
-<<<<<<< Updated upstream
-    
-    
-=======
->>>>>>> Stashed changes
     }
 
     //////////
@@ -479,19 +382,12 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
 
     // Add one dot in the legend for each name.
     const size = 20;
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
     svg
       .selectAll("myrect")
       .data(keys)
       .join("rect")
-<<<<<<< Updated upstream
-      .attr("x", 400)
-=======
       .attr("x", width + 10)
->>>>>>> Stashed changes
       .attr("y", function (d, i) {
         return 10 + i * (size + 5);
       }) // 100 is where the first dot appears. 25 is the distance between dots
@@ -504,20 +400,13 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
       .on("mouseleave", noHighlight);
 
     // Add one dot in the legend for each name.
-<<<<<<< Updated upstream
-=======
 
 
->>>>>>> Stashed changes
     svg
       .selectAll("mylabels")
       .data(keys)
       .join("text")
-<<<<<<< Updated upstream
-      .attr("x", 400 + size * 1.2)
-=======
       .attr("x", width + 10 + size * 1.2)
->>>>>>> Stashed changes
       .attr("y", function (d, i) {
         return 10 + i * (size + 5) + size / 2;
       }) // 100 is where the first dot appears. 25 is the distance between dots
@@ -540,8 +429,4 @@ write.csv(interactive_df,"data/interactive6.csv", row.names = FALSE)
       update(selectedOption);
     });
   });
-<<<<<<< Updated upstream
 </script>
-=======
-</script>
->>>>>>> Stashed changes
