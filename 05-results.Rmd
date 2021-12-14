@@ -269,7 +269,7 @@ There seems to be a **threshold of energy consumption per capita which separates
 *(Disclaimer: There is no data on renewable energy available for 91/169 countries. These countries are mainly in Africa and/or low-income countries and thus limit the analysis for these areas.)*
 
 The earlier analysis of GDP and energy consumption shows that economic growth, energy consumption, and human development are correlated until a threshold on the economic growth is reached. Considering the growing importance of renewable energy and the negative effects fossil energy sources can have on human livelihood, we must understand the **relation of renewable energy and human development**.
-```{r, fig.height=7, fig.width=7}
+```{r}
 graph_df <- master_df[master_df$year==2019 & master_df$country != "Iceland"  & master_df$country != "Norway",]
 
 # Create graph for MWh of renewable energy per capita 
@@ -356,7 +356,7 @@ Significantly more countries with a high share of renewable energy are also thos
 
 * * *
 
-## Characteristics of countries With a high share of renewable Energy 
+## Characteristics of countries with a high share of renewable energy 
 
 Now, we want to analyse countries have a high share of renewable energy and what differentiates them from the rest of the world.
 

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body {
+      font-family: Verdana, Arial, sans-serif;
+    }
+
+    h2 {
+      font-size: 1.2em;
+      margin: 60px 0 5px 0;
+    }
+
+    svg {
+      width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    b {
+      margin-left: 50px;
+    }
+
+    div {
+      width: 1200px;
+      margin: 35px 0;
+    }
+
+    .HDI_category {
+      width: 50px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v7.js"></script>
+
+<!-- Create a div where the graph will take place -->
+
+<body>
+  <div id="my_dataviz"></div>
+  <!-- Initialize a select button -->
+  <b>Select the wanted HDI category: </b>
+  <select id="HDI_category"></select>
+</body>
+<script>
+  // set the dimensions and margins of the graph
+  const margin = { top: 60, right: 230, bottom: 50, left: 50 },
+    width = 1000 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+  // append the svg object to the body of the page
+  const svg = d3
+    .select("#my_dataviz")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+  // Parse the Data
+  d3.csv(
+    "https://raw.githubusercontent.com/AntoninVidon/energyhumandevelopment/main/data/interactive6.csv"
+  ).then(function (data) {
+    // List of groups (here I have one group per column)
+    const allGroup = new Set(data.map((d) => d.HDI));
+
+    // add the options to the button
+    d3.select("#HDI_category")
+      .selectAll("myOptions")
+      .data(allGroup)
+      .enter()
+      .append("option")
+      .text(function (d) {
+        return d;
+      }) // text showed in the menu
+      .attr("value", function (d) {
+        return d;
+      }); // corresponding value returned by the button
+
+    // store old data
+    old_data = data
+    data = old_data.filter(function (d) {
+      return d.HDI == "Medium";
+    });
+
+    //////////
+    // GENERAL //
+    //////////
+
+    // List of groups = header of the csv files
+    //const keys = data.columns.slice(1)
+    const keys = [
+      "Solar",
+      "Biofuel",
+      "Wind",
+      "Coal",
+      "Nuclear",
+      "Other_renewables",
+      "Gas",
+      "Oil",
+      "Hydropower",
+    ];
+
+    // color palette
+    const color = d3
+      .scaleOrdinal()
+      .domain(keys)
+      .range([
+        "#eabc35",
+        "#8d9e2b",
+        "#7cabcb",
+        "#645f55",
+        "#c0b879",
+        "#d0d890",
+        "#b18781",
+        "black",
+        "#1e7991",
+      ]);
+
+    //stack the data?
+    const stackedData = d3.stack().keys(keys)(data);
+
+    //////////
+    // AXIS //
+    //////////
+
+    // Add X axis
+    const x = d3
+      .scaleLinear()
+      .domain(
+        d3.extent(data, function (d) {
+          return d.Year;
+        })
+      )
+      .range([0, width]);
+    const xAxis = svg
+      .append("g")
+      .attr("transform", `translate(0, ${height})`)
+      .call(d3.axisBottom(x).ticks(5));
+
+    // Add X axis label:
+    svg
+      .append("text")
+      .attr("text-anchor", "end")
+      .attr("x", width)
+      .attr("y", height + 40)
+      .text("Time (year)");
+
+    // Add Y axis label:
+    svg
+      .append("text")
+      .attr("text-anchor", "end")
+      .attr("x", 0)
+      .attr("y", -20)
+      .text("Energy consumption split for the selected HDI range")
+      .attr("text-anchor", "start");
+
+    // Add Y axis
+    const y = d3
+      .scaleLinear()
+      .domain([
+        0,
+        d3.max(data, function (d) {
+          return (
+            +d.Hydropower +
+            +d.Nuclear +
+            +d.Solar +
+            +d.Wind +
+            +d.Coal +
+            +d.Gas +
+            +d.Oil +
+            +d.Biofuel +
+            +d.Other_renewables
+          );
+        }) * 1.1,
+      ])
+      .range([height, 0]);
+    const yAxis = svg
+      .append("g")
+      .attr("transform", `translate(0, 0)`)
+      .call(d3.axisLeft(y).ticks(5));
+
+    //////////
+    // BRUSHING AND CHART //
+    //////////
+
+    // Add a clipPath: everything out of this area won't be drawn.
+    const clip = svg
+      .append("defs")
+      .append("svg:clipPath")
+      .attr("id", "clip")
+      .append("svg:rect")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("x", 0)
+      .attr("y", 0);
+
+    // Add brushing
+    const brush = d3
+      .brushX() // Add the brush feature using the d3.brush function
+      .extent([
+        [0, 0],
+        [width, height],
+      ]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
+      .on("end", updateChart); // Each time the brush selection changes, trigger the 'updateChart' function
+
+    // Create the scatter variable: where both the circles and the brush take place
+    const areaChart = svg.append("g").attr("clip-path", "url(#clip)");
+
+    // Area generator
+    const area = d3.area()
+      .x(function (d) {
+        return x(d.data.Year);
+      })
+      .y0(function (d) {
+        return y(d[0]);
+      })
+      .y1(function (d) {
+        return y(d[1]);
+      });
+
+    // Show the areas
+    areaChart
+      .selectAll("mylayers")
+      .data(stackedData)
+      .join("path")
+      .attr("class", function (d) {
+        return "myArea " + d.key;
+      })
+      .style("fill", function (d) {
+        return color(d.key);
+      })
+      .attr("d", area);
+
+    // Add the brushing
+    areaChart.append("g").attr("class", "brush").call(brush);
+
+    let idleTimeout;
+    function idled() {
+      idleTimeout = null;
+    }
+
+    // A function that update the chart for given boundaries
+    function updateChart(event, d) {
+      extent = event.selection;
+
+      // If no selection, back to initial coordinate. Otherwise, update X axis domain
+      if (!extent) {
+        if (!idleTimeout) return (idleTimeout = setTimeout(idled, 350)); // This allows to wait a little bit
+        x.domain(
+          d3.extent(data, function (d) {
+            return d.Year;
+          })
+        );
+      } else {
+        x.domain([x.invert(extent[0]), x.invert(extent[1])]);
+        areaChart.select(".brush").call(brush.move, null); // This remove the grey brush area as soon as the selection has been done
+      }
+
+      // Update axis and area position
+      xAxis.transition().duration(1000).call(d3.axisBottom(x).ticks(5));
+      areaChart.selectAll("path").transition().duration(1000).attr("d", area);
+    }
+
+    // A function that update the chart
+    function update(selectedGroup) {
+      //stack the data?
+
+      // get new data
+      data = old_data.filter(function (d) {
+        return d.HDI == selectedGroup;
+      });
+
+      const stackedData = d3.stack().keys(keys)(data);
+
+      // set new y domain according to the new data
+      y.domain([
+        0,
+        d3.max(data, function (d) {
+          return (
+            +d.Hydropower +
+            +d.Nuclear +
+            +d.Solar +
+            +d.Wind +
+            +d.Coal +
+            +d.Gas +
+            +d.Oil +
+            +d.Biofuel +
+            +d.Other_renewables
+          );
+        }),
+      ]);
+
+      // update y axis
+      yAxis.transition().duration(1000).call(d3.axisLeft(y).ticks(5));
+      // update areaChart
+
+      console.log(data);
+      areaChart.selectAll("path").remove();
+
+      // Show the areas
+      areaChart
+        .selectAll("mylayers")
+        .data(stackedData)
+        .join("path")
+        .attr("class", function (d) {
+          return "myArea " + d.key;
+        })
+        .style("fill", function (d) {
+          return color(d.key);
+        })
+
+      areaChart.selectAll("path").transition().duration(1000).attr("d", area);
+    }
+
+    //////////
+    // HIGHLIGHT GROUP //
+    //////////
+
+    // What to do when one group is hovered
+    const highlight = function (event, d) {
+      // reduce opacity of all groups
+      d3.selectAll(".myArea").style("opacity", 0.1);
+      // expect the one that is hovered
+      d3.select("." + d).style("opacity", 1);
+    };
+
+    // And when it is not hovered anymore
+    const noHighlight = function (event, d) {
+      d3.selectAll(".myArea").style("opacity", 1);
+    };
+
+    //////////
+    // LEGEND //
+    //////////
+
+    // Add one dot in the legend for each name.
+    const size = 20;
+    svg
+      .selectAll("myrect")
+      .data(keys)
+      .join("rect")
+      .attr("x", width + 10)
+      .attr("y", function (d, i) {
+        return 10 + i * (size + 5);
+      }) // 100 is where the first dot appears. 25 is the distance between dots
+      .attr("width", size)
+      .attr("height", size)
+      .style("fill", function (d) {
+        return color(d);
+      })
+      .on("mouseover", highlight)
+      .on("mouseleave", noHighlight);
+
+    // Add one dot in the legend for each name.
+    svg
+      .selectAll("mylabels")
+      .data(keys)
+      .join("text")
+      .attr("x", width + 10 + size * 1.2)
+      .attr("y", function (d, i) {
+        return 10 + i * (size + 5) + size / 2;
+      }) // 100 is where the first dot appears. 25 is the distance between dots
+      .style("fill", function (d) {
+        return color(d);
+      })
+      .text(function (d) {
+        return d;
+      })
+      .attr("text-anchor", "left")
+      .style("alignment-baseline", "middle")
+      .on("mouseover", highlight)
+      .on("mouseleave", noHighlight);
+
+    // When the button is changed, run the updateChart function
+    d3.select("#HDI_category").on("change", function (event, d) {
+      // recover the option that has been chosen
+      const selectedOption = d3.select(this).property("value");
+      // run the updateChart function with this selected option
+      update(selectedOption);
+    });
+  });
+</script>
