@@ -1,0 +1,17 @@
+introduction
+data-sources
+data-transformation
+selecting-the-time-range
+selecting-the-variables
+missing-values
+missing-values-for-the-merged-dataframe
+dive-into-each-primar-dataset-understanding-the-missing-values
+results
+cross-directional-causality-btw.-ec-gdp-and-yos
+co-movement-of-energy-consumption-and-hdi
+association-of-human-development-and-renewable-energy
+characteristics-of-countries-with-a-high-share-of-renewable-energy
+interactive-component
+conclusion
+answers
+summary

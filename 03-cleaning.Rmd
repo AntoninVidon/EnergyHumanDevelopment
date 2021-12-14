@@ -10,7 +10,7 @@ We aim at merging all data into one tidy master data frame within which **each o
 
 ## Selecting the time range
 
-We hope to keep a sufficiently wide range so as to **observe clear change in energy consumption behavior across time**. 
+We hope to keep a sufficiently wide range so as to **observe clear change in energy consumption behavior across time**, while at the same time reducing missing data for as many countries as possible.
 
 
 ```{r}
@@ -76,15 +76,32 @@ We note that this plot **does not tell us anything about missing values**. Indee
 
 ## Selecting the variables
 
-We hope to be able to analyze and understand the cross-correlation between energy consumption and human development. To do so, we figured we would need the following:
+We hope to be able to analyze and understand the cross-correlation between energy consumption and human development. To do so, we need the following:
 
-- data indicators for **HDI and all its major components**, namely: `GDP`, `life_expectancy`, `years_of_schooling`;
-- figures for **consumption per energy type**;
-- population.
+- Data indicators for **HDI and all its major components**, namely: `GDP`, `life_expectancy`, `years_of_schooling`;
+- Figures for **consumption per energy type**;
+- Population data and other country indicators like geographic region.
 
+## Data transformation procedure
+
+Our data transformation works as follows.
+1. Determine the needed variables from the respective datasets 
+2. Create dataframes for each of the datasets that only contains the needed variables and time frames to avoid having an unnecessarily large final dataframe that would slow down analyses
+  - Energy data
+  - GDP data
+  - Life expectancy data
+  - Schooling data
+  - Population data
+  - HDI data
+3. Filter the dataframes on common ISO codes (unique identifiers for countries) such that only countries for which all dataframes match up are selected. We find that there is little to no variance in the countries from the different datasets but that some include geographic regions that are filtered by this procedure as they do not have ISO codes.
+4. Convert previously wide dataframes into a long format such that each row is one unique observation of country and year
+5. Merge all dataframes on their ISO code and year
+6. Add the country names from the library `countrycode` based on the ISO codes to guarantee a common naming scheme and simplify interpretation.
+
+We use the resulting `master_df` as our database in all further analyses. Of course, we sometimes have to modify or calculate new variables based on the current question.
 
 ```{r}
-# except from year and country
+# `variable` includes all variables except for year and country
 variable <- c("ISO_code", "HDI", "population", 
              "years_of_schooling", "life_expectancy", "GDP", "fossil_fuel", "hydro", "low_carb", 
                "nuclear", "other_renew", "renew", "solar", "wind", 
@@ -200,7 +217,6 @@ df_population_long <- df_population_wide %>%
   pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "population") 
 df_HDI_long <- df_HDI_wide %>% pivot_longer(cols = -c("ISO_code"), names_to = "year", values_to = "HDI")
 ```
-
 
 ```{r}
 # merge data frames into one master data frame

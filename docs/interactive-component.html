@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 7 Interactive component | Energy and Human Development</title>
-  <meta name="description" content="Chapter 7 Interactive component | Energy and Human Development" />
+  <title>Chapter 6 Interactive component | Energy and Human Development</title>
+  <meta name="description" content="Chapter 6 Interactive component | Energy and Human Development" />
   <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 7 Interactive component | Energy and Human Development" />
+  <meta property="og:title" content="Chapter 6 Interactive component | Energy and Human Development" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 7 Interactive component | Energy and Human Development" />
+  <meta name="twitter:title" content="Chapter 6 Interactive component | Energy and Human Development" />
   
   
   
@@ -31,7 +31,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="results-antonins-part.html"/>
+<link rel="prev" href="results.html"/>
 <link rel="next" href="conclusion.html"/>
 <script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.5.1/jquery-3.5.1.min.js"></script>
@@ -53,6 +53,14 @@
 
 <link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
 <script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.0.4.1/leaflet.js"></script>
 
 
 
@@ -92,16 +100,11 @@
 <li class="chapter" data-level="5.3" data-path="results.html"><a href="results.html#association-of-human-development-and-renewable-energy"><i class="fa fa-check"></i><b>5.3</b> Association of Human Development and Renewable Energy</a></li>
 <li class="chapter" data-level="5.4" data-path="results.html"><a href="results.html#characteristics-of-countries-with-a-high-share-of-renewable-energy"><i class="fa fa-check"></i><b>5.4</b> Characteristics of Countries With a High Share of Renewable Energy</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="results-antonins-part.html"><a href="results-antonins-part.html"><i class="fa fa-check"></i><b>6</b> Results Antonin’s part</a>
+<li class="chapter" data-level="6" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>6</b> Interactive component</a></li>
+<li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a>
 <ul>
-<li class="chapter" data-level="6.1" data-path="results-antonins-part.html"><a href="results-antonins-part.html#cross-directional-causality-btw.-ec-gdp-and-yos-1"><i class="fa fa-check"></i><b>6.1</b> Cross directional causality btw. EC, GDP and YOS</a></li>
-<li class="chapter" data-level="6.2" data-path="results-antonins-part.html"><a href="results-antonins-part.html#co-movement-of-energy-consumption-and-hdi-1"><i class="fa fa-check"></i><b>6.2</b> Co-movement of energy consumption and HDI</a></li>
-</ul></li>
-<li class="chapter" data-level="7" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>7</b> Interactive component</a></li>
-<li class="chapter" data-level="8" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>8</b> Conclusion</a>
-<ul>
-<li class="chapter" data-level="8.1" data-path="conclusion.html"><a href="conclusion.html#answers"><i class="fa fa-check"></i><b>8.1</b> Answers</a></li>
-<li class="chapter" data-level="8.2" data-path="conclusion.html"><a href="conclusion.html#summary"><i class="fa fa-check"></i><b>8.2</b> Summary</a></li>
+<li class="chapter" data-level="7.1" data-path="conclusion.html"><a href="conclusion.html#answers"><i class="fa fa-check"></i><b>7.1</b> Answers</a></li>
+<li class="chapter" data-level="7.2" data-path="conclusion.html"><a href="conclusion.html#summary"><i class="fa fa-check"></i><b>7.2</b> Summary</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -122,8 +125,8 @@
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="interactive-component" class="section level1" number="7">
-<h1><span class="header-section-number">Chapter 7</span> Interactive component</h1>
+<div id="interactive-component" class="section level1" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Interactive component</h1>
 
 </div>
             </section>
@@ -131,7 +134,7 @@
           </div>
         </div>
       </div>
-<a href="results-antonins-part.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="results.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="conclusion.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
@@ -163,7 +166,7 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/AntoninVidon/energyhumandevelopment/edit/main/07-interactive.Rmd",
+"link": "https://github.com/AntoninVidon/energyhumandevelopment/edit/main/06-interactive.Rmd",
 "text": "Edit"
 },
 "history": {
@@ -171,7 +174,7 @@ gitbook.start({
 "text": null
 },
 "view": {
-"link": "https://github.com/AntoninVidon/energyhumandevelopment/blob/main/07-interactive.Rmd",
+"link": "https://github.com/AntoninVidon/energyhumandevelopment/blob/main/06-interactive.Rmd",
 "text": null
 },
 "download": null,
@@ -186,6 +189,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

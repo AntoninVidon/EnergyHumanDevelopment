@@ -264,6 +264,7 @@ There seems to be a **threshold of energy consumption per capita which separates
 * * *
 
 ## Association of Human Development and Renewable Energy 
+*(Disclaimer: There is no data on renewable energy available for 91/169 countries. These countries are mainly in Africa and/or low-income countries and thus limit the analysis for these areas.)*
 
 The earlier analysis of GDP and energy consumption shows that economic growth, energy consumption, and human development are correlated until a threshold on the economic growth is reached. Considering the growing importance of renewable energy and the negative effects fossil energy sources can have on human livelihood, we must understand the **relation of renewable energy and human development**.
 ```{r}
@@ -347,7 +348,6 @@ Statistically significantly more countries with a high share of renewable energy
 * * *
 
 ## Characteristics of Countries With a High Share of Renewable Energy 
-*(There is no data on renewable energy available for 91 countries. These countries are mainly in Africa.)*
 
 Now, we want to analyse countries have a high share of renewable energy and what differentiates them from the rest of the world.
 

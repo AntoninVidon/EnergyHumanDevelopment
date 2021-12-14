@@ -16,8 +16,6 @@ In this chapter, we **analyze the missing data in the merged master data frame**
 
 ## Missing values for the merged dataframe
 
-
-
 ```{r, fig.height=8}
 # read master dataframe
 master_df <- read.csv(file = "data/master.csv")
