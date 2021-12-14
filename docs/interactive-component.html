@@ -132,11 +132,11 @@
 <h1><span class="header-section-number">Chapter 6</span> Interactive component</h1>
 <div id="interactive-visualization-on-the-energy-mix-by-hdi-level" class="section level2 unlisted unnumbered">
 <h2>Interactive visualization on the energy mix by HDI level</h2>
-<p>You can do the following:</p>
+<p>The interactive plot offers the following features :</p>
 <ul>
-<li>Selecting only a part of the y-axis to identify the smaller categories</li>
-<li>Hover over each element of the legend to highlight the variable in the graph</li>
-<li>Select countries of which HDI level you want to examine</li>
+<li>Selecting only a part of the y-axis to identify the smaller categories;</li>
+<li>Hovering over each element of the legend to highlight the variable in the graph;</li>
+<li>Selecting countries of which HDI level you want to examine.</li>
 </ul>
 <style>
   body {
@@ -198,7 +198,7 @@
     "https://raw.githubusercontent.com/AntoninVidon/energyhumandevelopment/main/data/interactive7.csv"
   ).then(function (data) {
     // List of groups (here I have one group per column)
-    const allGroup = new Set(data.map((d) => d.HDI));
+    const allGroup = ["Medium", "High", "Very high"];
 
     // add the options to the button
     d3.select("#HDI_category")
@@ -476,7 +476,17 @@
 
     svg
       .selectAll("myrect")
-      .data(keys)
+      .data([
+      "Other_renewables",
+      "Wind",
+      "Biofuel",
+      "Solar",
+      "Nuclear",
+      "Hydropower",
+      "Gas",
+      "Oil",
+      "Coal"
+    ])
       .join("rect")
       .attr("x", width + 10)
       .attr("y", function (d, i) {
@@ -495,7 +505,17 @@
 
     svg
       .selectAll("mylabels")
-      .data(keys)
+      .data([
+      "Other_renewables",
+      "Wind",
+      "Biofuel",
+      "Solar",
+      "Nuclear",
+      "Hydropower",
+      "Gas",
+      "Oil",
+      "Coal"
+    ])
       .join("text")
       .attr("x", width + 10 + size * 1.2)
       .attr("y", function (d, i) {
@@ -521,6 +541,9 @@
     });
   });
 </script>
+<p><br></p>
+<p>The stacked areas bring a fresh way of looking at evolution of the energy mix by HDI. We observe that <strong>the rate at which energy consumption is evolving is significantly higher for countries with medium and high HDI</strong>. Across all HDI categories, consumption of coal, oil and gas remains largely dominant. In the case of medium HDI countries, the staggering increase in energy consumption is almost solely supported by fossil energy sources. On the other hand, <strong>the evolution of the consumption of non-renewable energy seem to slow down in high HDI countries</strong>.</p>
+<p>The solar energy seem to only be mastered by the wealthiest countries; probably because this specific mean of production might require a lot of prior investments. Interestingly, the potential of this energy source might in fact be higher in countries in central Africa, which benefit from a high level of solar exposition.</p>
 
 </div>
 </div>
