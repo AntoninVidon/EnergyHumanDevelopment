@@ -11,7 +11,7 @@ master_df <- read.csv(file = "data/master.csv")
 distinct_energy_vars <- c("hydro", "nuclear", "solar", "wind", "coal", "gas", "oil", "biofuel", "other_renew")
 
 left_df <- master_df %>%
-  select(c("ISO_code", "year", "HDI", "solar", "biofuel", "wind", "coal", "nuclear", "other_renew", "gas", "oil", "hydro")) %>%
+  select(c("ISO_code", "year", "HDI", "coal", "oil", "gas", "hydro", "nuclear", "wind", "other_renew", "solar", "biofuel")) %>%
   na.omit()
 
 right_df <- left_df[left_df$year==2019,] %>% select(c("ISO_code", "HDI"))
